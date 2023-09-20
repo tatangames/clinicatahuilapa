@@ -19,11 +19,14 @@
 
     <style>
         html, body {
-            height: 100%;
+            height: 90%;
         }
         body {
             font-family: 'Roboto', sans-serif;
-            background-image: url({{ asset('images/fondo3.jpg') }});
+            background-image: url({{ asset('images/medical_back.jpg') }});
+            background-size: cover;
+            background-repeat: no-repeat;
+
         }
 
         .demo-container {
