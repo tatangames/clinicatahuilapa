@@ -9,7 +9,7 @@ use App\Http\Controllers\Backend\Roles\PermisoController;
 use App\Http\Controllers\Backend\Expedientes\ExpedientesController;
 use App\Http\Controllers\Backend\Configuracion\NuevoPacienteController;
 use App\Http\Controllers\Backend\Configuracion\TipoDocumentoController;
-
+use App\Http\Controllers\Backend\Configuracion\DiagnosticoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +90,11 @@ Route::post('/admin/tipodocumento/informacion', [TipoDocumentoController::class,
 Route::post('/admin/tipodocumento/editar', [TipoDocumentoController::class, 'editarNuevoTipoDocumento']);
 
 
+Route::get('/admin/diagnostico/vista', [DiagnosticoController::class,'indexNuevoTipoDiagnostico'])->name('admin.tipo.diagnostico.nuevo');
+Route::get('/admin/diagnostico/tabla', [DiagnosticoController::class,'tablaNuevoTipoDiagnostico']);
+Route::post('/admin/diagnostico/registro', [DiagnosticoController::class, 'registroNuevoTipoDiagnostico']);
+Route::post('/admin/diagnostico/informacion', [DiagnosticoController::class, 'informacionNuevoTipoDiagnostico']);
+Route::post('/admin/diagnostico/editar', [DiagnosticoController::class, 'editarNuevoTipoDiagnostico']);
 
 
 
