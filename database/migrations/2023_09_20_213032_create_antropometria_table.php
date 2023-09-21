@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateAntropometriaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations. n
      *
      * @return void
      */
