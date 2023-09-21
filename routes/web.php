@@ -10,6 +10,10 @@ use App\Http\Controllers\Backend\Expedientes\ExpedientesController;
 use App\Http\Controllers\Backend\Configuracion\ProfesionController;
 use App\Http\Controllers\Backend\Configuracion\EstadoCivilController;
 use App\Http\Controllers\Backend\Configuracion\MedicoController;
+use App\Http\Controllers\Backend\Configuracion\NuevoPacienteController;
+use App\Http\Controllers\Backend\Configuracion\TipoDocumentoController;
+use App\Http\Controllers\Backend\Configuracion\DiagnosticoController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,14 +70,33 @@ Route::get('/admin/vista/nuevo/expediente', [ExpedientesController::class,'index
 
 
 
-
 // --- CONFIGURACIONES ---
 
 // nuevo tipo de paciente
 
-Route::get('/admin/vista/nuevo/tipopaciente', [ConfiguracionController::class,'indexNuevoTipoPaciente'])->name('admin.tipo.paciente.nuevo');
+Route::get('/admin/tipopaciente/vista', [NuevoPacienteController::class,'indexNuevoTipoPaciente'])->name('admin.tipo.paciente.nuevo');
+Route::get('/admin/tipopaciente/tabla', [NuevoPacienteController::class,'tablaNuevoTipoPaciente']);
+Route::post('/admin/tipopaciente/registro', [NuevoPacienteController::class, 'registroNuevoTipoPaciente']);
+Route::post('/admin/tipopaciente/informacion', [NuevoPacienteController::class, 'informacionNuevoTipoPaciente']);
+Route::post('/admin/tipopaciente/editar', [NuevoPacienteController::class, 'editarNuevoTipoPaciente']);
 
 
+// --- TIPO DE DOCUMENTO ---
+
+// nuevo tipo de documento
+
+Route::get('/admin/tipodocumento/vista', [TipoDocumentoController::class,'indexNuevoTipoDocumento'])->name('admin.tipo.documento.nuevo');
+Route::get('/admin/tipodocumento/tabla', [TipoDocumentoController::class,'tablaNuevoTipoDocumento']);
+Route::post('/admin/tipodocumento/registro', [TipoDocumentoController::class, 'registroNuevoTipoDocumento']);
+Route::post('/admin/tipodocumento/informacion', [TipoDocumentoController::class, 'informacionNuevoTipoDocumento']);
+Route::post('/admin/tipodocumento/editar', [TipoDocumentoController::class, 'editarNuevoTipoDocumento']);
+
+
+Route::get('/admin/diagnostico/vista', [DiagnosticoController::class,'indexNuevoTipoDiagnostico'])->name('admin.tipo.diagnostico.nuevo');
+Route::get('/admin/diagnostico/tabla', [DiagnosticoController::class,'tablaNuevoTipoDiagnostico']);
+Route::post('/admin/diagnostico/registro', [DiagnosticoController::class, 'registroNuevoTipoDiagnostico']);
+Route::post('/admin/diagnostico/informacion', [DiagnosticoController::class, 'informacionNuevoTipoDiagnostico']);
+Route::post('/admin/diagnostico/editar', [DiagnosticoController::class, 'editarNuevoTipoDiagnostico']);
 
 
 
