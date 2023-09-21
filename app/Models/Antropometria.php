@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Antropometria extends Model
 {
     use HasFactory;
+    protected $table = 'antropometria';
+    public $timestamps = false;
 }

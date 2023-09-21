@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Antecedentes extends Model
 {
     use HasFactory;
+    protected $table = 'antecedentes';
+    public $timestamps = false;
 }
