@@ -80,3 +80,13 @@ Route::get('/admin/vista/nuevo/tipopaciente', [ConfiguracionController::class,'i
 
 
 
+
+
+
+
+/// AQUI CREE PARA ABAJO
+
+
+
+
+
