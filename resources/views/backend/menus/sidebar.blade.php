@@ -81,6 +81,13 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('admin.tipo.documento.nuevo') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Tipo de Documento</p>
+                            </a>
+                        </li>
+
                     </ul>
 
 

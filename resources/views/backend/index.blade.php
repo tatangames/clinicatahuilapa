@@ -47,5 +47,7 @@
 
 @yield('content-admin-js')
 
+
+
 </body>
 </html>

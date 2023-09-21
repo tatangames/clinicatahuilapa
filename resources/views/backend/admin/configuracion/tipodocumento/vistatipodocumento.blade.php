@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" onclick="modalAgregar()" class="button button-3d button-rounded button-pill button-small">
                 <i class="fas fa-pencil-alt"></i>
-                Nuevo Tipo de Paciente
+                Nuevo Tipo de Documento
             </button>
         </div>
     </section>
@@ -61,7 +61,7 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <label>Tipo de Paciente</label>
+                                        <label>Tipo de Documento</label>
                                         <input type="text" maxlength="150" autocomplete="off" class="form-control" id="nombre-nuevo">
                                     </div>
 
@@ -95,7 +95,7 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <label>Tipo de Paciente</label>
+                                        <label>Tipo de Documento</label>
                                         <input type="hidden" id="id-editar">
                                         <input type="text" maxlength="150" autocomplete="off" class="form-control" id="nombre-editar">
                                     </div>
@@ -130,7 +130,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/tipopaciente/tabla') }}";
+            var ruta = "{{ URL::to('/admin/tipodocumento/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             document.getElementById("divcontenedor").style.display = "block";
@@ -140,7 +140,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/tipopaciente/tabla') }}";
+            var ruta = "{{ URL::to('/admin/tipodocumento/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -162,11 +162,11 @@
             var formData = new FormData();
             formData.append('nombre', nombre);
 
-            axios.post(url+'/tipopaciente/registro', formData, {
+            axios.post(url+'/tipodocumento/registro', formData, {
             })
                 .then((response) => {
                     closeLoading();
-                   if(response.data.success === 1){
+                    if(response.data.success === 1){
                         toastr.success('Registrado correctamente');
                         $('#modalAgregar').modal('hide');
                         recargar();
@@ -185,7 +185,7 @@
             openLoading();
             document.getElementById("formulario-editar").reset();
 
-            axios.post(url+'/tipopaciente/informacion',{
+            axios.post(url+'/tipodocumento/informacion',{
                 'id': id
             })
                 .then((response) => {
@@ -221,7 +221,7 @@
             formData.append('id', id);
             formData.append('nombre', nombre);
 
-            axios.post(url+'/tipopaciente/editar', formData, {
+            axios.post(url+'/tipodocumento/editar', formData, {
             })
                 .then((response) => {
                     closeLoading();
