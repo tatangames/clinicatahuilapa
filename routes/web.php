@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\Roles\RolesController;
 use App\Http\Controllers\Controles\ControlController;
 use App\Http\Controllers\Backend\Roles\PermisoController;
 use App\Http\Controllers\Backend\Expedientes\ExpedientesController;
+use App\Http\Controllers\Backend\Configuracion\ConfiguracionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -56,11 +57,19 @@ Route::get('sin-permisos', [ControlController::class,'indexSinPermiso'])->name('
 
 
 // --- EXPEDIENTES ---
+
+// nuevo expediente
 Route::get('/admin/vista/nuevo/expediente', [ExpedientesController::class,'indexNuevoExpediente'])->name('admin.expediente.nuevo');
 
 
 
 
+
+// --- CONFIGURACIONES ---
+
+// nuevo tipo de paciente
+
+Route::get('/admin/vista/nuevo/tipopaciente', [ConfiguracionController::class,'indexNuevoTipoPaciente'])->name('admin.tipo.paciente.nuevo');
 
 
 

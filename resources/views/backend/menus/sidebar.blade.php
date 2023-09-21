@@ -68,20 +68,25 @@
                     <a href="#" class="nav-link nav-">
                         <i class="far fa-user"></i>
                         <p>
-                            Expediente
+                            Configuración
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
 
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.expediente.nuevo') }}" target="frameprincipal" class="nav-link">
+                            <a href="{{ route('admin.tipo.paciente.nuevo') }}" target="frameprincipal" class="nav-link">
                                 <i class="far fa-edit nav-icon"></i>
-                                <p>Nuevo Expediente</p>
+                                <p>Tipo de Paciente</p>
                             </a>
                         </li>
 
                     </ul>
+
+
+
+
+
                 </li>
 
 
