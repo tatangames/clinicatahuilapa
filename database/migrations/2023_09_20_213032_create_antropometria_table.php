@@ -35,7 +35,7 @@ class CreateAntropometriaTable extends Migration
 
 
 
-            table->foreign('consulta_id')->references('id')->on('consulta_paciente');
+            $table->foreign('consulta_id')->references('id')->on('consulta_paciente');
         });
     }
 

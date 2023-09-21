@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\Perfil\PerfilController;
 use App\Http\Controllers\Backend\Roles\RolesController;
 use App\Http\Controllers\Controles\ControlController;
 use App\Http\Controllers\Backend\Roles\PermisoController;
+use App\Http\Controllers\Backend\Expedientes\ExpedientesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -52,3 +53,21 @@ Route::post('/admin/editar-perfil/actualizar', [PerfilController::class, 'editar
 
 // --- SIN PERMISOS VISTA 403 ---
 Route::get('sin-permisos', [ControlController::class,'indexSinPermiso'])->name('no.permisos.index');
+
+
+// --- EXPEDIENTES ---
+Route::get('/admin/vista/nuevo/expediente', [ExpedientesController::class,'indexNuevoExpediente'])->name('admin.expediente.nuevo');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
