@@ -80,6 +80,25 @@
                                 <p>Tipo de Paciente</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.profesion.index') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Profesiones</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.estadocivil.index') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Estado Civil</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.medico.index') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Medico</p>
+                            </a>
+                        </li>
+
 
                     </ul>
 
