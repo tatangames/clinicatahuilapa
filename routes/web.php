@@ -7,7 +7,6 @@ use App\Http\Controllers\Backend\Roles\RolesController;
 use App\Http\Controllers\Controles\ControlController;
 use App\Http\Controllers\Backend\Roles\PermisoController;
 use App\Http\Controllers\Backend\Expedientes\ExpedientesController;
-use App\Http\Controllers\Backend\Configuracion\ConfiguracionController;
 use App\Http\Controllers\Backend\Configuracion\ProfesionController;
 use App\Http\Controllers\Backend\Configuracion\EstadoCivilController;
 use App\Http\Controllers\Backend\Configuracion\MedicoController;
@@ -124,5 +123,9 @@ Route::post('/admin/medico/nuevo', [MedicoController::class, 'nuevoMedico']);
 Route::post('/admin/medico/informacion', [MedicoController::class, 'infoMedico']);
 // editar una medico
 Route::post('/admin/medico/editar', [MedicoController::class, 'editarMedico']);
+
+
+
+
 
 

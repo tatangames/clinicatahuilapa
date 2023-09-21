@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateTipoDocumentoTable extends Migration
 {
     /**
-     * Run the migrations.
+     * DUI, nit, pasaporte
      *
      * @return void
      */
