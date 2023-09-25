@@ -69,7 +69,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text"  class="form-control" id="nombre-nuevo" autocomplete="off">
+                                        <input type="text" maxlength="150" class="form-control" id="nombre-nuevo" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@
 
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text" class="form-control" id="nombre-editar" autocomplete="off">
+                                        <input type="text" maxlength="150" class="form-control" id="nombre-editar" autocomplete="off">
                                     </div>
 
                                 </div>
@@ -161,14 +161,13 @@
         function nuevo(){
             var nombre = document.getElementById('nombre-nuevo').value;
 
-
             if(nombre === ''){
                 toastr.error('Nombre es requerido');
                 return;
             }
 
-            if(nombre.length > 300){
-                toastr.error('Nombre máximo 350 caracteres');
+            if(nombre.length > 150){
+                toastr.error('Nombre máximo 150 caracteres');
                 return;
             }
 
@@ -228,8 +227,8 @@
                 return;
             }
 
-            if(nombre.length > 300){
-                toastr.error('Nombre máximo 300 caracteres');
+            if(nombre.length > 150){
+                toastr.error('Nombre máximo 150 caracteres');
                 return;
             }
 

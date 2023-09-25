@@ -69,7 +69,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text"  class="form-control" id="nombre-nuevo" autocomplete="off">
+                                        <input type="text" maxlength="300" class="form-control" id="nombre-nuevo" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@
 
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text" class="form-control" id="nombre-editar" autocomplete="off">
+                                        <input type="text" maxlength="300" class="form-control" id="nombre-editar" autocomplete="off">
                                     </div>
 
                                 </div>
@@ -168,7 +168,7 @@
             }
 
             if(nombre.length > 300){
-                toastr.error('Nombre máximo 350 caracteres');
+                toastr.error('Nombre máximo 300 caracteres');
                 return;
             }
 

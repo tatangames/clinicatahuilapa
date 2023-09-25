@@ -154,7 +154,7 @@
             var nombre = document.getElementById('nombre-nuevo').value;
 
             if(nombre === ''){
-                toastr.error('Tipo de Paciente es requerido');
+                toastr.error('Tipo de documento es requerido');
                 return;
             }
 
@@ -212,7 +212,7 @@
             var nombre = document.getElementById('nombre-editar').value;
 
             if(nombre === ''){
-                toastr.error('Tipo de Paciente es requerido');
+                toastr.error('Tipo de documento es requerido');
                 return;
             }
 

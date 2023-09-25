@@ -66,7 +66,8 @@ Route::get('sin-permisos', [ControlController::class,'indexSinPermiso'])->name('
 
 // nuevo expediente
 Route::get('/admin/vista/nuevo/expediente', [ExpedientesController::class,'indexNuevoExpediente'])->name('admin.expediente.nuevo');
-
+Route::post('/admin/expediente/registro', [ExpedientesController::class, 'nuevoExpediente']);
+Route::post('/admin/expediente/calcularedad', [ExpedientesController::class, 'calcularEdad']);
 
 
 

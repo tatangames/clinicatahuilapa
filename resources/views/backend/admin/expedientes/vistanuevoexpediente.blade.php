@@ -36,43 +36,34 @@
                                         <div class="col-md-6">
 
 
-                                            <form>
-                                                <div class="card-body">
+                                            <div class="card-body">
 
-                                                    <div class="form-group row">
-                                                        <label class="col-sm-2 col-form-label" style="color: #686868">Medico</label>
-                                                        <div class="col-md-9">
-                                                            <select class="form-control" id="select-medico">
-                                                                <option value="0">medico 1</option>
-                                                                <option value="1">medico 2</option>
-                                                            </select>
-                                                        </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Medico: </label>
+                                                    <span class="text-danger">*</span>
+                                                    <div class="col-md-9">
+                                                        <select class="form-control" id="select-medico">
+                                                            @foreach($arrayMedicos as $item)
+                                                                <option value="{{$item->id}}">{{ $item->nombre }} {{ $item->apellido }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
-
-
-                                                    <div class="form-group row" style="margin-top: 35px">
-                                                        <label class="col-sm-2 col-form-label" style="color: #686868">Nombre</label>
-                                                        <div class="col-md-9">
-                                                            <div class="form-group">
-                                                                <input type="text" maxlength="150" autocomplete="off" class="form-control" id="nombre-nuevo">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group" style="margin-top: 0px">
-                                                        <label class="col-sm-5 col-form-label" style="color: #686868">Fecha de Nacimiento</label>
-                                                        <div class="col-md-5">
-                                                            <div class="form-group">
-                                                                <input type="date" class="form-control" id="fechanacimiento-nuevo">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
                                                 </div>
 
 
-                                            </form>
+                                                <div class="form-group row" style="margin-top: 35px">
+                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Nombre: </label>
+                                                    <span class="text-danger">*</span>
+                                                    <div class="col-md-9">
+                                                        <div class="form-group">
+                                                            <input type="text" maxlength="150" autocomplete="off"
+                                                                   class="form-control" id="nombre-nuevo">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
 
 
                                         </div>
@@ -83,26 +74,28 @@
                                             <div class="card-body">
 
                                                 <div class="form-group row">
-                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Tipo Paciente: </label>
+                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Tipo
+                                                        Paciente: </label>
+                                                    <span class="text-danger">*</span>
                                                     <div class="col-md-9">
                                                         <select class="form-control" id="select-tipopaciente">
-                                                            <option value="0">xxxxx</option>
-                                                            <option value="1">xxxxx</option>
+                                                            @foreach($arrayTipoPaciente as $item)
+                                                                <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
 
 
-                                                <div class="form-group row" style="margin-top: 0px">
-                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Apellido</label>
+                                                <div class="form-group row" >
+                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Apellido: </label>
                                                     <div class="col-md-9">
                                                         <div class="form-group">
-                                                            <input type="text" maxlength="150" autocomplete="off" class="form-control" id="apellido-nuevo">
+                                                            <input type="text" maxlength="150" autocomplete="off"
+                                                                   class="form-control" id="apellido-nuevo">
                                                         </div>
                                                     </div>
                                                 </div>
-
-
 
                                             </div>
                                         </div>
@@ -110,10 +103,183 @@
 
                                     </div>
 
-
                                 </div>
                             </section>
 
+
+                            <section>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-5">Fecha nacimiento:<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-7">
+                                                <input type="date" id="fecha-nacimiento" class="form-control"
+                                                       onchange="calcular_edad();">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">Edad: </label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" id="edad" value=""
+                                                       disabled="disabled">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">Sexo: <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-9">
+                                                <select name="sexo" id="select-sexo" class="form-control">
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="M">Masculino</option>
+                                                    <option value="F">Femenino</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </section>
+
+
+
+                            <section style="margin-top: 25px">
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-5">Teléfono: </label>
+                                            <div class="col-md-7">
+                                                <input type="text" maxlength="25" autocomplete="off"
+                                                       class="form-control" id="telefono">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">Celular: </label>
+                                            <div class="col-md-9">
+                                                <input type="text" maxlength="25" autocomplete="off" class="form-control" id="celular" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">Dirección: </label>
+                                            <div class="col-md-9">
+                                                <textarea maxlength="500" id="direccion" cols="17" rows="2" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </section>
+
+
+
+                            <section style="margin-top: 25px">
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-5">Estado civil: <span
+                                                    class="text-danger">*</span> </label>
+                                                <div class="col-md-7">
+                                                    <select name="sexo" id="select-civil" class="form-control">
+                                                        @foreach($arrayEstadoCivil as $item)
+                                                            <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-6">Tipo de Documento: <span
+                                                    class="text-danger">*</span> </label>
+                                            <div class="col-md-9">
+                                                <select name="sexo" id="select-documento" class="form-control">
+                                                    @foreach($arrayTipoDocumento as $item)
+                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-5">Num. Documento:
+                                                <span class="text-danger">*</span> </label>
+                                            <div class="col-md-7">
+                                                <input type="text" maxlength="100" autocomplete="off"
+                                                       class="form-control" id="numero-documento">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                            </section>
+
+
+
+                            <section style="margin-top: 25px">
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-5">Profesión:  </label>
+                                            <div class="col-md-7">
+                                                <select name="sexo" id="select-profesion" class="form-control">
+                                                    @foreach($arrayProfesion as $item)
+                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-6">Correo electrónico:  </label>
+                                            <div class="col-md-9">
+                                                <input type="text" maxlength="150" autocomplete="off" class="form-control" id="correo" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-5">Referido por: </label>
+                                            <div class="col-md-9">
+                                                <input type="text" maxlength="300" autocomplete="off" class="form-control" id="referido" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </section>
+
+                            <br>
+                            <hr>
+
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-offset-3 col-md-12" align="center">
+                                                <button type="button" class="btn btn-success" onclick="registrar();">Registrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -140,13 +306,11 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var ruta = "{{ URL::to('/admin/equipos/tabla/index') }}";
-            $('#tablaDatatable').load(ruta);
 
             $('#select-medico').select2({
                 theme: "bootstrap-5",
                 "language": {
-                    "noResults": function(){
+                    "noResults": function () {
                         return "Búsqueda no encontrada";
                     }
                 },
@@ -155,7 +319,7 @@
             $('#select-tipopaciente').select2({
                 theme: "bootstrap-5",
                 "language": {
-                    "noResults": function(){
+                    "noResults": function () {
                         return "Búsqueda no encontrada";
                     }
                 },
@@ -168,9 +332,35 @@
 
     <script>
 
-        function recargar() {
-            var ruta = "{{ url('/admin/equipos/tabla/index') }}";
-            $('#tablaDatatable').load(ruta);
+        function calcular_edad() {
+
+            var fechaNacimiento = document.getElementById('fecha-nacimiento').value;
+
+            if(fechaNacimiento === ''){
+                return;
+            }
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('fecha', fechaNacimiento);
+
+            axios.post(url + '/expediente/calcularedad', formData, {})
+                .then((response) => {
+                    closeLoading();
+
+                    if (response.data.success === 1) {
+
+                        var edad = response.data.edad;
+
+                        var inputEdad = document.getElementById("edad");
+                        inputEdad.value = edad.toString();
+
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
         }
 
         function modalAgregar() {
@@ -178,38 +368,114 @@
             $('#modalAgregar').modal('show');
         }
 
-        function nuevo() {
-            var codigo = document.getElementById('codigo-nuevo').value;
-            var descripcion = document.getElementById('descripcion-nuevo').value;
-            var placa = document.getElementById('placa-nuevo').value;
+        function registrar() {
+            Swal.fire({
+                title: 'Registrar Paciente',
+                text: "",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    nuevoPaciente();
+                }
+            })
+        }
 
-            if (codigo === '') {
-                toastr.error('Codigo es requerido');
+
+        function nuevoPaciente(){
+
+            var selectMedico = document.getElementById('select-medico').value; //*
+            var nombre = document.getElementById('nombre-nuevo').value; //*
+            var selectTipoPaciente = document.getElementById('select-tipopaciente').value; //*
+            var apellido = document.getElementById('apellido-nuevo').value;
+            var fechaNacimiento = document.getElementById('fecha-nacimiento').value; //*
+            var selectSexo = document.getElementById('select-sexo').value; //*
+            var telefono = document.getElementById('telefono').value;
+            var celular = document.getElementById('celular').value;
+            var direccion = document.getElementById('direccion').value;
+            var selectCivil = document.getElementById('select-civil').value; //*
+            var selectDocumento = document.getElementById('select-documento').value; //*
+            var numeroDocumento = document.getElementById('numero-documento').value; //*
+            var correo = document.getElementById('correo').value;
+            var referido = document.getElementById('referido').value;
+            var selectProfesion = document.getElementById('select-profesion').value; //*
+
+
+            if (selectMedico === '') {
+                toastr.error('Médico es requerido');
                 return;
             }
-            if (descripcion === '') {
-                toastr.error('Descripcion es requerido');
+
+            if (nombre === '') {
+                toastr.error('Nombre es requerido');
                 return;
             }
 
-            if (placa.length > 25) {
-                toastr.error('Placa máximo 25 caracteres');
+            if (selectTipoPaciente === '') {
+                toastr.error('Tipo de Paciente es requerido');
+                return;
+            }
+
+            if (fechaNacimiento === '') {
+                toastr.error('Fecha de nacimiento es requerido');
+                return;
+            }
+
+            if (selectSexo === '') {
+                toastr.error('Sexo del paciente es requerido');
+                return;
+            }
+
+            if (selectCivil === '') {
+                toastr.error('Estado civil es requerido');
+                return;
+            }
+
+            if (selectDocumento === '') {
+                toastr.error('Tipo de documento es requerido');
+                return;
+            }
+
+            if (numeroDocumento === '') {
+                toastr.error('Número de documento es requerido');
+                return;
+            }
+
+            if (selectProfesion === '') {
+                toastr.error('Profesión es requerido');
                 return;
             }
 
             openLoading();
             var formData = new FormData();
-            formData.append('codigo', codigo);
-            formData.append('descripcion', descripcion);
-            formData.append('placa', placa);
+            formData.append('medico', selectMedico);
+            formData.append('nombre', nombre);
+            formData.append('tipopaciente', selectTipoPaciente);
+            formData.append('apellido', apellido);
+            formData.append('fechanacimiento', fechaNacimiento);
+            formData.append('sexopaciente', selectSexo);
+            formData.append('telefono', telefono);
+            formData.append('celular', celular);
+            formData.append('direccion', direccion);
+            formData.append('estadocivil', selectCivil);
+            formData.append('tipodocumento', selectDocumento);
+            formData.append('documento', numeroDocumento);
+            formData.append('correo', correo);
+            formData.append('referido', referido);
+            formData.append('profesion', selectProfesion);
 
-            axios.post(url + '/equipos/nuevo', formData, {})
+
+            axios.post(url + '/expediente/registro', formData, {})
                 .then((response) => {
                     closeLoading();
+
                     if (response.data.success === 1) {
                         toastr.success('Registrado correctamente');
-                        $('#modalAgregar').modal('hide');
-                        recargar();
+                        borrarCampos();
                     } else {
                         toastr.error('Error al registrar');
                     }
@@ -220,72 +486,8 @@
                 });
         }
 
-        function informacion(id) {
-            openLoading();
-            document.getElementById("formulario-editar").reset();
+        function borrarCampos(){
 
-            axios.post(url + '/equipos/informacion', {
-                'id': id
-            })
-                .then((response) => {
-                    closeLoading();
-                    if (response.data.success === 1) {
-                        $('#modalEditar').modal('show');
-                        $('#id-editar').val(response.data.lista.id);
-                        $('#codigo-editar').val(response.data.lista.codigo);
-                        $('#descripcion-editar').val(response.data.lista.descripcion);
-                        $('#placa-editar').val(response.data.lista.placa);
-
-                    } else {
-                        toastr.error('Información no encontrada');
-                    }
-                })
-                .catch((error) => {
-                    closeLoading();
-                    toastr.error('Información no encontrada');
-                });
-        }
-
-        function editar() {
-            var id = document.getElementById('id-editar').value;
-            var codigo = document.getElementById('codigo-editar').value;
-            var descripcion = document.getElementById('descripcion-editar').value;
-            var placa = document.getElementById('placa-editar').value;
-
-            if (codigo === '') {
-                toastr.error('Codigo es requerido');
-                return;
-            }
-            if (descripcion === '') {
-                toastr.error('Descripcion es requerido');
-                return;
-            }
-
-
-            openLoading();
-            var formData = new FormData();
-            formData.append('id', id);
-            formData.append('codigo', codigo);
-            formData.append('descripcion', descripcion);
-            formData.append('placa', placa);
-
-            axios.post(url + '/equipos/editar', formData, {})
-                .then((response) => {
-                    closeLoading();
-
-                    if (response.data.success === 1) {
-                        toastr.success('Actualizado correctamente');
-                        $('#modalEditar').modal('hide');
-                        recargar();
-                    } else {
-                        toastr.error('Error al actualizar');
-                    }
-
-                })
-                .catch((error) => {
-                    toastr.error('Error al actualizar');
-                    closeLoading();
-                });
         }
 
 

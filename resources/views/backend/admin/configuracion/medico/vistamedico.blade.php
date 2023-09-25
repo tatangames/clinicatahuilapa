@@ -77,17 +77,17 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text"  class="form-control" id="nombre-nuevo" autocomplete="off">
+                                        <input type="text" maxlength="150"  class="form-control" id="nombre-nuevo" autocomplete="off">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Apellido</label>
-                                        <input type="text"  class="form-control" id="apellido-nuevo" autocomplete="off">
+                                        <input type="text" maxlength="150"  class="form-control" id="apellido-nuevo" autocomplete="off">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Teléfono</label>
-                                        <input type="number"  class="form-control" id="telefono-nuevo" autocomplete="off">
+                                        <input type="number" maxlength="25" class="form-control" id="telefono-nuevo" autocomplete="off">
                                     </div>
 
                                 </div>
@@ -133,17 +133,17 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Nombre</label>
-                                        <input type="text"  class="form-control" id="nombre-editar" autocomplete="off">
+                                        <input type="text" maxlength="150" class="form-control" id="nombre-editar" autocomplete="off">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Apellido</label>
-                                        <input type="text"  class="form-control" id="apellido-editar" autocomplete="off">
+                                        <input type="text" maxlength="150" class="form-control" id="apellido-editar" autocomplete="off">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Teléfono</label>
-                                        <input type="number"  class="form-control" id="telefono-editar" autocomplete="off">
+                                        <input type="number" maxlength="25" class="form-control" id="telefono-editar" autocomplete="off">
                                     </div>
 
                                 </div>
@@ -201,8 +201,6 @@
             var telefono = document.getElementById('telefono-nuevo').value;
             var usuario_id = document.getElementById('select-usuario').value;
 
-
-
             if(nombre === ''){
                 toastr.error('Nombre es requerido');
                 return;
@@ -212,8 +210,8 @@
                 return;
             }
 
-            if(nombre.length > 300){
-                toastr.error('Nombre máximo 350 caracteres');
+            if(nombre.length > 150){
+                toastr.error('Nombre máximo 150 caracteres');
                 return;
             }
 
@@ -229,7 +227,26 @@
             })
                 .then((response) => {
                     closeLoading();
-                    if(response.data.success === 1){
+
+                    if (response.data.success === 1) {
+
+                        Swal.fire({
+                            title: 'Usuario repetido',
+                            text: "el usuario ya esta registrado",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
+
+                    }
+
+                    else if(response.data.success === 2){
                         toastr.success('Registrado correctamente');
                         $('#modalAgregar').modal('hide');
                         recargar();
@@ -297,8 +314,8 @@
                 return;
             }
 
-            if(nombre.length > 300){
-                toastr.error('Nombre máximo 300 caracteres');
+            if(nombre.length > 150){
+                toastr.error('Nombre máximo 150 caracteres');
                 return;
             }
 
@@ -315,7 +332,25 @@
                 .then((response) => {
                     closeLoading();
 
-                    if(response.data.success === 1){
+                    if (response.data.success === 1) {
+
+                        Swal.fire({
+                            title: 'Usuario repetido',
+                            text: "el usuario ya esta registrado",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
+
+                    }
+
+                    else if(response.data.success === 2){
                         toastr.success('Actualizado correctamente');
                         $('#modalEditar').modal('hide');
                         recargar();

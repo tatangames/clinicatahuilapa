@@ -3,7 +3,17 @@
 namespace App\Http\Controllers\Backend\Expedientes;
 
 use App\Http\Controllers\Controller;
+use App\Models\Estado_Civil;
+use App\Models\Medico;
+use App\Models\Paciente;
+use App\Models\Profesion;
+use App\Models\Tipo_Documento;
+use App\Models\Tipo_Paciente;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ExpedientesController extends Controller
 {
@@ -14,7 +24,81 @@ class ExpedientesController extends Controller
 
     public function indexNuevoExpediente(){
 
+        $arrayMedicos = Medico::orderBy('nombre')->get();
 
-        return view('backend.admin.expedientes.vistanuevoexpediente');
+        $arrayTipoPaciente = Tipo_Paciente::orderBy('nombre')->get();
+
+        $arrayEstadoCivil = Estado_Civil::orderBy('nombre')->get();
+
+        $arrayTipoDocumento = Tipo_Documento::orderBy('nombre')->get();
+
+        $arrayProfesion = Profesion::orderBy('nombre')->get();
+
+        return view('backend.admin.expedientes.vistanuevoexpediente', compact('arrayMedicos', 'arrayTipoPaciente',
+        'arrayEstadoCivil', 'arrayTipoDocumento', 'arrayProfesion'));
     }
+
+
+    public function calcularEdad(Request $request){
+
+        $edad = Carbon::parse($request->fecha)->age;
+
+        return ['success' => 1, 'edad' => $edad];
+    }
+
+
+    public function nuevoExpediente(Request $request){
+
+        $regla = array(
+            'nombre' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        DB::beginTransaction();
+
+        try {
+
+            if($request->sexopaciente == 1){
+                $genero = "M";
+            }else{
+                $genero = "F";
+            }
+
+
+            $detalle = new Paciente();
+            $detalle->medico_id = $request->medico;
+            $detalle->tipo_id = $request->tipopaciente;
+            $detalle->estado_civil_id = $request->estadocivil;
+            $detalle->tipo_documento_id = $request->tipodocumento;
+            $detalle->profesion_id = $request->profesion;
+            $detalle->nombres = $request->nombre;
+            $detalle->apellidos = $request->apellido;
+            $detalle->fecha_nacimiento = $request->fechanacimiento;
+            $detalle->sexo = $genero;
+            $detalle->referido_por = $request->referido;
+            $detalle->num_documento = $request->documento;
+            $detalle->correo = $request->correo;
+            $detalle->celular = $request->celular;
+            $detalle->telefono = $request->telefono;
+            $detalle->direccion = $request->direccion;
+            $detalle->save();
+
+            DB::commit();
+            return ['success' => 1];
+
+        }catch(\Throwable $e){
+            DB::rollback();
+            Log::info('error expediente: ' . $e);
+            return ['success' => 99];
+        }
+
+    }
+
+
+
+
 }

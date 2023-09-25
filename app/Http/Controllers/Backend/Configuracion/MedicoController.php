@@ -41,6 +41,11 @@ class MedicoController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
+        if(Medico::where('usuario_id', $request->usuario_id)->first()){
+            return ['success' => 1];
+        }
+
+
         $dato = new Medico();
         $dato->usuario_id = $request->usuario_id;
         $dato->nombre = $request->nombre;
@@ -48,9 +53,9 @@ class MedicoController extends Controller
         $dato->telefono = $request->telefono;
 
         if($dato->save()){
-            return ['success' => 1];
-        }else{
             return ['success' => 2];
+        }else{
+            return ['success' => 99];
         }
     }
 
@@ -87,6 +92,11 @@ class MedicoController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
+        if(Medico::where('usuario_id', $request->usuario_id)
+            ->where('id', '!=', $request->id)->first()){
+            return ['success' => 1];
+        }
+
         if(Medico::where('id', $request->id)->first()){
 
             Medico::where('id', $request->id)->update([
@@ -96,9 +106,9 @@ class MedicoController extends Controller
                 'telefono' => $request->telefono
             ]);
 
-            return ['success' => 1];
-        }else{
             return ['success' => 2];
+        }else{
+            return ['success' => 99];
         }
     }
 }
