@@ -13,7 +13,7 @@ use App\Http\Controllers\Backend\Configuracion\MedicoController;
 use App\Http\Controllers\Backend\Configuracion\NuevoPacienteController;
 use App\Http\Controllers\Backend\Configuracion\TipoDocumentoController;
 use App\Http\Controllers\Backend\Configuracion\DiagnosticoController;
-
+use App\Http\Controllers\Backend\Configuracion\MotivoConsultaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -100,6 +100,12 @@ Route::post('/admin/diagnostico/informacion', [DiagnosticoController::class, 'in
 Route::post('/admin/diagnostico/editar', [DiagnosticoController::class, 'editarNuevoTipoDiagnostico']);
 
 
+// --- MOTIVO DE CONSULTA ---
+Route::get('/admin/motivoconsulta/index', [MotivoConsultaController::class,'indexMotivoConsulta'])->name('admin.motivo.consulta.index');
+Route::get('/admin/motivoconsulta/tabla/index', [MotivoConsultaController::class,'tablaMotivoConsulta']);
+Route::post('/admin/motivoconsulta/nuevo', [MotivoConsultaController::class, 'nuevoMotivoConsulta']);
+Route::post('/admin/motivoconsulta/informacion', [MotivoConsultaController::class, 'infoMotivoConsulta']);
+Route::post('/admin/motivoconsulta/editar', [MotivoConsultaController::class, 'editarMotivoConsulta']);
 
 
 
@@ -108,9 +114,6 @@ Route::post('/admin/diagnostico/editar', [DiagnosticoController::class, 'editarN
 
 
 
-
-
-/// AQUI CREE PARA ABAJO
 ///
 //PROFESION
 // retorna vista de Profesion
