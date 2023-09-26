@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\Configuracion\NuevoPacienteController;
 use App\Http\Controllers\Backend\Configuracion\TipoDocumentoController;
 use App\Http\Controllers\Backend\Configuracion\DiagnosticoController;
 use App\Http\Controllers\Backend\Configuracion\MotivoConsultaController;
+use App\Http\Controllers\Backend\Asignaciones\AsignacionesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -72,6 +73,12 @@ Route::post('/admin/expediente/calcularedad', [ExpedientesController::class, 'ca
 // buscar expediente
 Route::get('/admin/expediente/vista/buscar', [ExpedientesController::class,'indexBuscarExpediente'])->name('admin.expediente.buscar');
 Route::get('/admin/expediente/tabla/buscar', [ExpedientesController::class,'tablaBuscarExpediente']);
+
+
+
+// --- ASIGNACIONES ---
+
+Route::get('/admin/asignaciones/vista/index', [AsignacionesController::class,'indexAsignaciones'])->name('admin.asignaciones.vista');
 
 
 

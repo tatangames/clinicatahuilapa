@@ -41,6 +41,15 @@
                 @endcan
 
 
+                    <a href="{{ route('admin.asignaciones.vista') }}" target="frameprincipal" class="nav-link">
+                        <i class="nav-icon fas fa-plus"></i>
+                        <p>
+                            Asignaciones
+                        </p>
+                    </a>
+
+
+
                 <li class="nav-item">
 
                     <a href="#" class="nav-link nav-">
