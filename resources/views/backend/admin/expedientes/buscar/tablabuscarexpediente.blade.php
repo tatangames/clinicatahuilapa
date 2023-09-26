@@ -7,23 +7,48 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
+                                <th># Exp</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
-                                <th>Teléfono</th>
+                                <th>Documento</th>
+                                <th>Profesión</th>
+                                <th>Médico de Cabecera</th>
                                 <th>Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            @foreach($lista as $dato)
+                            @foreach($arrayExpedientes as $dato)
                                 <tr>
-                                    <td>{{ $dato->nombre }}</td>
-                                    <td>{{ $dato->apellido }}</td>
-                                    <td>{{ $dato->telefono }}</td>
+                                    <td>{{ $dato->id }}</td>
+                                    <td>{{ $dato->nombres }}</td>
+                                    <td>{{ $dato->apellidos }}</td>
+                                    <td>{{ $dato->num_documento }}</td>
+                                    <td>{{ $dato->profesion }}</td>
+                                    <td>{{ $dato->medico }}</td>
+
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-xs" onclick="informacion({{ $dato->id }})">
-                                            <i class="fas fa-eye" title="Editar"></i>&nbsp; Editar
-                                        </button>
+
+                                        <div style="text-align:center;">
+
+
+                                            <button type="button" class="btn btn-success btn-sm" onclick="informacion({{ $dato->id }})">
+                                                <i class="fas fa-file" title="Documentos y Recetas"></i>&nbsp;
+                                            </button>
+
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="informacion({{ $dato->id }})">
+                                                <i class="fas fa-list-alt" title="Datos Generales"></i>&nbsp;
+                                            </button>
+
+                                            <button type="button" class="btn btn-warning btn-sm" onclick="informacion({{ $dato->id }})">
+                                                <i class="fas fa-file-alt" title="Subir Documento"></i>&nbsp;
+                                            </button>
+
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="informacion({{ $dato->id }})">
+                                                <i class="fas fa-image" title="Subir Imagen"></i>&nbsp;
+                                            </button>
+
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

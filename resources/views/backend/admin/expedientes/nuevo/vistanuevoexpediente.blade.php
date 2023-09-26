@@ -340,27 +340,18 @@
                 return;
             }
 
-            openLoading();
-            var formData = new FormData();
-            formData.append('fecha', fechaNacimiento);
 
-            axios.post(url + '/expediente/calcularedad', formData, {})
-                .then((response) => {
-                    closeLoading();
+            var hoy = new Date();
+            var cumpleanos = new Date(fechaNacimiento);
+            var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+            var m = hoy.getMonth() - cumpleanos.getMonth();
 
-                    if (response.data.success === 1) {
+            if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+                edad--;
+            }
 
-                        var edad = response.data.edad;
-
-                        var inputEdad = document.getElementById("edad");
-                        inputEdad.value = edad.toString();
-
-                    }
-                })
-                .catch((error) => {
-                    toastr.error('Error al registrar');
-                    closeLoading();
-                });
+            var inputEdad = document.getElementById("edad");
+            inputEdad.value = edad;
         }
 
         function modalAgregar() {

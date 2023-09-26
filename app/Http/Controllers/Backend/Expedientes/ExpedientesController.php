@@ -107,7 +107,19 @@ class ExpedientesController extends Controller
 
     public function tablaBuscarExpediente(){
 
-        $arrayExpedientes = Paciente::orderBy('nombre')->get();
+        $arrayExpedientes = Paciente::orderBy('nombres')->get();
+
+        foreach ($arrayExpedientes as $dato){
+
+            if($infoProfesion = Profesion::where('id', $dato->profesion_id)->first()){
+                $dato->profesion = $infoProfesion->nombre;
+            }else{
+                $dato->profesion = '';
+            }
+
+            $infoMedico = Medico::where('id', $dato->medico_id)->first();
+            $dato->medico = $infoMedico->nombre;
+        }
 
         return view('backend.admin.expedientes.buscar.tablabuscarexpediente', compact('arrayExpedientes'));
     }

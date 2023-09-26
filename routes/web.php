@@ -71,7 +71,7 @@ Route::post('/admin/expediente/calcularedad', [ExpedientesController::class, 'ca
 
 // buscar expediente
 Route::get('/admin/expediente/vista/buscar', [ExpedientesController::class,'indexBuscarExpediente'])->name('admin.expediente.buscar');
-Route::get('/admin/expediente/tabla/buscar', [ExpedientesController::class,'indexTablaExpediente']);
+Route::get('/admin/expediente/tabla/buscar', [ExpedientesController::class,'tablaBuscarExpediente']);
 
 
 
