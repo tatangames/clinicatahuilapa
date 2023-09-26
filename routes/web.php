@@ -65,9 +65,18 @@ Route::get('sin-permisos', [ControlController::class,'indexSinPermiso'])->name('
 // --- EXPEDIENTES ---
 
 // nuevo expediente
-Route::get('/admin/vista/nuevo/expediente', [ExpedientesController::class,'indexNuevoExpediente'])->name('admin.expediente.nuevo');
+Route::get('/admin/expediente/vista/nuevo', [ExpedientesController::class,'indexNuevoExpediente'])->name('admin.expediente.nuevo');
 Route::post('/admin/expediente/registro', [ExpedientesController::class, 'nuevoExpediente']);
 Route::post('/admin/expediente/calcularedad', [ExpedientesController::class, 'calcularEdad']);
+
+// buscar expediente
+Route::get('/admin/expediente/vista/buscar', [ExpedientesController::class,'indexBuscarExpediente'])->name('admin.expediente.buscar');
+Route::get('/admin/expediente/tabla/buscar', [ExpedientesController::class,'indexTablaExpediente']);
+
+
+
+
+
 
 
 

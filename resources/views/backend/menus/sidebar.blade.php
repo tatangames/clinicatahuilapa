@@ -59,6 +59,14 @@
                             </a>
                         </li>
 
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.expediente.buscar') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Buscar Expediente</p>
+                            </a>
+                        </li>
+
                     </ul>
                 </li>
 

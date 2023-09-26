@@ -34,7 +34,7 @@ class ExpedientesController extends Controller
 
         $arrayProfesion = Profesion::orderBy('nombre')->get();
 
-        return view('backend.admin.expedientes.vistanuevoexpediente', compact('arrayMedicos', 'arrayTipoPaciente',
+        return view('backend.admin.expedientes.nuevo.vistanuevoexpediente', compact('arrayMedicos', 'arrayTipoPaciente',
         'arrayEstadoCivil', 'arrayTipoDocumento', 'arrayProfesion'));
     }
 
@@ -68,7 +68,6 @@ class ExpedientesController extends Controller
                 $genero = "F";
             }
 
-
             $detalle = new Paciente();
             $detalle->medico_id = $request->medico;
             $detalle->tipo_id = $request->tipopaciente;
@@ -95,8 +94,25 @@ class ExpedientesController extends Controller
             Log::info('error expediente: ' . $e);
             return ['success' => 99];
         }
-
     }
+
+
+    // ********************************************
+
+
+    public function indexBuscarExpediente(){
+
+        return view('backend.admin.expedientes.buscar.vistabuscarexpediente');
+    }
+
+    public function tablaBuscarExpediente(){
+
+        $arrayExpedientes = Paciente::orderBy('nombre')->get();
+
+        return view('backend.admin.expedientes.buscar.tablabuscarexpediente', compact('arrayExpedientes'));
+    }
+
+
 
 
 
