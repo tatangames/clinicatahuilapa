@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Backend\Asignaciones;
 
 use App\Http\Controllers\Controller;
+use App\Models\Consulta_Paciente;
 use App\Models\Motivo;
 use App\Models\Paciente;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AsignacionesController extends Controller
@@ -81,6 +84,31 @@ class AsignacionesController extends Controller
         $validar = Validator::make($request->all(), $regla);
 
         if ($validar->fails()){ return ['success' => 0];}
+
+        DB::beginTransaction();
+
+        try {
+            $fechaCarbon = Carbon::parse(Carbon::now());
+
+            $dato = new Consulta_Paciente();
+            $dato->paciente_id = $request->idpaciente;
+            $dato->motivo_id = $request->idrazon;
+            $dato->fecha_hora = $fechaCarbon;
+            $dato->estado_paciente = 1; // pasa a sala de espera
+            $dato->estado_receta = 0; // no tiene receta asignada
+            $dato->save();
+
+            DB::commit();
+            return ['success' => 1];
+
+
+        }catch(\Throwable $e){
+            Log::info('error ' . $e);
+            DB::rollback();
+            return ['success' => 99];
+        }
+
+
 
 
 
