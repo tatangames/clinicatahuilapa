@@ -28,14 +28,13 @@
                     <div class="row">
                         <div class="col-md-12">
 
+                            <form id="formulario">
 
                             <section class="content">
                                 <div class="container-fluid">
                                     <div class="row">
 
                                         <div class="col-md-6">
-
-
                                             <div class="card-body">
 
                                                 <div class="form-group row">
@@ -266,6 +265,8 @@
 
                             </section>
 
+                            </form>
+
                             <br>
                             <hr>
 
@@ -478,6 +479,15 @@
         }
 
         function borrarCampos(){
+
+            document.getElementById("formulario").reset();
+
+            document.getElementById('select-medico').selectedIndex = 0;
+            document.getElementById('select-tipopaciente').selectedIndex = 0;
+            document.getElementById('edad').value = '';
+            document.getElementById('select-profesion').selectedIndex = 0;
+            document.getElementById('select-civil').selectedIndex = 0;
+            document.getElementById('select-documento').selectedIndex = 0;
 
         }
 
