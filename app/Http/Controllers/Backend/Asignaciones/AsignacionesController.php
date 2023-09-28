@@ -23,7 +23,15 @@ class AsignacionesController extends Controller
 
         $arrayRazonUso = Motivo::orderBy('nombre')->get();
 
-        return view('backend.admin.asignaciones.nuevo.vistanuevaasignacion', compact('arrayRazonUso'));
+
+        if(Consulta_Paciente::where('estado_paciente', 1)->count()){
+            $hayPacientes = 1;
+        }else{
+            $hayPacientes = 0;
+        }
+
+
+        return view('backend.admin.asignaciones.nuevo.vistanuevaasignacion', compact('arrayRazonUso', 'hayPacientes'));
     }
 
 
@@ -107,18 +115,27 @@ class AsignacionesController extends Controller
             DB::rollback();
             return ['success' => 99];
         }
-
-
-
-
-
-
-
-
-
-
     }
 
+
+    public function tablaPacientesEnEspera(){
+
+        $arrayPacientes = Consulta_Paciente::orderBy('fecha_hora', 'ASC')->get();
+
+        foreach ($arrayPacientes as $dato){
+
+            $fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha_hora));
+            $dato->fechaFormat = $fechaFormat;
+
+            $infoPaciente = Paciente::where('id', $dato->paciente_id)->first();
+            $dato->nombrePaciente = $infoPaciente->nombres;
+            $dato->apellidoPaciente = $infoPaciente->apellidos;
+            $dato->idExpediente = $infoPaciente->id;
+            $dato->numdocumento = $infoPaciente->num_documento;
+        }
+
+        return view('backend.admin.asignaciones.pacientes.tablapacientesenespera', compact('arrayPacientes'));
+    }
 
 
 

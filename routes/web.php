@@ -81,6 +81,7 @@ Route::get('/admin/expediente/tabla/buscar', [ExpedientesController::class,'tabl
 Route::get('/admin/asignaciones/vista/index', [AsignacionesController::class,'indexAsignaciones'])->name('admin.asignaciones.vista');
 Route::post('/admin/asignaciones/buscar/paciente',  [AsignacionesController::class,'buscadorPaciente']);
 Route::post('/admin/asignaciones/nuevo/registro',  [AsignacionesController::class,'nuevoRegistro']);
+Route::get('/admin/asignaciones/paciente/esperando', [AsignacionesController::class,'tablaPacientesEnEspera']);
 
 
 

@@ -117,18 +117,23 @@
 
                                     </div>
 
+
                                     <div class="card-body">
-                                        The body of the card
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div id="tablaDatatable">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+
+
 
                                 </div>
 
 
                             </section>
-
-
-
-
 
 
 
@@ -140,8 +145,6 @@
             </div>
         </div>
     </section>
-
-
 
 
     <div class="modal fade" id="modalAgregar">
@@ -234,6 +237,13 @@
                 $(".droplista").hide();
             });
 
+
+            var ruta = "{{ URL::to('/admin/asignaciones/paciente/esperando') }}";
+            $('#tablaDatatable').load(ruta);
+
+            verificarSalaEspera();
+
+
             document.getElementById("divcontenedor").style.display = "block";
 
         });
@@ -241,8 +251,21 @@
 
     <script>
 
+        function verificarSalaEspera(){
+
+            var hayDatos = {{ $hayPacientes }};
+
+            if(hayDatos>0){
+                // habilitar tabla y cargar datos
+                document.getElementById("divcontenedor").style.display = "block";
+            }else{
+                document.getElementById("divcontenedor").style.display = "hidden";
+            }
+
+        }
+
         function recargar(){
-            var ruta = "{{ URL::to('/admin/expediente/tabla/buscar') }}";
+            var ruta = "{{ URL::to('/admin/xx') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -338,8 +361,6 @@
                 return;
             }
 
-
-
             openLoading();
 
             let formData = new FormData();
@@ -353,6 +374,7 @@
 
                     if(response.data.success === 1){
                         toastr.success('Registrado correctamente');
+                        $('#modalAgregar').modal('hide');
                         borrarDatos();
                     }
                     else{
