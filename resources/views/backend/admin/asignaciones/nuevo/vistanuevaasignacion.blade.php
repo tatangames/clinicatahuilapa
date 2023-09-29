@@ -37,7 +37,7 @@
                 <div class="card-header">
                     <h3 class="card-title">ASIGNACIÓN DE SALAS</h3>
                     <p style="float: right; font-weight: bold; font-size: 15px" id="contador">10</p>
-                    <img src="{{ asset('images/cronometro.png') }}" width="35px" height="35px" style="float: right">
+                    <img src="{{ asset('images/cronometro2.png') }}" width="35px" height="35px" style="float: right">
                 </div>
 
                 <section class="content-header" style="margin-left: 25px">
@@ -67,16 +67,26 @@
 
                                             <div class="card card-secondary">
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Enfermeria ( {{ $conteoConsultorio }} en Espera )</h3>
+                                                    <h3 class="card-title">Enfermeria ( {{ $conteoEnfermeria }} en Espera )</h3>
+                                                    <span class="input-group-btn" style="float: right">
+                                                        <span class="btn waves-effect waves-light btn-warning"><i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        </span>
+                                                    </span>
+
                                                 </div>
                                                 <div class="card-body">
-                                                    <input class="form-control form-control-lg" type="text" placeholder=".form-control-lg">
-                                                    <br>
-                                                    <input class="form-control" type="text" placeholder="Default input">
-                                                    <br>
-                                                    <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm">
+
+
+                                                    <p class="form-control" style="font-weight: bold" id="paciente-enfermeria">Paciente: (No asignado) </p>
+                                                    <p class="form-control" style="font-weight: bold">Médico:<span style="font-weight: normal"> (No asignado)</span> </p>
+                                                    <p class="form-control" style="font-weight: bold">Asignado:<span style="font-weight: normal"> (No asignado)</span> </p>
+
+
                                                 </div>
 
+                                                <div class="small-box bg-info">
+                                                    <a href="#" class="small-box-footer">OPCIONES <i class="fas fa-arrow-circle-right"></i></a>
+                                                </div>
                                             </div>
 
                                         </div>
@@ -85,14 +95,23 @@
 
                                             <div class="card card-success">
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Consultorio ( {{ $conteoEnfermeria }} en Espera )</h3>
+                                                    <h3 class="card-title">Consultorio ( {{ $conteoConsultorio }} en Espera )</h3>
+
+                                                    <span class="input-group-btn" style="float: right">
+                                                        <span class="btn waves-effect waves-light btn-warning"><i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        </span>
+                                                    </span>
                                                 </div>
                                                 <div class="card-body">
-                                                    <input class="form-control form-control-lg" type="text" placeholder=".form-control-lg">
-                                                    <br>
-                                                    <input class="form-control" type="text" placeholder="Default input">
-                                                    <br>
-                                                    <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm">
+
+                                                    <p class="form-control" style="font-weight: bold" id="paciente-consultorio">Paciente:<span style="font-weight: normal"> (No asignado)</span> </p>
+                                                    <p class="form-control" style="font-weight: bold">Médico:<span style="font-weight: normal"> (No asignado)</span> </p>
+                                                    <p class="form-control" style="font-weight: bold">Asignado:<span style="font-weight: normal"> (No asignado)</span> </p>
+
+                                                </div>
+
+                                                <div class="small-box bg-info">
+                                                    <a href="#" class="small-box-footer">OPCIONES <i class="fas fa-arrow-circle-right"></i></a>
                                                 </div>
 
                                             </div>
@@ -296,8 +315,17 @@
 
 
         function modalAgregar(){
+
+            document.getElementById("paciente-span-enfermeria").innerHTML = 'holas';
+            document.getElementById("paciente-enfermeria").innerHTML = 'sdfsfs';
+
+
             document.getElementById("formulario-nuevo").reset();
             $('#modalAgregar').modal('show');
+
+
+
+
         }
 
 
