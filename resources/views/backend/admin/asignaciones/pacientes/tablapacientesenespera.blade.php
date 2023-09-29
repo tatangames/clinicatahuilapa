@@ -7,10 +7,9 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th>Expe. #</th>
-                                <th>Fecha Ingreso</th>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
+                                <th>Hora</th>
+                                <th>Paciente</th>
+                                <th>Razón Uso</th>
                                 <th>Documento</th>
 
                                 <th>Opciones</th>
@@ -20,7 +19,6 @@
 
                             @foreach($arrayPacientes as $dato)
                                 <tr>
-                                    <td>{{ $dato->idExpediente }}</td>
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->nombrePaciente }}</td>
                                     <td>{{ $dato->apellidoPaciente }}</td>

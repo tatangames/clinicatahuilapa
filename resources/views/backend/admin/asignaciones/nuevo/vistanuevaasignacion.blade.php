@@ -36,6 +36,8 @@
             <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">ASIGNACIÓN DE SALAS</h3>
+                    <p style="float: right; font-weight: bold; font-size: 15px" id="contador">10</p>
+                    <img src="{{ asset('images/cronometro.png') }}" width="35px" height="35px" style="float: right">
                 </div>
 
                 <section class="content-header" style="margin-left: 25px">
@@ -65,7 +67,7 @@
 
                                             <div class="card card-secondary">
                                                 <div class="card-header">
-                                                    <h3 class="card-title">En Espera 0</h3>
+                                                    <h3 class="card-title">Enfermeria ( {{ $conteoConsultorio }} en Espera )</h3>
                                                 </div>
                                                 <div class="card-body">
                                                     <input class="form-control form-control-lg" type="text" placeholder=".form-control-lg">
@@ -83,7 +85,7 @@
 
                                             <div class="card card-success">
                                                 <div class="card-header">
-                                                    <h3 class="card-title">En Espera 0</h3>
+                                                    <h3 class="card-title">Consultorio ( {{ $conteoEnfermeria }} en Espera )</h3>
                                                 </div>
                                                 <div class="card-body">
                                                     <input class="form-control form-control-lg" type="text" placeholder=".form-control-lg">
@@ -101,41 +103,6 @@
 
                                 </div>
                             </section>
-
-
-                            <section style="margin-top: 25px">
-
-
-                                <div class="card card-warning">
-                                    <div class="card-header">
-                                        <h3 class="card-title" style="color: white; font-weight: bold">Sala de espera</h3>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                        </div>
-
-                                    </div>
-
-
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="tablaDatatable">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-
-                                </div>
-
-
-                            </section>
-
-
 
 
 
@@ -183,6 +150,18 @@
                                         <select id="select-razon" class="form-control">
                                             <option value="">Seleccione una Razón del uso</option>
                                             @foreach($arrayRazonUso as $item)
+                                                <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="form-group" style="margin-top: 30px">
+                                        <label class="control-label">Sala de Espera: </label>
+                                        <select id="select-salaespera" class="form-control">
+                                            <option value="">Seleccione una Sala</option>
+                                            @foreach($arraySalaEspera as $item)
                                                 <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                             @endforeach
                                         </select>
@@ -238,11 +217,9 @@
             });
 
 
-            var ruta = "{{ URL::to('/admin/asignaciones/paciente/esperando') }}";
-            $('#tablaDatatable').load(ruta);
 
-            verificarSalaEspera();
 
+            //countdown();
 
             document.getElementById("divcontenedor").style.display = "block";
 
@@ -251,22 +228,70 @@
 
     <script>
 
+        function recargarPacientesEspera(){
+            let ruta = "{{ URL::to('/admin/asignaciones/paciente/esperando') }}";
+            $('#tablaDatatable').load(ruta);
+        }
+
         function verificarSalaEspera(){
 
-            var hayDatos = {{ $hayPacientes }};
+
 
             if(hayDatos>0){
                 // habilitar tabla y cargar datos
-                document.getElementById("divcontenedor").style.display = "block";
+                document.getElementById("contenedorSalaEspera").style.display = "block";
             }else{
-                document.getElementById("divcontenedor").style.display = "hidden";
+                document.getElementById("contenedorSalaEspera").style.display = "none";
             }
-
         }
 
-        function recargar(){
-            var ruta = "{{ URL::to('/admin/xx') }}";
-            $('#tablaDatatable').load(ruta);
+        function countdown() {
+            var seconds = 60;
+            function tick() {
+                var counter = document.getElementById("contador");
+                seconds--;
+                counter.innerHTML = "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+                if( seconds > 0 ) {
+                    setTimeout(tick, 1000);
+                } else {
+                    verificarSalaEsperaServer();
+                    countdown();
+                }
+            }
+            tick();
+        }
+
+        function verificarSalaEsperaServer(){
+
+            openLoading();
+
+
+            axios.post(url+'/asignaciones/verificar/hay/espera',{
+
+            })
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+
+                        if(response.data.haypacientes === 1){
+                            document.getElementById("contenedorSalaEspera").style.display = "block";
+
+                        }else{
+                            // ocultar tabla
+                            document.getElementById("contenedorSalaEspera").style.display = "none";
+                        }
+
+                        // reargar tabla
+                        recargarPacientesEspera();
+
+                    }else{
+                        toastr.error('Información no encontrada');
+                    }
+                })
+                .catch((error) => {
+                    closeLoading();
+                    toastr.error('Información no encontrada');
+                });
         }
 
 
@@ -347,17 +372,21 @@
 
         function guardarRegistro(){
 
-            console.log('id es: ' + idPacienteGlobal);
-
             if(idPacienteGlobal === 0){
                 toastr.error('Paciente es requerido');
                 return;
             }
 
             var razonUso = document.getElementById('select-razon').value;
+            var salaEspera = document.getElementById('select-salaespera').value;
 
             if(razonUso === ''){
                 toastr.error('Razón de uso es requerido');
+                return;
+            }
+
+            if(salaEspera === ''){
+                toastr.error('Sala de espera es requerido');
                 return;
             }
 
@@ -366,6 +395,7 @@
             let formData = new FormData();
             formData.append('idpaciente', idPacienteGlobal);
             formData.append('idrazon', razonUso);
+            formData.append('idsalaespera', salaEspera);
 
             axios.post(url+'/asignaciones/nuevo/registro', formData, {
             })

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Consulta_Paciente;
 use App\Models\Motivo;
 use App\Models\Paciente;
+use App\Models\SalasEspera;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ class AsignacionesController extends Controller
     public function indexAsignaciones(){
 
         $arrayRazonUso = Motivo::orderBy('nombre')->get();
-
+        $arraySalaEspera = SalasEspera::orderBy('nombre')->get();
 
         if(Consulta_Paciente::where('estado_paciente', 1)->count()){
             $hayPacientes = 1;
@@ -30,8 +31,18 @@ class AsignacionesController extends Controller
             $hayPacientes = 0;
         }
 
+        // cuantos pacientes hay en Espera para cada sala
 
-        return view('backend.admin.asignaciones.nuevo.vistanuevaasignacion', compact('arrayRazonUso', 'hayPacientes'));
+        $conteoConsultorio = Consulta_Paciente::where('salaespera_id', 1)
+                                ->where('estado_paciente', 0)
+                                ->count();
+
+        $conteoEnfermeria = Consulta_Paciente::where('salaespera_id', 2)
+            ->where('estado_paciente', 0)
+            ->count();
+
+        return view('backend.admin.asignaciones.nuevo.vistanuevaasignacion', compact('arrayRazonUso',
+            'conteoConsultorio', 'conteoEnfermeria', 'arraySalaEspera'));
     }
 
 
@@ -87,6 +98,7 @@ class AsignacionesController extends Controller
         $regla = array(
             'idpaciente' => 'required',
             'idrazon' => 'required',
+            'idsalaespera' => 'required'
         );
 
         $validar = Validator::make($request->all(), $regla);
@@ -102,8 +114,9 @@ class AsignacionesController extends Controller
             $dato->paciente_id = $request->idpaciente;
             $dato->motivo_id = $request->idrazon;
             $dato->fecha_hora = $fechaCarbon;
-            $dato->estado_paciente = 1; // pasa a sala de espera
-            $dato->estado_receta = 0; // no tiene receta asignada
+            $dato->estado_paciente = 0;
+            $dato->estado_receta = 0;
+            $dato->salaespera_id = $request->idsalaespera;
             $dato->save();
 
             DB::commit();
@@ -120,7 +133,9 @@ class AsignacionesController extends Controller
 
     public function tablaPacientesEnEspera(){
 
-        $arrayPacientes = Consulta_Paciente::orderBy('fecha_hora', 'ASC')->get();
+        $arrayPacientes = Consulta_Paciente::where('estado_paciente', 1)
+            ->orderBy('fecha_hora', 'ASC')
+            ->get();
 
         foreach ($arrayPacientes as $dato){
 
@@ -137,6 +152,16 @@ class AsignacionesController extends Controller
         return view('backend.admin.asignaciones.pacientes.tablapacientesenespera', compact('arrayPacientes'));
     }
 
+
+    public function verificarPacientesEnEspera(Request $request){
+
+        $hayPacientes = 0;
+        if(Consulta_Paciente::where('estado_paciente', 1)->count()){
+            $hayPacientes = 1;
+        }
+
+        return ['success' => 1, 'haypacientes' => $hayPacientes];
+    }
 
 
 

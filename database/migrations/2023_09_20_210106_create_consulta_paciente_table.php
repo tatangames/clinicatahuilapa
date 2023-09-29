@@ -17,10 +17,16 @@ class CreateConsultaPacienteTable extends Migration
             $table->id();
             $table->bigInteger('paciente_id')->unsigned();
             $table->bigInteger('motivo_id')->unsigned();
+
+            // PARA VER A QUE SALA FUE ASIGNADO EL PACIENTE
+            $table->bigInteger('salaespera_id')->unsigned();
             $table->dateTime('fecha_hora');
 
+            // * Solo puede haber 1 usuario dentro de una SALA
 
-            // 1: se creo la consulta y pasa a sala de espera
+            // 0: Paciente esperando ser ingresado a la Sala, porque estamos en espera
+            // 1: paciente esta dentro de la sala actualmente a la que fue asignado
+            // 2: paciente fue despachado
 
             $table->integer('estado_paciente');
 
@@ -34,6 +40,7 @@ class CreateConsultaPacienteTable extends Migration
 
             $table->foreign('paciente_id')->references('id')->on('paciente');
             $table->foreign('motivo_id')->references('id')->on('motivo');
+            $table->foreign('salaespera_id')->references('id')->on('salas_espera');
         });
     }
 
