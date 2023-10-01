@@ -69,7 +69,7 @@
                                                 <div class="card-header">
                                                     <h3 class="card-title">Enfermeria ( {{ $conteoEnfermeria }} en Espera )</h3>
                                                     <span class="input-group-btn" style="float: right">
-                                                        <span class="btn waves-effect waves-light btn-warning"><i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        <span class="btn waves-effect waves-light btn-primary"><i class="fa fa-plus" style="color: white">Asignar</i>
                                                         </span>
                                                     </span>
 
@@ -78,14 +78,14 @@
 
 
                                                     <p class="form-control" style="font-weight: bold" id="paciente-enfermeria">Paciente: (No asignado) </p>
-                                                    <p class="form-control" style="font-weight: bold">Médico:<span style="font-weight: normal"> (No asignado)</span> </p>
-                                                    <p class="form-control" style="font-weight: bold">Asignado:<span style="font-weight: normal"> (No asignado)</span> </p>
+                                                    <p class="form-control" style="font-weight: bold" id="medico-enfermeria">xxx</p>
+                                                    <p class="form-control" style="font-weight: bold" id="asignado-enfermeria">xxx</p>
 
 
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <a href="#" class="small-box-footer">OPCIONES <i class="fas fa-arrow-circle-right"></i></a>
+                                                    <button id="opciones-enfermeria" class="btn btn-info" style="width: 100%;" disabled="">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
                                             </div>
 
@@ -98,20 +98,20 @@
                                                     <h3 class="card-title">Consultorio ( {{ $conteoConsultorio }} en Espera )</h3>
 
                                                     <span class="input-group-btn" style="float: right">
-                                                        <span class="btn waves-effect waves-light btn-warning"><i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        <span class="btn waves-effect waves-light btn-primary"><i class="fa fa-plus" style="color: white">Asignar</i>
                                                         </span>
                                                     </span>
                                                 </div>
                                                 <div class="card-body">
 
-                                                    <p class="form-control" style="font-weight: bold" id="paciente-consultorio">Paciente:<span style="font-weight: normal"> (No asignado)</span> </p>
-                                                    <p class="form-control" style="font-weight: bold">Médico:<span style="font-weight: normal"> (No asignado)</span> </p>
-                                                    <p class="form-control" style="font-weight: bold">Asignado:<span style="font-weight: normal"> (No asignado)</span> </p>
+                                                    <p class="form-control" style="font-weight: bold" id="paciente-consultorio">xxx</span> </p>
+                                                    <p class="form-control" style="font-weight: bold">Médico:</p>
+                                                    <p class="form-control" style="font-weight: bold">Asignado </p>
 
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <a href="#" class="small-box-footer">OPCIONES <i class="fas fa-arrow-circle-right"></i></a>
+                                                    <button id="opciones-consultorio" class="btn btn-info" style="width: 100%;" disabled="">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
 
                                             </div>
@@ -235,6 +235,7 @@
                 $(".droplista").hide();
             });
 
+            validarBotonOpciones();
 
 
 
@@ -246,6 +247,24 @@
     </script>
 
     <script>
+
+        function validarBotonOpciones(){
+            let conteoConsultorio = {{ $conteoConsultorio }};
+            let conteoEnfermeria = {{ $conteoEnfermeria }};
+
+            if(conteoConsultorio > 0){
+                document.getElementById("opciones-consultorio").disabled = false;
+            }else{
+                document.getElementById("opciones-consultorio").disabled = true;
+            }
+
+            if(conteoEnfermeria > 0){
+                document.getElementById("opciones-enfermeria").disabled = false;
+            }else{
+                document.getElementById("opciones-enfermeria").disabled = true;
+            }
+
+        }
 
         function recargarPacientesEspera(){
             let ruta = "{{ URL::to('/admin/asignaciones/paciente/esperando') }}";
@@ -316,16 +335,8 @@
 
         function modalAgregar(){
 
-            document.getElementById("paciente-span-enfermeria").innerHTML = 'holas';
-            document.getElementById("paciente-enfermeria").innerHTML = 'sdfsfs';
-
-
             document.getElementById("formulario-nuevo").reset();
             $('#modalAgregar').modal('show');
-
-
-
-
         }
 
 

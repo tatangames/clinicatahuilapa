@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Asignaciones;
 
 use App\Http\Controllers\Controller;
 use App\Models\Consulta_Paciente;
+use App\Models\Medico;
 use App\Models\Motivo;
 use App\Models\Paciente;
 use App\Models\SalasEspera;
@@ -25,11 +26,6 @@ class AsignacionesController extends Controller
         $arrayRazonUso = Motivo::orderBy('nombre')->get();
         $arraySalaEspera = SalasEspera::orderBy('nombre')->get();
 
-        if(Consulta_Paciente::where('estado_paciente', 1)->count()){
-            $hayPacientes = 1;
-        }else{
-            $hayPacientes = 0;
-        }
 
         // cuantos pacientes hay en Espera para cada sala
 
@@ -40,6 +36,43 @@ class AsignacionesController extends Controller
         $conteoEnfermeria = Consulta_Paciente::where('salaespera_id', 2)
             ->where('estado_paciente', 0)
             ->count();
+
+
+        // obtener el paciente que esta dentro de la sala Consultorio
+
+        if($infoConsultorio = Consulta_Paciente::where('salaespera_id', 1)
+            ->where('estado_paciente', 1)
+            ->first()){
+
+            $infoPaciente = Paciente::where('id', $infoConsultorio->paciente_id)->first();
+            $infoMedico = Medico::where('id', $infoConsultorio->medico_id)->first();
+
+            $salaConsulPaciente = "";
+            $salaConsulMedico = "";
+            $salaConsulAsignado = "";
+        }else{
+            $salaConsulPaciente = "Paciente: (No asignado)";
+            $salaConsulMedico = "Médico: (No asignado)";
+            $salaConsulAsignado = "Asignado Por: (No asignado)";
+        }
+
+        if($infoEnfermeria = Consulta_Paciente::where('salaespera_id', 2)
+            ->where('estado_paciente', 1)
+            ->first()){
+            $salaEnfermePaciente = "";
+            $salaEnfermeMedico = "";
+            $salaEnfermeAsignado = "";
+        }else{
+            $salaEnfermePaciente = "Paciente: (No asignado)";
+            $salaEnfermeMedico = "Médico: (No asignado)";
+            $salaEnfermeAsignado = "Asignado Por: (No asignado)";
+        }
+
+        $array = [
+            "foo" => "bar",
+            "bar" => "foo",
+        ];
+
 
         return view('backend.admin.asignaciones.nuevo.vistanuevaasignacion', compact('arrayRazonUso',
             'conteoConsultorio', 'conteoEnfermeria', 'arraySalaEspera'));
