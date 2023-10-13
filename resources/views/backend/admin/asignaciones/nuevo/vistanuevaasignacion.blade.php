@@ -93,7 +93,8 @@
                                                     <h3 class="card-title">Consultorio ( {{ $conteoConsultorio }} en Espera )</h3>
 
                                                     <span class="input-group-btn" style="float: right">
-                                                        <span class="btn waves-effect waves-light btn-primary"><i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        <span class="btn waves-effect waves-light btn-primary" onclick="modalTablaConsultoria()">
+                                                            <i class="fa fa-plus" style="color: white">Asignar</i>
                                                         </span>
                                                     </span>
                                                 </div>
@@ -195,15 +196,13 @@
 
 
 
-
-
     <!-- MODAL TABLA PARA MOSTRAR PACIENTES EN ESPERA PARA LA SALA: ENFERMERIA -->
 
     <div class="modal fade" id="modalTablaEnfermeria">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" style="text-align: center">
-                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">PACIENTES EN ESPERA</h4>
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">PACIENTES EN ESPERA (ENFERMERIA)</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -233,6 +232,45 @@
         </div>
     </div>
 
+
+
+
+
+    <!-- MODAL TABLA PARA MOSTRAR PACIENTES EN ESPERA PARA LA SALA: CONSULTORIA -->
+
+    <div class="modal fade" id="modalTablaConsultoriaModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">PACIENTES EN ESPERA (CONSULTORIA)</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formulario-tabla-consultoria">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div id="tablaDatatableConsultoria">
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -534,6 +572,20 @@
 
             $('#modalTablaEnfermeria').modal('show');
 
+        }
+
+
+        // abrir modal para ver Tabla de asignacion para consultoria
+        function modalTablaConsultoria(){
+
+            document.getElementById("formulario-tabla-consultoria").reset();
+
+            // buscar tabla
+            var ruta = "{{ URL::to('/admin/asignaciones/tablamodal/consultoria') }}";
+            $('#tablaDatatableConsultoria').load(ruta);
+
+
+            $('#modalTablaConsultoriaModal').modal('show');
         }
 
 

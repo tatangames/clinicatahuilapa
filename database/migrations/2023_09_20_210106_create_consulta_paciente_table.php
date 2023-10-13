@@ -17,7 +17,6 @@ class CreateConsultaPacienteTable extends Migration
             $table->id();
             $table->bigInteger('paciente_id')->unsigned();
             $table->bigInteger('motivo_id')->unsigned();
-            $table->bigInteger('medico_id')->unsigned();
 
             // PARA VER A QUE SALA FUE ASIGNADO EL PACIENTE
             $table->bigInteger('salaespera_id')->unsigned();
@@ -42,7 +41,6 @@ class CreateConsultaPacienteTable extends Migration
             $table->foreign('paciente_id')->references('id')->on('paciente');
             $table->foreign('motivo_id')->references('id')->on('motivo');
             $table->foreign('salaespera_id')->references('id')->on('salas_espera');
-            $table->foreign('medico_id')->references('id')->on('medico');
         });
     }
 

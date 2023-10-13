@@ -83,6 +83,7 @@ Route::post('/admin/asignaciones/buscar/paciente',  [AsignacionesController::cla
 Route::post('/admin/asignaciones/nuevo/registro',  [AsignacionesController::class,'nuevoRegistro']);
 Route::get('/admin/asignaciones/paciente/esperando', [AsignacionesController::class,'tablaPacientesEnEspera']);
 Route::get('/admin/asignaciones/tablamodal/enfermeria', [AsignacionesController::class, 'tablaModalEnfermeria']);
+Route::get('/admin/asignaciones/tablamodal/consultoria', [AsignacionesController::class, 'tablaModalConsultoria']);
 
 
 

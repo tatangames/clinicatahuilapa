@@ -225,20 +225,52 @@ class AsignacionesController extends Controller
     // muestra la tabla de pacientes en espera para Enfermeria
     public function tablaModalEnfermeria(){
 
-
         // lista de pacientes en modo espera para tabla enfermeria
         $arrayTablaEnfermeria = Consulta_Paciente::where('estado_paciente', 0)
             ->where('salaespera_id', 2) // ENFERMERIA
+            ->orderBy('id', 'ASC')
             ->get();
+
 
         foreach ($arrayTablaEnfermeria as $dato){
 
+            $infoPaciente = Paciente::where('id', $dato->paciente_id)->first();
+            $infoRazonUso = Motivo::where('id', $dato->motivo_id)->first();
 
+            $dato->nombrepaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+            $dato->razonUso = $infoRazonUso->nombre;
+
+            $dato->horaFormat = date("h:i A", strtotime($dato->fecha_hora));
         }
 
-        return [$arrayTablaEnfermeria];
 
-        return view('backend.admin.asignaciones.tablamodalenfermeria.vistamodaltablaenfermeria');
+        return view('backend.admin.asignaciones.tablamodalenfermeria.vistamodaltablaenfermeria', compact('arrayTablaEnfermeria'));
+    }
+
+
+
+    // muestra la tabla de pacientes en espera para Consultoria
+    public function tablaModalConsultoria(){
+
+        // lista de pacientes en modo espera para tabla enfermeria
+        $arrayTablaConsultoria = Consulta_Paciente::where('estado_paciente', 0)
+            ->where('salaespera_id', 1) // CONSULTORIA
+            ->orderBy('id', 'ASC')
+            ->get();
+
+
+        foreach ($arrayTablaConsultoria as $dato){
+
+            $infoPaciente = Paciente::where('id', $dato->paciente_id)->first();
+            $infoRazonUso = Motivo::where('id', $dato->motivo_id)->first();
+
+            $dato->nombrepaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+            $dato->razonUso = $infoRazonUso->nombre;
+
+            $dato->horaFormat = date("h:i A", strtotime($dato->fecha_hora));
+        }
+
+        return view('backend.admin.asignaciones.tablamodalconsultoria.vistamodaltablaconsultoria', compact('arrayTablaConsultoria'));
     }
 
 
