@@ -15,7 +15,6 @@ class CreatePacienteTable extends Migration
     {
         Schema::create('paciente', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('medico_id')->unsigned();
             $table->bigInteger('tipo_id')->unsigned();
             $table->bigInteger('estado_civil_id')->unsigned();
             $table->bigInteger('tipo_documento_id')->unsigned();
@@ -31,10 +30,9 @@ class CreatePacienteTable extends Migration
             $table->string('celular', 25)->nullable();
             $table->string('telefono', 25)->nullable();
             $table->string('direccion', 550)->nullable();
-            //$table->boolean('estado')->default('0');
+
 
             $table->foreign('tipo_documento_id')->references('id')->on('tipo_documento');
-            $table->foreign('medico_id')->references('id')->on('medico');
             $table->foreign('tipo_id')->references('id')->on('tipo_paciente');
             $table->foreign('estado_civil_id')->references('id')->on('estado_civil');
             $table->foreign('profesion_id')->references('id')->on('profesion');

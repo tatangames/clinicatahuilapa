@@ -26,8 +26,8 @@ class CreateConsultaPacienteTable extends Migration
             // * Solo puede haber 1 usuario dentro de una SALA
 
             // 0: Paciente esperando ser ingresado a la Sala, porque estamos en espera
-            // 1: paciente esta dentro de la sala actualmente a la que fue asignado
-            // 2: paciente fue despachado
+            // 1: Paciente esta dentro de la sala actualmente a la que fue asignado
+            // 2: Paciente fue despachado
 
             $table->integer('estado_paciente');
 

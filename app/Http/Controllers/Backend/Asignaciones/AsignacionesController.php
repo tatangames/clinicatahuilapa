@@ -38,44 +38,46 @@ class AsignacionesController extends Controller
             ->count();
 
 
-        // obtener el paciente que esta dentro de la sala Consultorio
+
+        // OBTENER AL PACIENTE QUE ESTA DENTRO DE LA SALA CONSULTORIA
 
         if($infoConsultorio = Consulta_Paciente::where('salaespera_id', 1)
             ->where('estado_paciente', 1)
             ->first()){
 
             $infoPaciente = Paciente::where('id', $infoConsultorio->paciente_id)->first();
-            $infoMedico = Medico::where('id', $infoConsultorio->medico_id)->first();
 
-            $salaConsulPaciente = "";
-            $salaConsulMedico = "";
-            $salaConsulAsignado = "";
+            $salaConsulPaciente = "Paciente: " . $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+            $botonConsultoria = 1;
         }else{
             $salaConsulPaciente = "Paciente: (No asignado)";
-            $salaConsulMedico = "Médico: (No asignado)";
-            $salaConsulAsignado = "Asignado Por: (No asignado)";
+            $botonConsultoria = 0;
         }
+
+        // OBTENER AL PACIENTE QUE ESTA DENTRO DE LA SALA ENFERMERIA
 
         if($infoEnfermeria = Consulta_Paciente::where('salaespera_id', 2)
             ->where('estado_paciente', 1)
             ->first()){
-            $salaEnfermePaciente = "";
-            $salaEnfermeMedico = "";
-            $salaEnfermeAsignado = "";
+
+            $infoPaciente = Paciente::where('id', $infoEnfermeria->paciente_id)->first();
+
+            $salaEnfermePaciente = "Paciente: " . $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+            $botonEnfermeria = 1;
         }else{
             $salaEnfermePaciente = "Paciente: (No asignado)";
-            $salaEnfermeMedico = "Médico: (No asignado)";
-            $salaEnfermeAsignado = "Asignado Por: (No asignado)";
+            $botonEnfermeria = 0;
         }
 
-        $array = [
-            "foo" => "bar",
-            "bar" => "foo",
+        $arrayPaciente = [
+            "salaConsultaPaciente" => $salaConsulPaciente,
+            "salaEnfermeriaPaciente" => $salaEnfermePaciente,
+            "botonOpcionConsultoria" => $botonConsultoria,
+            "botonOpcionEnfermeria" => $botonEnfermeria
         ];
 
-
         return view('backend.admin.asignaciones.nuevo.vistanuevaasignacion', compact('arrayRazonUso',
-            'conteoConsultorio', 'conteoEnfermeria', 'arraySalaEspera'));
+            'conteoConsultorio', 'conteoEnfermeria', 'arraySalaEspera', 'arrayPaciente'));
     }
 
 
@@ -140,6 +142,29 @@ class AsignacionesController extends Controller
 
         DB::beginTransaction();
 
+
+        if($infoPaciente = Consulta_Paciente::where('paciente_id', $request->idpaciente)
+            ->where('estado_paciente', 0)->first()){
+
+            $infoSala = SalasEspera::where('id', $infoPaciente->salaespera_id)->first();
+
+            $msj = "El Paciente ya se encuentra en sala de espera: " . $infoSala->nombre;
+
+            return ['success' => 1, 'mensaje' => $msj];
+        }
+
+        if($infoPaciente = Consulta_Paciente::where('paciente_id', $request->idpaciente)
+            ->where('estado_paciente', 1)->first()){
+
+            $infoSala = SalasEspera::where('id', $infoPaciente->salaespera_id)->first();
+
+            $msj = "El Paciente ya se encuentra asignado a la sala: " . $infoSala->nombre;
+
+            return ['success' => 1, 'mensaje' => $msj];
+        }
+
+
+
         try {
             $fechaCarbon = Carbon::parse(Carbon::now());
 
@@ -153,7 +178,7 @@ class AsignacionesController extends Controller
             $dato->save();
 
             DB::commit();
-            return ['success' => 1];
+            return ['success' => 2];
 
 
         }catch(\Throwable $e){
@@ -186,16 +211,35 @@ class AsignacionesController extends Controller
     }
 
 
-    public function verificarPacientesEnEspera(Request $request){
+    public function recargarVistaPorCronometro(Request $request){
 
-        $hayPacientes = 0;
+        /*$hayPacientes = 0;
         if(Consulta_Paciente::where('estado_paciente', 1)->count()){
             $hayPacientes = 1;
         }
 
-        return ['success' => 1, 'haypacientes' => $hayPacientes];
+        return ['success' => 1, 'haypacientes' => $hayPacientes];*/
     }
 
+
+    // muestra la tabla de pacientes en espera para Enfermeria
+    public function tablaModalEnfermeria(){
+
+
+        // lista de pacientes en modo espera para tabla enfermeria
+        $arrayTablaEnfermeria = Consulta_Paciente::where('estado_paciente', 0)
+            ->where('salaespera_id', 2) // ENFERMERIA
+            ->get();
+
+        foreach ($arrayTablaEnfermeria as $dato){
+
+
+        }
+
+        return [$arrayTablaEnfermeria];
+
+        return view('backend.admin.asignaciones.tablamodalenfermeria.vistamodaltablaenfermeria');
+    }
 
 
 

@@ -37,18 +37,6 @@
                                         <div class="col-md-6">
                                             <div class="card-body">
 
-                                                <div class="form-group row">
-                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Medico: </label>
-                                                    <span class="text-danger">*</span>
-                                                    <div class="col-md-9">
-                                                        <select class="form-control" id="select-medico">
-                                                            @foreach($arrayMedicos as $item)
-                                                                <option value="{{$item->id}}">{{ $item->nombre }} {{ $item->apellido }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-
 
                                                 <div class="form-group row" style="margin-top: 35px">
                                                     <label class="col-sm-2 col-form-label" style="color: #686868">Nombre: </label>
@@ -380,7 +368,6 @@
 
         function nuevoPaciente(){
 
-            var selectMedico = document.getElementById('select-medico').value; //*
             var nombre = document.getElementById('nombre-nuevo').value; //*
             var selectTipoPaciente = document.getElementById('select-tipopaciente').value; //*
             var apellido = document.getElementById('apellido-nuevo').value;
@@ -396,11 +383,6 @@
             var referido = document.getElementById('referido').value;
             var selectProfesion = document.getElementById('select-profesion').value; //*
 
-
-            if (selectMedico === '') {
-                toastr.error('Médico es requerido');
-                return;
-            }
 
             if (nombre === '') {
                 toastr.error('Nombre es requerido');
@@ -444,7 +426,6 @@
 
             openLoading();
             var formData = new FormData();
-            formData.append('medico', selectMedico);
             formData.append('nombre', nombre);
             formData.append('tipopaciente', selectTipoPaciente);
             formData.append('apellido', apellido);
@@ -482,7 +463,6 @@
 
             document.getElementById("formulario").reset();
 
-            document.getElementById('select-medico').selectedIndex = 0;
             document.getElementById('select-tipopaciente').selectedIndex = 0;
             document.getElementById('edad').value = '';
             document.getElementById('select-profesion').selectedIndex = 0;

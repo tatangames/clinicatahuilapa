@@ -69,19 +69,14 @@
                                                 <div class="card-header">
                                                     <h3 class="card-title">Enfermeria ( {{ $conteoEnfermeria }} en Espera )</h3>
                                                     <span class="input-group-btn" style="float: right">
-                                                        <span class="btn waves-effect waves-light btn-primary"><i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        <span class="btn waves-effect waves-light btn-primary"  onclick="modalTablaEnfermeria()">
+                                                            <i class="fa fa-plus" style="color: white">Asignar</i>
                                                         </span>
                                                     </span>
 
                                                 </div>
                                                 <div class="card-body">
-
-
-                                                    <p class="form-control" style="font-weight: bold" id="paciente-enfermeria">Paciente: (No asignado) </p>
-                                                    <p class="form-control" style="font-weight: bold" id="medico-enfermeria">xxx</p>
-                                                    <p class="form-control" style="font-weight: bold" id="asignado-enfermeria">xxx</p>
-
-
+                                                    <p class="form-control" style="font-weight: bold" id="paciente-enfermeria">{{ $arrayPaciente['salaConsultaPaciente'] }}</p>
                                                 </div>
 
                                                 <div class="small-box bg-info">
@@ -103,10 +98,7 @@
                                                     </span>
                                                 </div>
                                                 <div class="card-body">
-
-                                                    <p class="form-control" style="font-weight: bold" id="paciente-consultorio">xxx</span> </p>
-                                                    <p class="form-control" style="font-weight: bold">Médico:</p>
-                                                    <p class="form-control" style="font-weight: bold">Asignado </p>
+                                                    <p class="form-control" style="font-weight: bold" id="paciente-consultorio">{{ $arrayPaciente['salaEnfermeriaPaciente'] }}</p>
 
                                                 </div>
 
@@ -133,6 +125,7 @@
     </section>
 
 
+    <!-- MODAL PARA GUARDAR NUEVA ASIGNACION -->
     <div class="modal fade" id="modalAgregar">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -200,6 +193,51 @@
     </div>
 
 
+
+
+
+
+    <!-- MODAL TABLA PARA MOSTRAR PACIENTES EN ESPERA PARA LA SALA: ENFERMERIA -->
+
+    <div class="modal fade" id="modalTablaEnfermeria">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">PACIENTES EN ESPERA</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formulario-tabla-enfermeria">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div id="tablaDatatableEnfermeria">
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
 </div>
 
 
@@ -237,8 +275,6 @@
 
             validarBotonOpciones();
 
-
-
             //countdown();
 
             document.getElementById("divcontenedor").style.display = "block";
@@ -248,22 +284,24 @@
 
     <script>
 
+        // valida botones de Opciones al recargar esta vista
         function validarBotonOpciones(){
-            let conteoConsultorio = {{ $conteoConsultorio }};
-            let conteoEnfermeria = {{ $conteoEnfermeria }};
 
-            if(conteoConsultorio > 0){
+            let btnConsultoria = {{ $arrayPaciente['botonOpcionConsultoria'] }};
+            let btnEnfermeria = {{ $arrayPaciente['botonOpcionEnfermeria'] }};
+
+            if(btnConsultoria > 0){
                 document.getElementById("opciones-consultorio").disabled = false;
             }else{
                 document.getElementById("opciones-consultorio").disabled = true;
             }
 
-            if(conteoEnfermeria > 0){
+
+            if(btnEnfermeria > 0){
                 document.getElementById("opciones-enfermeria").disabled = false;
             }else{
                 document.getElementById("opciones-enfermeria").disabled = true;
             }
-
         }
 
         function recargarPacientesEspera(){
@@ -272,8 +310,6 @@
         }
 
         function verificarSalaEspera(){
-
-
 
             if(hayDatos>0){
                 // habilitar tabla y cargar datos
@@ -292,19 +328,19 @@
                 if( seconds > 0 ) {
                     setTimeout(tick, 1000);
                 } else {
-                    verificarSalaEsperaServer();
+                    recargarPaginaCronometro();
                     countdown();
                 }
             }
             tick();
         }
 
-        function verificarSalaEsperaServer(){
+        function recargarPaginaCronometro(){
 
             openLoading();
 
 
-            axios.post(url+'/asignaciones/verificar/hay/espera',{
+            /*axios.post(url+'/asignaciones/verificar/hay/espera',{
 
             })
                 .then((response) => {
@@ -319,8 +355,7 @@
                             document.getElementById("contenedorSalaEspera").style.display = "none";
                         }
 
-                        // reargar tabla
-                        recargarPacientesEspera();
+
 
                     }else{
                         toastr.error('Información no encontrada');
@@ -329,10 +364,10 @@
                 .catch((error) => {
                     closeLoading();
                     toastr.error('Información no encontrada');
-                });
+                });*/
         }
 
-
+        // abre modal para agregar una nueva asignacion
         function modalAgregar(){
 
             document.getElementById("formulario-nuevo").reset();
@@ -340,7 +375,7 @@
         }
 
 
-
+        // buscar paciente en el buscador
         function buscarPaciente(e){
 
             // seguro para evitar errores de busqueda continua
@@ -375,6 +410,7 @@
             }
         }
 
+        // utilizado para obtener ID del paciente buscado en el buscador
         function modificarValor(edrop){
 
             // obtener texto del li
@@ -391,6 +427,7 @@
         }
 
 
+        // preguntar si guardar la nueva asignacion
         function preguntaGuardar(){
 
             Swal.fire({
@@ -409,6 +446,7 @@
             })
         }
 
+        // guardar la asignacion y recargar vista completa
         function guardarRegistro(){
 
             if(idPacienteGlobal === 0){
@@ -441,10 +479,31 @@
                 .then((response) => {
                     closeLoading();
 
+
                     if(response.data.success === 1){
+
+                        let msj = response.data.mensaje;
+
+                        Swal.fire({
+                            title: 'NOTA',
+                            text: msj,
+                            icon: 'info',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
+                    }
+
+                    else if(response.data.success === 2){
                         toastr.success('Registrado correctamente');
                         $('#modalAgregar').modal('hide');
-                        borrarDatos();
+                        recargarVista();
                     }
                     else{
                         toastr.error('error al guardar');
@@ -457,12 +516,24 @@
         }
 
 
-        function borrarDatos(){
+        function recargarVista(){
+            location. reload();
+        }
 
-            document.getElementById('select-razon').selectedIndex = 0;
-            idPacienteGlobal = 0;
-            $("#matriz tbody tr").remove();
-            document.getElementById('repuesto').value = '';
+
+
+        // abrir modal para ver Tabla de asignacion para enfermeria
+        function modalTablaEnfermeria(){
+
+            document.getElementById("formulario-tabla-enfermeria").reset();
+
+            // buscar tabla
+            var ruta = "{{ URL::to('/admin/asignaciones/tablamodal/enfermeria') }}";
+            $('#tablaDatatableEnfermeria').load(ruta);
+
+
+            $('#modalTablaEnfermeria').modal('show');
+
         }
 
 

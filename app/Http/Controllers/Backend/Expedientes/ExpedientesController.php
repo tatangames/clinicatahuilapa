@@ -24,8 +24,6 @@ class ExpedientesController extends Controller
 
     public function indexNuevoExpediente(){
 
-        $arrayMedicos = Medico::orderBy('nombre')->get();
-
         $arrayTipoPaciente = Tipo_Paciente::orderBy('nombre')->get();
 
         $arrayEstadoCivil = Estado_Civil::orderBy('nombre')->get();
@@ -34,7 +32,7 @@ class ExpedientesController extends Controller
 
         $arrayProfesion = Profesion::orderBy('nombre')->get();
 
-        return view('backend.admin.expedientes.nuevo.vistanuevoexpediente', compact('arrayMedicos', 'arrayTipoPaciente',
+        return view('backend.admin.expedientes.nuevo.vistanuevoexpediente', compact('arrayTipoPaciente',
         'arrayEstadoCivil', 'arrayTipoDocumento', 'arrayProfesion'));
     }
 
@@ -69,7 +67,6 @@ class ExpedientesController extends Controller
             }
 
             $detalle = new Paciente();
-            $detalle->medico_id = $request->medico;
             $detalle->tipo_id = $request->tipopaciente;
             $detalle->estado_civil_id = $request->estadocivil;
             $detalle->tipo_documento_id = $request->tipodocumento;
