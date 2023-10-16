@@ -113,9 +113,6 @@ class ExpedientesController extends Controller
             }else{
                 $dato->profesion = '';
             }
-
-            $infoMedico = Medico::where('id', $dato->medico_id)->first();
-            $dato->medico = $infoMedico->nombre;
         }
 
         return view('backend.admin.expedientes.buscar.tablabuscarexpediente', compact('arrayExpedientes'));

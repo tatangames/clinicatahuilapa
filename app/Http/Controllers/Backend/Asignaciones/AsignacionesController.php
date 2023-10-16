@@ -70,7 +70,7 @@ class AsignacionesController extends Controller
         }
 
         $arrayPaciente = [
-            "salaConsultaPaciente" => $salaConsulPaciente,
+            "salaConsultorioPaciente" => $salaConsulPaciente,
             "salaEnfermeriaPaciente" => $salaEnfermePaciente,
             "botonOpcionConsultoria" => $botonConsultoria,
             "botonOpcionEnfermeria" => $botonEnfermeria
@@ -143,6 +143,7 @@ class AsignacionesController extends Controller
         DB::beginTransaction();
 
 
+        // ESTA EN SALA DE ESPERA
         if($infoPaciente = Consulta_Paciente::where('paciente_id', $request->idpaciente)
             ->where('estado_paciente', 0)->first()){
 
@@ -153,6 +154,7 @@ class AsignacionesController extends Controller
             return ['success' => 1, 'mensaje' => $msj];
         }
 
+        // ESTA DENTRO DE LA SALA
         if($infoPaciente = Consulta_Paciente::where('paciente_id', $request->idpaciente)
             ->where('estado_paciente', 1)->first()){
 
@@ -340,6 +342,29 @@ class AsignacionesController extends Controller
 
 
         return ['success' => 1];
+    }
+
+    // ingresar paciente a la sala
+    public function ingresarPacienteALaSala(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required', // id consulta_paciente
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        Consulta_Paciente::where('id', $request->idconsulta)->update([
+            'estado_paciente' => 1, // paciente dentro de la Sala
+        ]);
+
+        $infoPaciente = Consulta_Paciente::where('id', $request->idconsulta)->first();
+        $infoSala = SalasEspera::where('id', $infoPaciente->salaespera_id)->first();
+
+
+        return ['success' => 1, 'nombresala' => $infoSala->nombre];
     }
 
 

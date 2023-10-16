@@ -87,6 +87,7 @@ Route::get('/admin/asignaciones/tablamodal/consultoria', [AsignacionesController
 Route::post('/admin/asignaciones/informacion/paciente',  [AsignacionesController::class,'informacionPaciente']);
 Route::post('/admin/asignaciones/informacion/guardar',  [AsignacionesController::class,'guardarInformacionEditadaPaciente']);
 Route::post('/admin/asignaciones/finalizar/consulta',  [AsignacionesController::class,'finalizarConsultaPaciente']);
+Route::post('/admin/asignaciones/ingresar/paciente/asala',  [AsignacionesController::class,'ingresarPacienteALaSala']);
 
 
 

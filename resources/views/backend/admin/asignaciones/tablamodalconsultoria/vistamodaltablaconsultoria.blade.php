@@ -21,7 +21,7 @@
                                     <td>{{ $dato->nombrepaciente }}</td>
                                     <td>{{ $dato->razonUso }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-xs" onclick="infoAsignarConsultoria({{ $dato->id }})">
+                                        <button type="button" class="btn btn-primary btn-xs" onclick="infoAsignarAsalaPaciente({{ $dato->id }})">
                                             Asignar
                                         </button>
 

@@ -12,7 +12,6 @@
                                 <th>Apellido</th>
                                 <th>Documento</th>
                                 <th>Profesión</th>
-                                <th>Médico de Cabecera</th>
                                 <th>Opciones</th>
                             </tr>
                             </thead>
@@ -25,7 +24,6 @@
                                     <td>{{ $dato->apellidos }}</td>
                                     <td>{{ $dato->num_documento }}</td>
                                     <td>{{ $dato->profesion }}</td>
-                                    <td>{{ $dato->medico }}</td>
 
                                     <td>
 

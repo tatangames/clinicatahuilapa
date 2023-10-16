@@ -76,11 +76,11 @@
 
                                                 </div>
                                                 <div class="card-body">
-                                                    <p class="form-control" style="font-weight: bold" id="paciente-enfermeria">{{ $arrayPaciente['salaConsultaPaciente'] }}</p>
+                                                    <p class="form-control" style="font-weight: bold" id="paciente-enfermeria">{{ $arrayPaciente['salaEnfermeriaPaciente'] }}</p>
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <button id="opciones-enfermeria" class="btn btn-info" style="width: 100%;" disabled="">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
+                                                    <button id="opciones-enfermeria" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaSalaEnfermeria()">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
                                             </div>
 
@@ -99,12 +99,12 @@
                                                     </span>
                                                 </div>
                                                 <div class="card-body">
-                                                    <p class="form-control" style="font-weight: bold" id="paciente-consultorio">{{ $arrayPaciente['salaEnfermeriaPaciente'] }}</p>
+                                                    <p class="form-control" style="font-weight: bold" id="paciente-consultorio">{{ $arrayPaciente['salaConsultorioPaciente'] }}</p>
 
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <button id="opciones-consultorio" class="btn btn-info" style="width: 100%;" disabled="">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
+                                                    <button id="opciones-consultorio" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaSalaConsultoria()">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
 
                                             </div>
@@ -333,6 +333,81 @@
             </div>
         </div>
     </div>
+
+
+
+
+    <!-- FICHA ADMINISTRATIVA CUANDO UN PACIENTE ESTA EN LA SALA. UTILIZADO PARA LAS 2 SALAS-->
+
+    <div class="modal fade" id="modalFichaAdministrativa">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">FICHA ADMINISTRATIVA DE INGRESO</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formulario-ficha-administrativa">
+                        <section class="content">
+                            <div class="container-fluid">
+                                <div class="row">
+
+
+
+                                        <div class="col-md-6">
+                                            <div class="card-body">
+
+                                                    <center><h3><strong>FOTOGRAFIA</strong></h3></center>
+                                                    <div class="list-group mail-list m-t-20" align="center">
+                                                        <center><img src="https://samucloud.app/clinicatahuilapa/assets/images/expedientes/2237.png" id="foto_paciente" class="thumb" alt="" width="120px" height="120px" style="border: 2px solid black;"></center>
+                                                    </div>
+                                                    <h3 class="panel-title m-t-40 m-b-0">
+                                                        <center><strong>OPCIONES</strong></center>
+                                                    </h3>
+                                                    <hr class="m-t-5">
+                                                    <div class="list-group b-0 mail-list" id="configuracion">
+                                                        <input type="button" onclick="antropometrias();" class="btn btn-info btn-block waves-effect waves-light" value="Atencion enfermeria">
+                                                        <input type="button" onclick="orden_salida();" class="btn btn-primary btn-block waves-effect waves-light" value="Farmacia">
+                                                        <input type="button" onclick="historial_medico();" class="btn btn-success btn-block waves-effect waves-light" value="Historial clinico">
+                                                        <button type="button" onclick="traslado_sala(3560);" class="btn btn-warning btn-block waves-effect waves-light">Traslado</button>
+                                                        <button type="button" onclick="cerrar_cuenta(3560); " class="btn btn-danger btn-block waves-effect waves-light">Liberar sala</button>
+                                                    </div>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="col-md-6">
+                                            <div class="card-body">
+
+    dbfbdfb
+
+
+
+                                            </div>
+                                        </div>
+
+
+
+
+                                </div>
+                            </div>
+                        </section>
+                    </form>
+
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 
 
@@ -631,7 +706,6 @@
 
 
             $('#modalTablaEnfermeria').modal('show');
-
         }
 
 
@@ -813,6 +887,64 @@
 
         }
 
+
+        // asignar paciente que esta en espera, a la sala
+
+        function infoAsignarAsalaPaciente(idconsulta){
+
+            openLoading();
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+
+            axios.post(url+'/asignaciones/ingresar/paciente/asala', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        let sala = response.data.nombresala;
+
+                        Swal.fire({
+                            title: 'Asignado',
+                            text: 'El Paciente esta dentro de la Sala: ' + sala,
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            closeOnClickOutside: false,
+                            allowOutsideClick: false,
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Recargar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargarVista();
+                            }
+                        })
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+
+        function buscarFichaSalaConsultoria(){
+
+
+            $('#modalFichaAdministrativa').modal('show');
+
+        }
+
+        function buscarFichaSalaEnfermeria(){
+
+            $('#modalFichaAdministrativa').modal('show');
+        }
 
 
 
