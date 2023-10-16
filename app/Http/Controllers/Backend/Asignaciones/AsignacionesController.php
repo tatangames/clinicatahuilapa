@@ -273,6 +273,74 @@ class AsignacionesController extends Controller
         return view('backend.admin.asignaciones.tablamodalconsultoria.vistamodaltablaconsultoria', compact('arrayTablaConsultoria'));
     }
 
+    // informacion de un paciente
+    public function informacionPaciente(Request $request){
+
+        $regla = array(
+            'id' => 'required', // id consulta_paciente
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        if($info = Consulta_Paciente::where('id', $request->id)->first()){
+
+            $arraySala = SalasEspera::orderBy('nombre', 'ASC')->get();
+            $arrayRazonUso = Motivo::orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 1, 'info' => $info,
+                'arraysala' => $arraySala,
+                'arrayrazonuso' => $arrayRazonUso];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+    public function guardarInformacionEditadaPaciente(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required', // id consulta_paciente
+            'idsala' => 'required',
+            'idrazonuso' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        Consulta_Paciente::where('id', $request->idconsulta)->update([
+            'salaespera_id' => $request->idsala,
+            'motivo_id' => $request->idrazonuso,
+        ]);
+
+
+        return ['success' => 1];
+    }
+
+
+    // finalizar la consulta medica
+    public function finalizarConsultaPaciente(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required', // id consulta_paciente
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        Consulta_Paciente::where('id', $request->idconsulta)->update([
+            'estado_paciente' => 2, // consulta finalizada
+        ]);
+
+
+        return ['success' => 1];
+    }
 
 
 }

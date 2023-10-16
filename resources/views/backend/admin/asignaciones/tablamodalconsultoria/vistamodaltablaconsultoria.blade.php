@@ -4,7 +4,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <table id="tabla" class="table table-bordered table-striped">
+                        <table id="tablaConsultoria" class="table table-bordered table-striped">
                             <thead>
                             <tr>
                                 <th>HORA</th>
@@ -21,8 +21,16 @@
                                     <td>{{ $dato->nombrepaciente }}</td>
                                     <td>{{ $dato->razonUso }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-xs" onclick="informacion({{ $dato->id }})">
-                                            <i class="fas fa-eye" title="Editar"></i>&nbsp; Editar
+                                        <button type="button" class="btn btn-primary btn-xs" onclick="infoAsignarConsultoria({{ $dato->id }})">
+                                            Asignar
+                                        </button>
+
+                                        <button type="button" class="btn btn-danger btn-xs" onclick="infoModalEliminarPaciente({{ $dato->id }})">
+                                            Eliminar
+                                        </button>
+
+                                        <button type="button" class="btn btn-warning btn-xs" onclick="infoModalEditarSalas({{ $dato->id }})">
+                                            Editar
                                         </button>
                                     </td>
                                 </tr>
@@ -40,7 +48,7 @@
 
 <script>
     $(function () {
-        $("#tabla").DataTable({
+        $("#tablaConsultoria").DataTable({
             "paging": true,
             "lengthChange": true,
             "searching": true,

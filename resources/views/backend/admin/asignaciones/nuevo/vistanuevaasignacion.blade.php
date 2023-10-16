@@ -275,6 +275,66 @@
 
 
 
+    <!-- MODAL EDITAR, UTILIZADO POR ENFERMERIA Y CONSULTORIA -->
+
+    <div class="modal fade" id="modalTablaEditarSalas">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">TRASLADO DE COLA</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formulario-editar-traslado">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="form-group">
+                                        <input type="hidden" id="id-traslado-cola">
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label style="color:#191818">Sala actual</label>
+                                        <br>
+                                        <div>
+                                            <select class="form-control" id="select-editar-salaactual">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label style="color:#191818">Razón de uso</label>
+                                        <br>
+                                        <div>
+                                            <select class="form-control" id="select-editar-razonuso">
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarAjustesEditados()">Guardar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 </div>
 
@@ -584,8 +644,173 @@
             var ruta = "{{ URL::to('/admin/asignaciones/tablamodal/consultoria') }}";
             $('#tablaDatatableConsultoria').load(ruta);
 
-
             $('#modalTablaConsultoriaModal').modal('show');
+        }
+
+
+
+        // Utilizado para las 2 salas
+        function infoModalEditarSalas(id){
+
+            openLoading();
+            document.getElementById("formulario-editar-traslado").reset();
+
+            axios.post(url+'/asignaciones/informacion/paciente',{
+                'id': id
+            })
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+
+                        $('#id-traslado-cola').val(response.data.info.id);
+
+
+                        document.getElementById("select-editar-salaactual").options.length = 0;
+                        document.getElementById("select-editar-razonuso").options.length = 0;
+
+                        $.each(response.data.arraysala, function( key, val ){
+                            if(response.data.info.salaespera_id == val.id){
+                                $('#select-editar-salaactual').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
+                            }else{
+                                $('#select-editar-salaactual').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                            }
+                        });
+
+                        $.each(response.data.arrayrazonuso, function( key, val ){
+                            if(response.data.info.motivo_id == val.id){
+                                $('#select-editar-razonuso').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
+                            }else{
+                                $('#select-editar-razonuso').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                            }
+                        });
+
+
+                        $('#modalTablaEditarSalas').modal('show');
+                    }else{
+                        toastr.error('información no encontrada');
+                    }
+                })
+                .catch((error) => {
+                    closeLoading();
+                    toastr.error('información no encontrada');
+                });
+        }
+
+
+
+        // guardar ajustes de model editar
+        function guardarAjustesEditados(){
+
+            openLoading();
+
+            var idconsulta = document.getElementById('id-traslado-cola').value;
+            var idSala = document.getElementById('select-editar-salaactual').value;
+            var idRazonUso = document.getElementById('select-editar-razonuso').value;
+
+            openLoading();
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+            formData.append('idsala', idSala);
+            formData.append('idrazonuso', idRazonUso);
+
+            axios.post(url+'/asignaciones/informacion/guardar', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        Swal.fire({
+                            title: 'Paciente Actualizado',
+                            text: '',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            closeOnClickOutside: false,
+                            allowOutsideClick: false,
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Recargar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargarVista();
+                            }
+                        })
+
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+
+        function infoModalEliminarPaciente(id){
+
+            Swal.fire({
+                title: '¿Finalizar Consulta?',
+                text: '',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                closeOnClickOutside: false,
+                allowOutsideClick: false,
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Sí'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    finalizarConsultaPaciente(id);
+                }
+            })
+        }
+
+
+        function finalizarConsultaPaciente(idconsulta){
+
+            openLoading();
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+
+            axios.post(url+'/asignaciones/finalizar/consulta', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        Swal.fire({
+                            title: 'Consulta Finalizada',
+                            text: '',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            closeOnClickOutside: false,
+                            allowOutsideClick: false,
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Recargar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargarVista();
+                            }
+                        })
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+
         }
 
 
