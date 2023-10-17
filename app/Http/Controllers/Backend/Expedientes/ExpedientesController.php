@@ -13,7 +13,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ExpedientesController extends Controller
 {
@@ -45,6 +47,7 @@ class ExpedientesController extends Controller
     }
 
 
+
     public function nuevoExpediente(Request $request){
 
         $regla = array(
@@ -60,31 +63,82 @@ class ExpedientesController extends Controller
 
         try {
 
-            if($request->sexopaciente == 1){
-                $genero = "M";
+
+
+            if ($request->hasFile('documento')) {
+
+                $cadena = Str::random(15);
+                $tiempo = microtime();
+                $union = $cadena . $tiempo;
+                $nombre = str_replace(' ', '_', $union);
+
+                $extension = '.' . $request->documento->getClientOriginalExtension();
+                $nomDocumento = $nombre . strtolower($extension);
+                $avatar = $request->file('documento');
+                $archivo = Storage::disk('archivos')->put($nomDocumento, \File::get($avatar));
+
+
+                if($archivo){
+
+                    if($request->sexopaciente == 1){
+                        $genero = "M";
+                    }else{
+                        $genero = "F";
+                    }
+
+                    $detalle = new Paciente();
+                    $detalle->tipo_id = $request->tipopaciente;
+                    $detalle->estado_civil_id = $request->estadocivil;
+                    $detalle->tipo_documento_id = $request->tipodocumento;
+                    $detalle->profesion_id = $request->profesion;
+                    $detalle->nombres = $request->nombre;
+                    $detalle->apellidos = $request->apellido;
+                    $detalle->fecha_nacimiento = $request->fechanacimiento;
+                    $detalle->sexo = $genero;
+                    $detalle->referido_por = $request->referido;
+                    $detalle->num_documento = $request->documento;
+                    $detalle->correo = $request->correo;
+                    $detalle->celular = $request->celular;
+                    $detalle->telefono = $request->telefono;
+                    $detalle->direccion = $request->direccion;
+                    $detalle->foto = $nomDocumento;
+                    $detalle->save();
+
+                    DB::commit();
+                    return ['success' => 1];
+
+                }else{
+                    return ['success' => 99];
+                }
+
             }else{
-                $genero = "F";
+
+                if($request->sexopaciente == 1){
+                    $genero = "M";
+                }else{
+                    $genero = "F";
+                }
+
+                $detalle = new Paciente();
+                $detalle->tipo_id = $request->tipopaciente;
+                $detalle->estado_civil_id = $request->estadocivil;
+                $detalle->tipo_documento_id = $request->tipodocumento;
+                $detalle->profesion_id = $request->profesion;
+                $detalle->nombres = $request->nombre;
+                $detalle->apellidos = $request->apellido;
+                $detalle->fecha_nacimiento = $request->fechanacimiento;
+                $detalle->sexo = $genero;
+                $detalle->referido_por = $request->referido;
+                $detalle->num_documento = $request->documento;
+                $detalle->correo = $request->correo;
+                $detalle->celular = $request->celular;
+                $detalle->telefono = $request->telefono;
+                $detalle->direccion = $request->direccion;
+                $detalle->save();
+
+                DB::commit();
+                return ['success' => 1];
             }
-
-            $detalle = new Paciente();
-            $detalle->tipo_id = $request->tipopaciente;
-            $detalle->estado_civil_id = $request->estadocivil;
-            $detalle->tipo_documento_id = $request->tipodocumento;
-            $detalle->profesion_id = $request->profesion;
-            $detalle->nombres = $request->nombre;
-            $detalle->apellidos = $request->apellido;
-            $detalle->fecha_nacimiento = $request->fechanacimiento;
-            $detalle->sexo = $genero;
-            $detalle->referido_por = $request->referido;
-            $detalle->num_documento = $request->documento;
-            $detalle->correo = $request->correo;
-            $detalle->celular = $request->celular;
-            $detalle->telefono = $request->telefono;
-            $detalle->direccion = $request->direccion;
-            $detalle->save();
-
-            DB::commit();
-            return ['success' => 1];
 
         }catch(\Throwable $e){
             DB::rollback();
@@ -92,6 +146,8 @@ class ExpedientesController extends Controller
             return ['success' => 99];
         }
     }
+
+
 
 
     // ********************************************

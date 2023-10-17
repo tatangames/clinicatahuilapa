@@ -258,17 +258,42 @@
                             <br>
                             <hr>
 
-                            <div class="form-actions">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="row">
-                                            <div class="col-md-offset-3 col-md-12" align="center">
-                                                <button type="button" class="btn btn-success" onclick="registrar();">Registrar</button>
+
+
+                            <section class="content">
+                                <div class="container-fluid">
+                                    <div class="row ">
+
+
+                                        <div class="col-md-6">
+
+                                            <div class="col-md-offset-3 col-md-12">
+                                                <button type="button" class="btn btn-warning"
+                                                        style="color: white"
+                                                        onclick="abrirModalFoto();">
+                                            <span>
+
+                                            <img class="manImg" src="{{ asset('images/camera360.png') }}" height="25px" width="25px">
+
+                                            </span>
+                                                    Agregar Fotografía</button>
                                             </div>
+
                                         </div>
+
+                                        <div class="col-md-6">
+
+                                            <div class="col-md-offset-3 col-md-12" align="center">
+                                                <button type="button" class="btn btn-success" onclick="registrar();">Registrar Nuevo Expediente</button>
+                                            </div>
+
+                                        </div>
+
+
                                     </div>
                                 </div>
-                            </div>
+                            </section>
+
 
                         </div>
                     </div>
@@ -278,20 +303,73 @@
     </section>
 
 
+
+    <!-- MODAL FOTOGRAFIA -->
+
+    <div class="modal fade" id="modalFotografia">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">FOTOGRAFIA PACIENTE</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formulario-fotografia">
+                        <div class="card-body">
+                            <div class="row">
+
+                                <div class="col-md-6">
+
+                                    <div id="my_camera"></div>
+
+                                    <br/>
+
+                                    <input type=button value="Tomar Captura" onClick="tomarCapturaWebCam()">
+
+                                    <input type="hidden" name="image" class="image-tag">
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div id="results">La Fotografía aparecera aquí</div>
+
+                                </div>
+
+                                <div class="col-md-12 text-center">
+
+                                    <br/>
+
+                                    <button class="btn btn-success" data-dismiss="modal">Cerrar Vista</button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 
 
 @extends('backend.menus.footerjs')
 @section('archivos-js')
 
-    <script src="{{ asset('js/jquery.dataTables.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/dataTables.bootstrap4.js') }}" type="text/javascript"></script>
-
     <script src="{{ asset('js/toastr.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/axios.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/alertaPersonalizada.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/webcam.min.js') }}" type="text/javascript"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -320,6 +398,11 @@
     </script>
 
     <script>
+
+        // VARIABLE GLOBAL PARA ALMACENAR IMAGEN WEBCAM
+        let fileImagenWebCam;
+
+
 
         function calcular_edad() {
 
@@ -367,6 +450,10 @@
 
 
         function nuevoPaciente(){
+
+            btnBorrarFoto();
+
+            return;
 
             var nombre = document.getElementById('nombre-nuevo').value; //*
             var selectTipoPaciente = document.getElementById('select-tipopaciente').value; //*
@@ -426,6 +513,9 @@
 
             openLoading();
             var formData = new FormData();
+
+
+            formData.append('documento', fileImagenWebCam);
             formData.append('nombre', nombre);
             formData.append('tipopaciente', selectTipoPaciente);
             formData.append('apellido', apellido);
@@ -440,7 +530,6 @@
             formData.append('correo', correo);
             formData.append('referido', referido);
             formData.append('profesion', selectProfesion);
-
 
             axios.post(url + '/expediente/registro', formData, {})
                 .then((response) => {
@@ -469,7 +558,76 @@
             document.getElementById('select-civil').selectedIndex = 0;
             document.getElementById('select-documento').selectedIndex = 0;
 
+            btnBorrarFoto();
         }
+
+
+        function abrirModalFoto(){
+
+            Webcam.set({
+                width: 490,
+                height: 350,
+                image_format: 'jpeg',
+                jpeg_quality: 90
+            });
+
+            Webcam.attach( '#my_camera' );
+            $('#modalFotografia').modal('show');
+        }
+
+
+        function tomarCapturaWebCam(){
+
+            Webcam.snap( function(dataURI) {
+            const blob = dataURItoBlob(dataURI);
+
+            // Crear un objeto File a partir del Blob
+            const file = new File([blob], "nombre_del_archivo.jpg", { type: blob.type });
+
+            fileImagenWebCam = file;
+
+                $(".image-tag").val(dataURI);
+
+                document.getElementById('results').innerHTML = '<img id="idFotoWebCam" src="'+dataURI+'"/> <center>' +
+                    '<button onclick="btnBorrarFoto()" id="idBtnBorrarFoto" style="margin-top: 15px" class="btn btn-danger" type="button">Borrar Foto</button></center>';
+            });
+        }
+
+
+        // convertir URI de imagen webcam a un archivo BLOB
+        function dataURItoBlob(dataURI) {
+            // Separar el encabezado del contenido de la data URI
+            const byteString = atob(dataURI.split(',')[1]);
+
+            // Obtener el tipo de contenido del archivo desde la data URI
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+            // Convertir la cadena de bytes en un array de enteros sin signo
+            const arrayBuffer = new ArrayBuffer(byteString.length);
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            for (let i = 0; i < byteString.length; i++) {
+                uint8Array[i] = byteString.charCodeAt(i);
+            }
+
+            // Crear un objeto Blob a partir del array de enteros sin signo
+            return new Blob([arrayBuffer], { type: mimeString });
+        }
+
+
+
+        // borrar fotografia del modal
+        function btnBorrarFoto(){
+
+            var element = document.getElementById('idFotoWebCam');
+            if (typeof element !== "undefined") {
+                document.getElementById('idFotoWebCam').removeAttribute('src');
+                document.getElementById('idBtnBorrarFoto').style.display = "none";
+            }
+
+            fileImagenWebCam = null;
+        }
+
 
 
     </script>

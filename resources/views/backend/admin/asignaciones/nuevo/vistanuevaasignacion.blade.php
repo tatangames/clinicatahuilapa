@@ -362,7 +362,9 @@
 
                                                     <center><h3><strong>FOTOGRAFIA</strong></h3></center>
                                                     <div class="list-group mail-list m-t-20" align="center">
-                                                        <center><img src="https://samucloud.app/clinicatahuilapa/assets/images/expedientes/2237.png" id="foto_paciente" class="thumb" alt="" width="120px" height="120px" style="border: 2px solid black;"></center>
+                                                        <center><img src="https://samucloud.app/clinicatahuilapa/assets/images/expedientes/2237.png"
+                                                                     id="foto_paciente" class="thumb" alt="" width="120px" height="120px" style="border: 2px solid black;">
+                                                        </center>
                                                     </div>
                                                     <h3 class="panel-title m-t-40 m-b-0">
                                                         <center><strong>OPCIONES</strong></center>
