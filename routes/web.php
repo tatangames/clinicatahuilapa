@@ -92,7 +92,8 @@ Route::post('/admin/asignaciones/ingresar/paciente/asala',  [AsignacionesControl
 // EDITAR PACIENTE
 Route::get('/admin/asignaciones/info/vista/editarpaciente/{idpaciente}', [AsignacionesController::class,'vistaEditarPaciente']);
 
-// Informacion del paciente que esta dentro de la sala
+// Informacion del paciente que esta dentro de la sala, informacion para el modal.
+// Ficha Administrativa
 Route::post('/admin/asignaciones/info/paciente/dentrosala',  [AsignacionesController::class,'informacionPacienteDentroDeSala']);
 
 

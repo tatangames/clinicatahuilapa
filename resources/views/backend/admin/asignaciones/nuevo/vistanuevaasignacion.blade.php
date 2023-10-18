@@ -340,7 +340,7 @@
     <!-- FICHA ADMINISTRATIVA CUANDO UN PACIENTE ESTA EN LA SALA. UTILIZADO PARA LAS 2 SALAS-->
 
     <div class="modal fade" id="modalFichaAdministrativa">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" style="text-align: center">
                     <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">FICHA ADMINISTRATIVA DE INGRESO</h4>
@@ -382,7 +382,15 @@
                                         <div class="col-md-6">
                                             <div class="card-body">
 
-    dbfbdfb
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12">Paciente </label>
+                                                        <input type="text" id="txtNombre" autocomplete="off"
+                                                               class="form-control" disabled>
+                                                </div>
+
+
+
+
 
 
 
@@ -952,7 +960,7 @@
 
                     if(response.data.success === 1){
 
-                        if(response.data.hayfoto == 1){
+                        if(response.data.hayfoto === 1){
                             $('#foto-paciente-ficha').prop("src","{{ url('storage/archivos') }}"+'/'+ response.data.infopaciente.foto);
 
                             document.getElementById('textofoto').innerHTML = "FOTOGRAFIA";
@@ -960,6 +968,11 @@
                             $('#foto-paciente-ficha').prop("src","{{ asset('images/foto-default.png') }}");
                             document.getElementById('textofoto').innerHTML = "SIN FOTOGRAFIA";
                         }
+
+                        let unido = response.data.infopaciente.nombres + " " + response.data.infopaciente.apellidos;
+
+                        $('#txtNombre').val(unido);
+
 
 
                         $('#modalFichaAdministrativa').modal('show');
