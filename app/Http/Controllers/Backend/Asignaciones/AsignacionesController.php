@@ -394,5 +394,35 @@ class AsignacionesController extends Controller
 
 
 
+    public function informacionPacienteDentroDeSala(Request $request){
+
+        // buscar al paciente dentro de la sala por tipo de sala
+        // y debe estar dentro de una sala
+        if($infoConsulta = Consulta_Paciente::where('salaespera_id', $request->tipoficha)
+            ->where('estado_paciente', 1)->first()){
+
+            $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+            if($infoPaciente->foto == null){
+                $hayfoto = 0;
+            }else{
+                $hayfoto = 1;
+            }
+
+            return ['success' => 1, 'infoconsulta' => $infoConsulta,
+                'infopaciente' => $infoPaciente, 'hayfoto' => $hayfoto];
+        }
+        else{
+            return ['success' => 2];
+        }
+
+
+
+
+
+    }
+
+
+
 
 }

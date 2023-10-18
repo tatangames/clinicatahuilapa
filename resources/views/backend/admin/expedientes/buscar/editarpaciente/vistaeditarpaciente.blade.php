@@ -27,7 +27,7 @@
 
 
                 <div class="col-md-offset-3 col-md-12" align="left">
-                    <button type="button" class="btn btn-warning" style="margin-top: 15px" onclick="vistaAtras();"> ← Atras</button>
+                    <button type="button" class="btn btn-warning" style="margin-top: 15px; color: white" onclick="vistaAtras();"> ← Atras</button>
                 </div>
 
 

@@ -80,7 +80,7 @@
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <button id="opciones-enfermeria" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaSalaEnfermeria()">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
+                                                    <button id="opciones-enfermeria" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaAdministrativaModal(2)">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
                                             </div>
 
@@ -104,7 +104,7 @@
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <button id="opciones-consultorio" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaSalaConsultoria()">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
+                                                    <button id="opciones-consultorio" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaAdministrativaModal(1)">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
 
                                             </div>
@@ -355,15 +355,12 @@
                             <div class="container-fluid">
                                 <div class="row">
 
-
-
                                         <div class="col-md-6">
                                             <div class="card-body">
 
-                                                    <center><h3><strong>FOTOGRAFIA</strong></h3></center>
+                                                    <center><h3 id="textofoto"><strong>FOTOGRAFIA</strong></h3></center>
                                                     <div class="list-group mail-list m-t-20" align="center">
-                                                        <center><img src="https://samucloud.app/clinicatahuilapa/assets/images/expedientes/2237.png"
-                                                                     id="foto_paciente" class="thumb" alt="" width="120px" height="120px" style="border: 2px solid black;">
+                                                        <center><img id="foto-paciente-ficha" class="thumb" alt="" width="120px" height="120px" style="border: 2px solid black;">
                                                         </center>
                                                     </div>
                                                     <h3 class="panel-title m-t-40 m-b-0">
@@ -936,17 +933,62 @@
         }
 
 
-        function buscarFichaSalaConsultoria(){
+        function buscarFichaAdministrativaModal(tipoficha){
+
+            // Tipo Ficha
+            // 1 CONSULTORIA
+            // 2 ENFERMERIA
+
+            // buscara al primer paciente que encuentre
+
+            openLoading();
+
+            let formData = new FormData();
+            formData.append('tipoficha', tipoficha);
+            axios.post(url+'/asignaciones/info/paciente/dentrosala', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        if(response.data.hayfoto == 1){
+                            $('#foto-paciente-ficha').prop("src","{{ url('storage/archivos') }}"+'/'+ response.data.infopaciente.foto);
+
+                            document.getElementById('textofoto').innerHTML = "FOTOGRAFIA";
+                        }else{
+                            $('#foto-paciente-ficha').prop("src","{{ asset('images/foto-default.png') }}");
+                            document.getElementById('textofoto').innerHTML = "SIN FOTOGRAFIA";
+                        }
 
 
-            $('#modalFichaAdministrativa').modal('show');
-
+                        $('#modalFichaAdministrativa').modal('show');
+                    }
+                    else{
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Información no encontrada, recargar la página',
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            closeOnClickOutside: false,
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Recargar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargarVista();
+                            }
+                        })
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al buscar');
+                    closeLoading();
+                });
         }
 
-        function buscarFichaSalaEnfermeria(){
 
-            $('#modalFichaAdministrativa').modal('show');
-        }
 
 
 
