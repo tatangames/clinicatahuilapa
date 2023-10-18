@@ -68,7 +68,7 @@ Route::get('sin-permisos', [ControlController::class,'indexSinPermiso'])->name('
 // nuevo expediente
 Route::get('/admin/expediente/vista/nuevo', [ExpedientesController::class,'indexNuevoExpediente'])->name('admin.expediente.nuevo');
 Route::post('/admin/expediente/registro', [ExpedientesController::class, 'nuevoExpediente']);
-Route::post('/admin/expediente/calcularedad', [ExpedientesController::class, 'calcularEdad']);
+Route::post('/admin/expediente/actualizar', [ExpedientesController::class, 'actualizarExpediente']);
 
 // buscar expediente
 Route::get('/admin/expediente/vista/buscar', [ExpedientesController::class,'indexBuscarExpediente'])->name('admin.expediente.buscar');
@@ -89,7 +89,8 @@ Route::post('/admin/asignaciones/informacion/guardar',  [AsignacionesController:
 Route::post('/admin/asignaciones/finalizar/consulta',  [AsignacionesController::class,'finalizarConsultaPaciente']);
 Route::post('/admin/asignaciones/ingresar/paciente/asala',  [AsignacionesController::class,'ingresarPacienteALaSala']);
 
-
+// EDITAR PACIENTE
+Route::get('/admin/asignaciones/info/vista/editarpaciente/{idpaciente}', [AsignacionesController::class,'vistaEditarPaciente']);
 
 
 

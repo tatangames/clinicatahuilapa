@@ -50,6 +50,17 @@
                                                 </div>
 
 
+                                                <div class="form-group row" >
+                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Apellido: </label>
+                                                    <div class="col-md-9">
+                                                        <div class="form-group">
+                                                            <input type="text" style="margin-left: 8px" maxlength="150" autocomplete="off"
+                                                                   class="form-control" id="apellido-nuevo">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
                                             </div>
 
 
@@ -60,7 +71,9 @@
 
                                             <div class="card-body">
 
-                                                <div class="form-group row">
+
+
+                                                <div class="form-group row" style="margin-top: 18px">
                                                     <label class="col-sm-2 col-form-label" style="color: #686868">Tipo
                                                         Paciente: </label>
                                                     <span class="text-danger">*</span>
@@ -74,15 +87,7 @@
                                                 </div>
 
 
-                                                <div class="form-group row" >
-                                                    <label class="col-sm-2 col-form-label" style="color: #686868">Apellido: </label>
-                                                    <div class="col-md-9">
-                                                        <div class="form-group">
-                                                            <input type="text" maxlength="150" autocomplete="off"
-                                                                   class="form-control" id="apellido-nuevo">
-                                                        </div>
-                                                    </div>
-                                                </div>
+
 
                                             </div>
                                         </div>
@@ -121,10 +126,10 @@
                                             <label class="control-label col-md-3">Sexo: <span
                                                     class="text-danger">*</span></label>
                                             <div class="col-md-9">
-                                                <select name="sexo" id="select-sexo" class="form-control">
+                                                <select id="select-sexo" class="form-control">
                                                     <option value="">Seleccione...</option>
-                                                    <option value="M">Masculino</option>
-                                                    <option value="F">Femenino</option>
+                                                    <option value="1">Masculino</option>
+                                                    <option value="2">Femenino</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -177,7 +182,7 @@
                                             <label class="control-label col-md-5">Estado civil: <span
                                                     class="text-danger">*</span> </label>
                                                 <div class="col-md-7">
-                                                    <select name="sexo" id="select-civil" class="form-control">
+                                                    <select  id="select-civil" class="form-control">
                                                         @foreach($arrayEstadoCivil as $item)
                                                             <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                         @endforeach
@@ -190,7 +195,7 @@
                                             <label class="control-label col-md-6">Tipo de Documento: <span
                                                     class="text-danger">*</span> </label>
                                             <div class="col-md-9">
-                                                <select name="sexo" id="select-documento" class="form-control">
+                                                <select id="select-documento" class="form-control">
                                                     @foreach($arrayTipoDocumento as $item)
                                                         <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                     @endforeach
@@ -225,7 +230,7 @@
                                         <div class="form-group">
                                             <label class="control-label col-md-5">Profesión:  </label>
                                             <div class="col-md-7">
-                                                <select name="sexo" id="select-profesion" class="form-control">
+                                                <select  id="select-profesion" class="form-control">
                                                     @foreach($arrayProfesion as $item)
                                                         <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                     @endforeach
@@ -451,10 +456,6 @@
 
         function nuevoPaciente(){
 
-            btnBorrarFoto();
-
-            return;
-
             var nombre = document.getElementById('nombre-nuevo').value; //*
             var selectTipoPaciente = document.getElementById('select-tipopaciente').value; //*
             var apellido = document.getElementById('apellido-nuevo').value;
@@ -526,7 +527,7 @@
             formData.append('direccion', direccion);
             formData.append('estadocivil', selectCivil);
             formData.append('tipodocumento', selectDocumento);
-            formData.append('documento', numeroDocumento);
+            formData.append('numdocumento', numeroDocumento);
             formData.append('correo', correo);
             formData.append('referido', referido);
             formData.append('profesion', selectProfesion);
@@ -619,8 +620,9 @@
         // borrar fotografia del modal
         function btnBorrarFoto(){
 
-            var element = document.getElementById('idFotoWebCam');
-            if (typeof element !== "undefined") {
+            var elemento = document.getElementById('idFotoWebCam');
+
+            if (elemento) {
                 document.getElementById('idFotoWebCam').removeAttribute('src');
                 document.getElementById('idBtnBorrarFoto').style.display = "none";
             }

@@ -34,8 +34,8 @@
                                                 <i class="fas fa-file" title="Documentos y Recetas"></i>&nbsp;
                                             </button>
 
-                                            <button type="button" class="btn btn-primary btn-sm" onclick="informacion({{ $dato->id }})">
-                                                <i class="fas fa-list-alt" title="Datos Generales"></i>&nbsp;
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="infoEditarPaciente({{ $dato->id }})">
+                                                <i class="fas fa-user" title="Datos Generales"></i>&nbsp;
                                             </button>
 
                                             <button type="button" class="btn btn-warning btn-sm" onclick="informacion({{ $dato->id }})">

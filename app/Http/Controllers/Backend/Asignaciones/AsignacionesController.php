@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Backend\Asignaciones;
 
 use App\Http\Controllers\Controller;
 use App\Models\Consulta_Paciente;
+use App\Models\Estado_Civil;
 use App\Models\Medico;
 use App\Models\Motivo;
 use App\Models\Paciente;
+use App\Models\Profesion;
 use App\Models\SalasEspera;
+use App\Models\Tipo_Documento;
+use App\Models\Tipo_Paciente;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -366,6 +370,29 @@ class AsignacionesController extends Controller
 
         return ['success' => 1, 'nombresala' => $infoSala->nombre];
     }
+
+
+
+    public function vistaEditarPaciente($idpaciente){
+
+        $infoPa = Paciente::where('id', $idpaciente)->first();
+
+        $arrayEstadoCivil = Estado_Civil::orderBy('nombre')->get();
+        $arrayTipoPaciente = Tipo_Paciente::orderBy('nombre')->get();
+        $arrayTipoDocumento = Tipo_Documento::orderBy('nombre')->get();
+        $arrayProfesion = Profesion::orderBy('nombre')->get();
+
+        if($infoPa->sexo == 'M'){
+            $tiposexo = 1;
+        }else{
+            $tiposexo = 2;
+        }
+
+        return view('backend.admin.expedientes.buscar.editarpaciente.vistaeditarpaciente', compact('infoPa', 'arrayEstadoCivil',
+            'arrayTipoPaciente', 'tiposexo', 'arrayTipoDocumento', 'arrayProfesion', 'idpaciente'));
+    }
+
+
 
 
 }

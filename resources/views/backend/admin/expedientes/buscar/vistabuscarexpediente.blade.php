@@ -84,6 +84,13 @@
         }
 
 
+        // vista para editar paciente
+        function infoEditarPaciente(id){
+
+            window.location.href="{{ url('/admin/asignaciones/info/vista/editarpaciente') }}/" + id;
+        }
+
+
 
     </script>
 
