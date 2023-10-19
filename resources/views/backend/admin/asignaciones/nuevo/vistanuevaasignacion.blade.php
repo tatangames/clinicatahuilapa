@@ -63,7 +63,7 @@
                                     <div class="row ">
 
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6" id="bloque01enfermeria">
 
                                             <div class="card card-secondary">
                                                 <div class="card-header">
@@ -86,7 +86,7 @@
 
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6" id="bloque02consultoria">
 
                                             <div class="card card-success">
                                                 <div class="card-header">
@@ -316,8 +316,6 @@
                                         </div>
                                     </div>
 
-
-
                                 </div>
                             </div>
                         </div>
@@ -371,8 +369,8 @@
                                                         <input type="button" onclick="antropometrias();" class="btn btn-info btn-block waves-effect waves-light" value="Atencion enfermeria">
                                                         <input type="button" onclick="orden_salida();" class="btn btn-primary btn-block waves-effect waves-light" value="Farmacia">
                                                         <input type="button" onclick="historial_medico();" class="btn btn-success btn-block waves-effect waves-light" value="Historial clinico">
-                                                        <button type="button" onclick="traslado_sala(3560);" class="btn btn-warning btn-block waves-effect waves-light">Traslado</button>
-                                                        <button type="button" onclick="cerrar_cuenta(3560); " class="btn btn-danger btn-block waves-effect waves-light">Liberar sala</button>
+                                                        <button type="button" onclick="trasladoPacienteModal();" class="btn btn-warning btn-block waves-effect waves-light" style="color: white">Traslado</button>
+                                                        <button type="button" onclick="preguntaLiberarSala()" class="btn btn-danger btn-block waves-effect waves-light">Liberar sala</button>
                                                     </div>
                                             </div>
                                         </div>
@@ -383,32 +381,70 @@
                                             <div class="card-body">
 
                                                 <div class="form-group">
-                                                    <label class="control-label col-md-12">Paciente </label>
+                                                    <input type="hidden" id="idpacientemodal-dentrosala">
+                                                </div>
+
+
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12">PACIENTE </label>
                                                         <input type="text" id="txtNombre" autocomplete="off"
                                                                class="form-control" disabled>
                                                 </div>
 
 
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12">HORA ENTRO SALA DE ESPERA</label>
+                                                    <input type="text" id="txtHoraEntroEspera" autocomplete="off"
+                                                           class="form-control" disabled>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12">HORA ENTRO A SALA</label>
+                                                    <input type="text" id="txtHoraEntro" autocomplete="off"
+                                                           class="form-control" disabled>
+                                                </div>
 
 
+                                                <div class="form-group">
+                                                    <label style="color:#191818">RAZON DE USO</label>
+                                                    <br>
+                                                    <div>
+                                                        <select class="form-control" id="select-dentrosala-razonuso" disabled>
+                                                        </select>
+                                                    </div>
+                                                </div>
 
+
+                                                <hr>
+
+                                                <div id="razonuso-btn-editar" style="display: block">
+                                                <center>
+                                                    <button type="button" class="btn btn-warning" style="color: white" onclick="modificarSelectRazonUso()">Editar Razón de uso</button>
+                                                </center>
+                                                </div>
+
+                                                <div id="razonuso-btn-guardar" style="display: none">
+                                                    <center>
+                                                        <button type="button" class="btn btn-success" style="color: white" onclick="actualizarSelectRazonUso()">Actualizar</button>
+                                                    </center>
+                                                </div>
 
 
                                             </div>
                                         </div>
 
 
-
-
                                 </div>
                             </div>
+
                         </section>
+
                     </form>
 
 
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -416,6 +452,75 @@
 
 
 
+
+
+
+    <!-- MODAL PARA TRASLADAR UN PACIENTE QUE ESTA DENTRO DE UNA SALA -->
+
+    <div class="modal fade" id="modalTrasladoPaciente">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">TRASLADO DE PACIENTES</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formulario-infotraslado">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="form-group">
+                                        <input type="hidden" id="id-trasladopaciente">
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label class="control-label col-md-12">SALA ACTUAL</label>
+                                        <input type="text" id="txtSalaActual-info" autocomplete="off"
+                                               class="form-control" disabled>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label style="color:#191818">Sala a Asignar</label>
+                                        <br>
+                                        <div>
+                                            <select class="form-control" id="select-sala-asignar">
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label style="color:#191818">Razón de uso</label>
+                                        <br>
+                                        <div>
+                                            <select class="form-control" id="select-razouso-v2">
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarNuevoTraslado()">Guardar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 </div>
@@ -455,7 +560,7 @@
 
             validarBotonOpciones();
 
-            //countdown();
+            countdown();
 
             document.getElementById("divcontenedor").style.display = "block";
 
@@ -500,7 +605,7 @@
         }
 
         function countdown() {
-            var seconds = 60;
+            var seconds = 20;
             function tick() {
                 var counter = document.getElementById("contador");
                 seconds--;
@@ -517,34 +622,36 @@
 
         function recargarPaginaCronometro(){
 
+            document.getElementById("bloque01enfermeria").style.display = "none";
+            document.getElementById("bloque02consultoria").style.display = "none";
+
             openLoading();
 
-
-            /*axios.post(url+'/asignaciones/verificar/hay/espera',{
+            axios.post(url+'/asignaciones/recargando/cronometro',{
 
             })
                 .then((response) => {
                     closeLoading();
                     if(response.data.success === 1){
 
-                        if(response.data.haypacientes === 1){
-                            document.getElementById("contenedorSalaEspera").style.display = "block";
 
-                        }else{
-                            // ocultar tabla
-                            document.getElementById("contenedorSalaEspera").style.display = "none";
-                        }
-
-
+                       volverMostrarBloques();
 
                     }else{
-                        toastr.error('Información no encontrada');
+                        volverMostrarBloques();
+                        toastr.error('Error al recargar');
                     }
                 })
                 .catch((error) => {
                     closeLoading();
-                    toastr.error('Información no encontrada');
-                });*/
+                    volverMostrarBloques();
+                    toastr.error('Error al recargar');
+                });
+        }
+
+        function volverMostrarBloques(){
+            document.getElementById("bloque01enfermeria").style.display = "block";
+            document.getElementById("bloque02consultoria").style.display = "block";
         }
 
         // abre modal para agregar una nueva asignacion
@@ -971,9 +1078,28 @@
 
                         let unido = response.data.infopaciente.nombres + " " + response.data.infopaciente.apellidos;
 
+                        $('#idpacientemodal-dentrosala').val(response.data.infoconsulta.id);
+
+
                         $('#txtNombre').val(unido);
+                        $('#txtHoraEntroEspera').val(response.data.entroespera);
+                        $('#txtHoraEntro').val(response.data.horaentro);
+
+                        document.getElementById("select-dentrosala-razonuso").options.length = 0;
+
+                        $.each(response.data.arrayrazonuso, function( key, val ){
+                            if(response.data.infoconsulta.motivo_id == val.id){
+                                $('#select-dentrosala-razonuso').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
+                            }else{
+                                $('#select-dentrosala-razonuso').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                            }
+                        });
 
 
+                        // bloquear botonera de editar o guardar
+                        document.getElementById("select-dentrosala-razonuso").disabled = true;
+                        document.getElementById("razonuso-btn-editar").style.display = "block";
+                        document.getElementById("razonuso-btn-guardar").style.display = "none";
 
                         $('#modalFichaAdministrativa').modal('show');
                     }
@@ -1000,6 +1126,220 @@
                     closeLoading();
                 });
         }
+
+
+
+        function modificarSelectRazonUso(){
+
+            document.getElementById("select-dentrosala-razonuso").disabled = false;
+            document.getElementById("razonuso-btn-editar").style.display = "none";
+            document.getElementById("razonuso-btn-guardar").style.display = "block";
+        }
+
+
+        function actualizarSelectRazonUso(){
+
+            openLoading();
+
+            var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
+            var idRazonUso = document.getElementById('select-dentrosala-razonuso').value;
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+            formData.append('idrazonuso', idRazonUso);
+
+            axios.post(url+'/asignaciones/actualizar/razonuso/paciente', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        toastr.success('Actualizado');
+
+                        document.getElementById("select-dentrosala-razonuso").disabled = true;
+                        document.getElementById("razonuso-btn-guardar").style.display = "none";
+                        document.getElementById("razonuso-btn-editar").style.display = "block";
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+
+        function preguntaLiberarSala(){
+
+            Swal.fire({
+                title: '¿Liberar Sala?',
+                text: '',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                closeOnClickOutside: false,
+                allowOutsideClick: false,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    liberarSala();
+                }
+            })
+
+        }
+
+        function liberarSala(){
+
+            openLoading();
+
+            var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+
+
+            axios.post(url+'/asignaciones/liberarsala/paciente', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        Swal.fire({
+                            title: 'Sala Liberada',
+                            text: '',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            closeOnClickOutside: false,
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Recargar Vista',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargarVista();
+                            }
+                        })
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+
+        // abre modal para trasladar un paciente
+        function trasladoPacienteModal(){
+
+            var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
+
+            openLoading();
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+            axios.post(url+'/asignaciones/informacion/paciente/dentrosala', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+
+                        $('#txtSalaActual-info').val(response.data.salactual);
+
+                        document.getElementById("select-sala-asignar").options.length = 0;
+                        document.getElementById("select-razouso-v2").options.length = 0;
+
+
+                        $.each(response.data.arraysala, function( key, val ){
+                            if(response.data.info.salaespera_id == val.id){
+                                $('#select-sala-asignar').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
+                            }else{
+                                $('#select-sala-asignar').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                            }
+                        });
+
+                        $.each(response.data.arrayrazonuso, function( key, val ){
+                            if(response.data.info.motivo_id == val.id){
+                                $('#select-razouso-v2').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
+                            }else{
+                                $('#select-razouso-v2').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                            }
+                        });
+
+
+                        $('#modalTrasladoPaciente').modal('show');
+                    }
+                    else{
+                        toastr.error('error al buscar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al buscar');
+                    closeLoading();
+                });
+        }
+
+
+        function guardarNuevoTraslado(){
+
+
+            openLoading();
+
+            var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
+            var nuevasala = document.getElementById('select-sala-asignar').value;
+            var nuevomotivo = document.getElementById('select-razouso-v2').value;
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+            formData.append('nuevasala', nuevasala);
+            formData.append('nuevomotivo', nuevomotivo);
+
+            axios.post(url+'/asignaciones/traslado/paciente/reseteo', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        Swal.fire({
+                            title: 'Traslado Guardado',
+                            text: '',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            closeOnClickOutside: false,
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Recargar Vista',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargarVista();
+                            }
+                        })
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+
 
 
 

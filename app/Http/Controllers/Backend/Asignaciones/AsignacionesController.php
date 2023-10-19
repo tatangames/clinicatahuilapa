@@ -359,14 +359,16 @@ class AsignacionesController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
+        $fechaCarbon = Carbon::parse(Carbon::now());
+
 
         Consulta_Paciente::where('id', $request->idconsulta)->update([
-            'estado_paciente' => 1, // paciente dentro de la Sala
+            'estado_paciente' => 1, // paciente dentro a la Sala
+            'hora_dentrosala' => $fechaCarbon
         ]);
 
         $infoPaciente = Consulta_Paciente::where('id', $request->idconsulta)->first();
         $infoSala = SalasEspera::where('id', $infoPaciente->salaespera_id)->first();
-
 
         return ['success' => 1, 'nombresala' => $infoSala->nombre];
     }
@@ -409,17 +411,135 @@ class AsignacionesController extends Controller
                 $hayfoto = 1;
             }
 
+            $horaEntroEsperar = date("h:i A", strtotime($infoConsulta->fecha_hora));
+            $horaEntroSala = date("h:i A", strtotime($infoConsulta->hora_dentrosala));
+
+            $arrayrazonuso = Motivo::orderBy('nombre')->get();
+
             return ['success' => 1, 'infoconsulta' => $infoConsulta,
-                'infopaciente' => $infoPaciente, 'hayfoto' => $hayfoto];
+                'infopaciente' => $infoPaciente, 'hayfoto' => $hayfoto,
+                'horaentro' => $horaEntroSala, 'entroespera' => $horaEntroEsperar,
+                'arrayrazonuso' => $arrayrazonuso];
         }
         else{
             return ['success' => 2];
         }
+    }
+
+
+    public function actualizarRazonUsoPaciente(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required',
+            'idrazonuso' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        Consulta_Paciente::where('id', $request->idconsulta)->update([
+            'motivo_id' => $request->idrazonuso,
+        ]);
+
+
+        return ['success' => 1];
+    }
+
+
+    // liberar sala del paciente
+    public function liberarSalaPaciente(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        Consulta_Paciente::where('id', $request->idconsulta)->update([
+            'estado_paciente' => 2, // liberado
+        ]);
+
+
+        return ['success' => 1];
+    }
+
+
+    public function informacionPacienteDentroSala(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required', // id consulta_paciente
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        if($info = Consulta_Paciente::where('id', $request->idconsulta)->first()){
+
+            $arraySala = SalasEspera::where('id', '!=', $info->salaespera_id)
+            ->orderBy('nombre', 'ASC')
+            ->get();
+
+            $infoSala = SalasEspera::where('id', $info->salaespera_id)->first();
+
+
+            $arrayRazonUso = Motivo::orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 1, 'info' => $info,
+                'arraysala' => $arraySala,
+                'arrayrazonuso' => $arrayRazonUso, 'salactual' => $infoSala->nombre];
+        }else{
+            return ['success' => 2];
+        }
+    }
 
 
 
+    public function reseteoTrasladoPacienteNuevaSala(Request $request){
 
 
+        $regla = array(
+            'idconsulta' => 'required', // id consulta_paciente
+            'nuevasala' => 'required',
+            'nuevomotivo' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        if(Consulta_Paciente::where('id', $request->idconsulta)->first()){
+
+            $fechaCarbon = Carbon::parse(Carbon::now());
+
+            Consulta_Paciente::where('id', $request->idconsulta)->update([
+                'salaespera_id' => $request->nuevasala,
+                'motivo_id' => $request->nuevomotivo,
+                'fecha_hora' => $fechaCarbon, // cambia fecha a cuando esta en sala de espera
+                'estado_paciente' => 0, // vuelve a sala de espera
+                'hora_dentrosala' => null,
+            ]);
+
+
+            return ['success' => 1];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+    // recargando vista por cronometro
+    public function recargandoVistaCronometro(Request $request){
+
+
+        return ['success' => 1];
     }
 
 

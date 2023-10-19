@@ -96,6 +96,23 @@ Route::get('/admin/asignaciones/info/vista/editarpaciente/{idpaciente}', [Asigna
 // Ficha Administrativa
 Route::post('/admin/asignaciones/info/paciente/dentrosala',  [AsignacionesController::class,'informacionPacienteDentroDeSala']);
 
+// actualizar razon de uso del paciente dentro de la ficha administrativa
+Route::post('/admin/asignaciones/actualizar/razonuso/paciente',  [AsignacionesController::class,'actualizarRazonUsoPaciente']);
+
+// liberar sala de paciente
+Route::post('/admin/asignaciones/liberarsala/paciente',  [AsignacionesController::class,'liberarSalaPaciente']);
+
+// informacion paciente que esta dentro de una sala y se trasladara a sala de espera de x sala
+Route::post('/admin/asignaciones/informacion/paciente/dentrosala',  [AsignacionesController::class,'informacionPacienteDentroSala']);
+
+// trasladar paciente a nueva sala, pero se ira a sala de espera primero
+Route::post('/admin/asignaciones/traslado/paciente/reseteo',  [AsignacionesController::class,'reseteoTrasladoPacienteNuevaSala']);
+
+// recarga por cronometro
+Route::post('/admin/asignaciones/recargando/cronometro',  [AsignacionesController::class,'recargandoVistaCronometro']);
+
+
+
 
 
 
