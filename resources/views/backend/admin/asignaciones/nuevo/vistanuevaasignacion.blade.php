@@ -638,7 +638,36 @@
                     loadingOverlay().cancel(spinHandle);
                     if(response.data.success === 1){
 
-                       volverMostrarBloques();
+                        let btnConsultoria = response.data.arraypaciente['botonOpcionConsultoria'];
+                        let btnEnfermeria = response.data.arraypaciente['botonOpcionEnfermeria'];
+
+                        if(btnConsultoria > 0){
+                            document.getElementById("opciones-consultorio").disabled = false;
+                        }else{
+                            document.getElementById("opciones-consultorio").disabled = true;
+                        }
+
+
+                        if(btnEnfermeria > 0){
+                            document.getElementById("opciones-enfermeria").disabled = false;
+                        }else{
+                            document.getElementById("opciones-enfermeria").disabled = true;
+                        }
+
+                        let conteoEnfermeria = response.data.conteoEnfermeria;
+                        let conteoConsultoria = response.data.conteoConsultorio;
+
+                        let textoEnfermeria = "Enfermería ( " + conteoEnfermeria + " en Espera )";
+                        let textoConsultoria = "Consultoria ( " + conteoConsultoria + " en Espera )";
+
+                        document.getElementById("txtConteoEnfermeria").innerHTML = textoEnfermeria;
+                        document.getElementById("txtConteoConsultoria").innerHTML = textoConsultoria;
+
+                        document.getElementById("paciente-enfermeria").innerHTML = response.data.arraypaciente['salaEnfermeriaPaciente'];
+                        document.getElementById("paciente-consultorio").innerHTML = response.data.arraypaciente['salaConsultorioPaciente'];
+
+
+                        volverMostrarBloques();
 
                     }else{
                         loadingOverlay().cancel(spinHandle);
