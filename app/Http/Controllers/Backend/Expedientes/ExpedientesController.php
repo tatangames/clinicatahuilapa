@@ -95,6 +95,7 @@ class ExpedientesController extends Controller
                     $detalle->foto = $nomDocumento;
                     $detalle->save();
 
+
                     DB::commit();
                     return ['success' => 1];
 

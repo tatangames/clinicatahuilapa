@@ -15,16 +15,10 @@ use App\Http\Controllers\Backend\Configuracion\TipoDocumentoController;
 use App\Http\Controllers\Backend\Configuracion\DiagnosticoController;
 use App\Http\Controllers\Backend\Configuracion\MotivoConsultaController;
 use App\Http\Controllers\Backend\Asignaciones\AsignacionesController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\Http\Controllers\Backend\Historial\HistorialClinicoController;
+
+
+
 
 Route::get('/', [LoginController::class,'index'])->name('login');
 
@@ -153,12 +147,6 @@ Route::post('/admin/motivoconsulta/informacion', [MotivoConsultaController::clas
 Route::post('/admin/motivoconsulta/editar', [MotivoConsultaController::class, 'editarMotivoConsulta']);
 
 
-
-
-
-
-
-
 ///
 //PROFESION
 // retorna vista de Profesion
@@ -195,6 +183,43 @@ Route::post('/admin/medico/nuevo', [MedicoController::class, 'nuevoMedico']);
 Route::post('/admin/medico/informacion', [MedicoController::class, 'infoMedico']);
 // editar una medico
 Route::post('/admin/medico/editar', [MedicoController::class, 'editarMedico']);
+
+
+// ANTECEDENTES MEDICOS
+// se guarda tipo de antecedente y su nombre
+Route::get('/admin/antecedentes/medico/index', [MedicoController::class,'indexAntecedentesMedicos'])->name('admin.antecedentes.medico.index');
+Route::get('/admin/antecedentes/medico/tabla/index', [MedicoController::class,'tablaAntecedentesMedico']);
+Route::post('/admin/antecedentes/medico/nuevo', [MedicoController::class, 'nuevoAntecedentesMedico']);
+Route::post('/admin/antecedentes/medico/informacion', [MedicoController::class, 'infoAntecedentesMedico']);
+Route::post('/admin/antecedentes/medico/editar', [MedicoController::class, 'editarAntecedentesMedico']);
+
+
+
+// HISTORIAL CLINICO
+
+// vista general de historial clinico
+Route::get('/admin/historial/vista/general/{idconsulta}', [HistorialClinicoController::class, 'indexVistaGeneralHistorial']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

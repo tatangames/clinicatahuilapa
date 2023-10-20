@@ -366,7 +366,7 @@
                                                     </h3>
                                                     <hr class="m-t-5">
                                                     <div class="list-group b-0 mail-list" id="configuracion">
-                                                        <input type="button" onclick="antropometrias();" class="btn btn-info btn-block waves-effect waves-light" value="Atencion enfermeria">
+                                                        <input type="button" onclick="vistaAtencionEnfermeria();" class="btn btn-info btn-block waves-effect waves-light" value="Atencion enfermería">
                                                         <input type="button" onclick="orden_salida();" class="btn btn-primary btn-block waves-effect waves-light" value="Farmacia">
                                                         <input type="button" onclick="historial_medico();" class="btn btn-success btn-block waves-effect waves-light" value="Historial clinico">
                                                         <button type="button" onclick="trasladoPacienteModal();" class="btn btn-warning btn-block waves-effect waves-light" style="color: white">Traslado</button>
@@ -1373,6 +1373,11 @@
         }
 
 
+        function vistaAtencionEnfermeria(){
+
+            var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
+            window.location.href="{{ url('/admin/historial/vista/general') }}/" + idconsulta;
+        }
 
 
 
