@@ -539,7 +539,57 @@ class AsignacionesController extends Controller
     public function recargandoVistaCronometro(Request $request){
 
 
-        return ['success' => 1];
+        // cuantos pacientes hay en Espera para cada sala
+
+        $conteoConsultorio = Consulta_Paciente::where('salaespera_id', 1)
+            ->where('estado_paciente', 0)
+            ->count();
+
+        $conteoEnfermeria = Consulta_Paciente::where('salaespera_id', 2)
+            ->where('estado_paciente', 0)
+            ->count();
+
+
+        // OBTENER AL PACIENTE QUE ESTA DENTRO DE LA SALA CONSULTORIA
+
+        if($infoConsultorio = Consulta_Paciente::where('salaespera_id', 1)
+            ->where('estado_paciente', 1)
+            ->first()){
+
+            $infoPaciente = Paciente::where('id', $infoConsultorio->paciente_id)->first();
+
+            $salaConsulPaciente = "Paciente: " . $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+            $botonConsultoria = 1;
+        }else{
+            $salaConsulPaciente = "Paciente: (No asignado)";
+            $botonConsultoria = 0;
+        }
+
+        // OBTENER AL PACIENTE QUE ESTA DENTRO DE LA SALA ENFERMERIA
+
+        if($infoEnfermeria = Consulta_Paciente::where('salaespera_id', 2)
+            ->where('estado_paciente', 1)
+            ->first()){
+
+            $infoPaciente = Paciente::where('id', $infoEnfermeria->paciente_id)->first();
+
+            $salaEnfermePaciente = "Paciente: " . $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+            $botonEnfermeria = 1;
+        }else{
+            $salaEnfermePaciente = "Paciente: (No asignado)";
+            $botonEnfermeria = 0;
+        }
+
+        $arrayPaciente = [
+            "salaConsultorioPaciente" => $salaConsulPaciente,
+            "salaEnfermeriaPaciente" => $salaEnfermePaciente,
+            "botonOpcionConsultoria" => $botonConsultoria,
+            "botonOpcionEnfermeria" => $botonEnfermeria
+        ];
+
+
+        return ['success' => 1, 'arraypaciente' => $arrayPaciente,
+            'conteoConsultorio' => $conteoConsultorio, 'conteoEnfermeria' => $conteoEnfermeria,];
     }
 
 

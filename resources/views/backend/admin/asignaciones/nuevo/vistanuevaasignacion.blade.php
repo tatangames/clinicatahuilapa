@@ -67,7 +67,7 @@
 
                                             <div class="card card-secondary">
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Enfermeria ( {{ $conteoEnfermeria }} en Espera )</h3>
+                                                    <h3 class="card-title" id="txtConteoEnfermeria">Enfermería ( {{ $conteoEnfermeria }} en Espera )</h3>
                                                     <span class="input-group-btn" style="float: right">
                                                         <span class="btn waves-effect waves-light btn-primary"  onclick="modalTablaEnfermeria()">
                                                             <i class="fa fa-plus" style="color: white">Asignar</i>
@@ -90,7 +90,7 @@
 
                                             <div class="card card-success">
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Consultorio ( {{ $conteoConsultorio }} en Espera )</h3>
+                                                    <h3 class="card-title" id="txtConteoConsultoria">Consultorio ( {{ $conteoConsultorio }} en Espera )</h3>
 
                                                     <span class="input-group-btn" style="float: right">
                                                         <span class="btn waves-effect waves-light btn-primary" onclick="modalTablaConsultoria()">
@@ -537,6 +537,9 @@
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/alertaPersonalizada.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/loadingOverlay.js') }}" type="text/javascript"></script>
+
+
     <script type="text/javascript">
         $(document).ready(function(){
 
@@ -605,7 +608,7 @@
         }
 
         function countdown() {
-            var seconds = 20;
+            var seconds = 60;
             function tick() {
                 var counter = document.getElementById("contador");
                 seconds--;
@@ -622,28 +625,29 @@
 
         function recargarPaginaCronometro(){
 
+
+            var spinHandle = loadingOverlay().activate();
+
             document.getElementById("bloque01enfermeria").style.display = "none";
             document.getElementById("bloque02consultoria").style.display = "none";
-
-            openLoading();
 
             axios.post(url+'/asignaciones/recargando/cronometro',{
 
             })
                 .then((response) => {
-                    closeLoading();
+                    loadingOverlay().cancel(spinHandle);
                     if(response.data.success === 1){
-
 
                        volverMostrarBloques();
 
                     }else{
+                        loadingOverlay().cancel(spinHandle);
                         volverMostrarBloques();
                         toastr.error('Error al recargar');
                     }
                 })
                 .catch((error) => {
-                    closeLoading();
+                    loadingOverlay().cancel(spinHandle);
                     volverMostrarBloques();
                     toastr.error('Error al recargar');
                 });
