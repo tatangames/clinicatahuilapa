@@ -200,7 +200,8 @@ Route::post('/admin/antecedentes/medico/editar', [MedicoController::class, 'edit
 // vista general de historial clinico
 Route::get('/admin/historial/vista/general/{idconsulta}', [HistorialClinicoController::class, 'indexVistaGeneralHistorial']);
 
-
+// actualizar listado de checkbox de antecedente del paciente
+Route::post('/admin/historial/antecedente/actualizacion', [HistorialClinicoController::class, 'actualizarListadoPacienteAntecedente']);
 
 
 

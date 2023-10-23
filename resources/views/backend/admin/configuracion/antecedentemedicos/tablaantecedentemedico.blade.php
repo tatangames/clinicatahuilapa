@@ -7,6 +7,7 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
+                                <th width="10%">ID</th>
                                 <th width="20%">Tipo de Antecedente</th>
                                 <th width="15%">Nombre</th>
                                 <th width="12%">Opciones</th>
@@ -16,6 +17,7 @@
 
                             @foreach($lista as $dato)
                                 <tr>
+                                    <td>{{ $dato->id }}</td>
                                     <td>{{ $dato->tipoantecedente }}</td>
                                     <td>{{ $dato->nombre }}</td>
                                     <td>

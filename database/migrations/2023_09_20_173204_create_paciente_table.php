@@ -19,7 +19,6 @@ class CreatePacienteTable extends Migration
             $table->bigInteger('estado_civil_id')->unsigned();
             $table->bigInteger('tipo_documento_id')->unsigned();
             $table->bigInteger('profesion_id')->unsigned();
-
             $table->string('nombres', 150)->nullable();
             $table->string('apellidos', 150)->nullable();
             $table->date('fecha_nacimiento');
@@ -36,6 +35,7 @@ class CreatePacienteTable extends Migration
             $table->foreign('tipo_id')->references('id')->on('tipo_paciente');
             $table->foreign('estado_civil_id')->references('id')->on('estado_civil');
             $table->foreign('profesion_id')->references('id')->on('profesion');
+
         });
     }
 
