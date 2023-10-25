@@ -776,6 +776,10 @@
 
                                 <div class="row">
 
+                                    <div class="">
+                                        <input type="hidden" class="form-control" id="id-antro-editar">
+                                    </div>
+
                                     <div class="form-group col-md-3">
                                         <label>Fecha <span style="color: red">*</span></label>
                                         <input type="date" class="form-control" id="fecha-antro-editar" autocomplete="off">
@@ -848,7 +852,7 @@
 
                                     <div class="form-group col-md-3">
                                         <label>Estatura (cm):</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();"  class="form-control" id="estatura-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();"  class="form-control" id="estatura-antro-editar" autocomplete="off">
                                     </div>
 
 
@@ -911,7 +915,7 @@
 
                                     <div class="form-group col-md-3">
                                         <label>SpO2:</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="sp02-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="sp02-antro-editar" autocomplete="off">
                                     </div>
 
 
@@ -971,17 +975,13 @@
 
 
 
-
-
-
-
                             </div>
                         </center>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarAntropometria()">Guardar Antropometría</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="actualizarAntropometria()">Actualizar Antropometría</button>
                 </div>
             </div>
         </div>
@@ -1341,6 +1341,22 @@
                     closeLoading();
 
                     if(response.data.success === 1){
+                        Swal.fire({
+                            title: 'Error',
+                            text: "Ya se encuentra un registro con esta consulta",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Recargar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargarVista()
+                            }
+                        })
+                    }
+                    else if(response.data.success === 2){
                         toastr.success('Registrado correctamente');
                         $('#modalAntro').modal('hide');
                         document.getElementById("btnAntro").style.display = "none";
@@ -1366,29 +1382,41 @@
 
             openLoading();
 
-            axios.post(url+'/medico/informacion',{
+
+
+            axios.post(url+'/historial/informacion/antropometria',{
                 'id': idantro
             })
                 .then((response) => {
                     closeLoading();
                     if(response.data.success === 1){
-                        $('#modalEditar').modal('show');
-                        $('#id-editar').val(response.data.lista.id);
-                        $('#nombre-editar').val(response.data.lista.nombre);
-                        $('#apellido-editar').val(response.data.lista.apellido);
-                        $('#telefono-editar').val(response.data.lista.telefono);
 
-                        document.getElementById("usuario-editar").options.length = 0;
+                        $('#id-antro-editar').val(idantro);
+                        $('#fecha-antro-editar').val(response.data.info.fecha);
+                        $('#frecuencia-cardia-antro-editar').val(response.data.info.frecuencia_cardiaca);
+                        $('#frecuencia-respiratoria-antro-editar').val(response.data.info.frecuencia_respiratoria);
+                        $('#presion-arterial-antro-editar').val(response.data.info.presion_arterial);
+                        $('#temperatura-antro-editar').val(response.data.info.temperatura);
+                        $('#perim-abdominal-antro-editar').val(response.data.info.perim_abdominal);
+                        $('#perimetro-cefalico-antro-editar').val(response.data.info.perim_cefalico);
+                        $('#peso-libra-antro-editar').val(response.data.info.peso_libra);
+                        $('#peso-kilo-antro-editar').val(response.data.info.peso_kilo);
+                        $('#estatura-antro-editar').val(response.data.info.estatura);
+                        $('#imc-antro-editar').val(response.data.info.imc);
+                        $('#resultado-imc-antro-editar').val(response.data.info.resultado_imc);
+                        $('#glucometria-capilar-antro-editar').val(response.data.info.glucometria_capilar);
+                        $('#glicohemoglobina-antro-editar').val(response.data.info.glicohemoglibona_capilar);
+                        $('#cetona-capilar-antro-editar').val(response.data.info.cetona_capilar);
+                        $('#sp02-antro-editar').val(response.data.info.spo2);
+                        $('#perimetro-cintura-antro-editar').val(response.data.info.perim_cintura);
+                        $('#perimetro-cadera-antro-editar').val(response.data.info.perim_cadera);
+                        $('#icc-antro-editar').val(response.data.info.icc);
+                        $('#riesgo-mujer-antro-editar').val(response.data.info.riesgo_mujer);
+                        $('#riesgo-hombre-antro-editar').val(response.data.info.riesgo_hombre);
+                        $('#gasto-energetico-antro-editar').val(response.data.info.gasto_energetico_basal);
+                        $('#otros-detalles-antro-editar').val(response.data.info.nota_adicional);
 
-                        $.each(response.data.rr, function( key, val ){
-                            if(response.data.idrr == val.id){
-                                $('#usuario-editar').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
-                            }else{
-                                $('#usuario-editar').append('<option value="' +val.id +'">'+val.nombre+'</option>');
-                            }
-                        });
-
-
+                        $('#modalAntroEditar').modal('show');
                     }else{
                         toastr.error('Información no encontrada');
                     }
@@ -1401,6 +1429,88 @@
         }
 
 
+
+        function actualizarAntropometria(){
+
+            var idmodal = document.getElementById('id-antro-editar').value;
+            var fecha = document.getElementById('fecha-antro-editar').value;
+
+            var freCardiaca = document.getElementById('frecuencia-cardia-antro-editar').value;
+            var freRespiratoria = document.getElementById('frecuencia-respiratoria-antro-editar').value;
+            var presionArterial = document.getElementById('presion-arterial-antro-editar').value;
+            var temperatura = document.getElementById('temperatura-antro-editar').value;
+            var perimetroAbdominal = document.getElementById('perim-abdominal-antro-editar').value;
+            var perimetroCefalico = document.getElementById('perimetro-cefalico-antro-editar').value;
+            var pesoLibra = document.getElementById('peso-libra-antro-editar').value;
+            var pesoKilo = document.getElementById('peso-kilo-antro-editar').value;
+            var estatura = document.getElementById('estatura-antro-editar').value;
+            var imc = document.getElementById('imc-antro-editar').value;
+            var resultadoImc = document.getElementById('resultado-imc-antro-editar').value;
+            var glucometria = document.getElementById('glucometria-capilar-antro-editar').value;
+            var glicohemoglobina = document.getElementById('glicohemoglobina-antro-editar').value;
+            var cetona = document.getElementById('cetona-capilar-antro-editar').value;
+            var sp02 = document.getElementById('sp02-antro-editar').value;
+            var perimetroCintura = document.getElementById('perimetro-cintura-antro-editar').value;
+            var perimetroCadera = document.getElementById('perimetro-cadera-antro-editar').value;
+            var icc = document.getElementById('icc-antro-editar').value;
+            var riesgoMujer = document.getElementById('riesgo-mujer-antro-editar').value;
+            var riesgoHombre = document.getElementById('riesgo-hombre-antro-editar').value;
+            var gastoEnergetico = document.getElementById('gasto-energetico-antro-editar').value;
+            var otrosDetalles = document.getElementById('otros-detalles-antro-editar').value;
+
+            if(fecha === ''){
+                toastr.error('Fecha es requerida');
+                return;
+            }
+
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('idmodal', idmodal);
+            formData.append('fecha', fecha);
+            formData.append('freCardiaca', freCardiaca);
+            formData.append('freRespiratoria', freRespiratoria);
+            formData.append('presionArterial', presionArterial);
+            formData.append('temperatura', temperatura);
+            formData.append('perimetroAbdominal', perimetroAbdominal);
+            formData.append('perimetroCefalico', perimetroCefalico);
+            formData.append('pesoLibra', pesoLibra);
+            formData.append('pesoKilo', pesoKilo);
+            formData.append('estatura', estatura);
+            formData.append('imc', imc);
+            formData.append('resultadoImc', resultadoImc);
+            formData.append('glucometria', glucometria);
+            formData.append('glicohemoglobina', glicohemoglobina);
+            formData.append('cetona', cetona);
+            formData.append('sp02', sp02);
+            formData.append('perimetroCintura', perimetroCintura);
+            formData.append('perimetroCadera', perimetroCadera);
+            formData.append('icc', icc);
+            formData.append('riesgoMujer', riesgoMujer);
+            formData.append('riesgoHombre', riesgoHombre);
+            formData.append('gastoEnergetico', gastoEnergetico);
+            formData.append('otrosDetalles', otrosDetalles);
+
+            axios.post(url+'/historial/actualizar/antropometria', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Actualizado correctamente');
+                        $('#modalAntroEditar').modal('hide');
+
+                        recargarTablaAntropometria();
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
 
 
 

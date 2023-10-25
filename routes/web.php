@@ -212,6 +212,9 @@ Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoControl
 // informacion de una antropometria
 Route::post('/admin/historial/informacion/antropometria', [HistorialClinicoController::class, 'informacionAntropometria']);
 
+// actualizar antropometria
+Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoController::class, 'actualizarAntropometria']);
+
 
 
 

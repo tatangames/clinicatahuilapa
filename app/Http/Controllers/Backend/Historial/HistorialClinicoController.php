@@ -205,6 +205,11 @@ class HistorialClinicoController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
+
+        if(Antropometria::where('consulta_id', $request->idconsulta)->first()){
+            return ['success' => 1];
+        }
+
         DB::beginTransaction();
 
         try {
@@ -243,7 +248,7 @@ class HistorialClinicoController extends Controller
             $dato->save();
 
             DB::commit();
-            return ['success' => 1];
+            return ['success' => 2];
 
         }catch(\Throwable $e){
             DB::rollback();
@@ -257,7 +262,6 @@ class HistorialClinicoController extends Controller
 
     public function informacionAntropometria(Request $request){
 
-
         $regla = array(
             'id' => 'required'
         );
@@ -266,17 +270,53 @@ class HistorialClinicoController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
-        if(Antropometria::where('id', $request->id)->first()){
+        if($info = Antropometria::where('id', $request->id)->first()){
 
-
-
-
-
-            return ['success' => 1];
+            return ['success' => 1, 'info' => $info];
         }else{
             return ['success' => 2];
         }
+    }
 
+
+    public function actualizarAntropometria(Request $request){
+
+        $regla = array(
+            'fecha' => 'required',
+            'idmodal' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        Antropometria::where('id', $request->idmodal)->update([
+            'fecha' => $request->fecha,
+            'frecuencia_cardiaca' => $request->freCardiaca,
+            'frecuencia_respiratoria' => $request->freRespiratoria,
+            'presion_arterial' => $request->presionArterial,
+            'temperatura' => $request->temperatura,
+            'perim_abdominal' => $request->perimetroAbdominal,
+            'perim_cefalico' => $request->perimetroCefalico,
+            'peso_libra' => $request->pesoLibra,
+            'peso_kilo' => $request->pesoKilo,
+            'estatura' => $request->estatura,
+            'imc' => $request->imc,
+            'resultado_imc' => $request->resultadoImc,
+            'glucometria_capilar' => $request->glucometria,
+            'glicohemoglibona_capilar' => $request->glicohemoglobina,
+            'cetona_capilar' => $request->cetona,
+            'spo2' => $request->sp02,
+            'perim_cintura' => $request->perimetroCintura,
+            'perim_cadera' => $request->perimetroCadera,
+            'icc' => $request->icc,
+            'riesgo_mujer' => $request->riesgoMujer,
+            'riesgo_hombre' => $request->riesgoHombre,
+            'gasto_energetico_basal' => $request->gastoEnergetico,
+            'nota_adicional' => $request->otrosDetalles,
+        ]);
+
+       return ['success' => 1];
     }
 
 

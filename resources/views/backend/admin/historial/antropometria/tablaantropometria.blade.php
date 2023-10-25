@@ -34,7 +34,7 @@
                                     <td>{{ $dato->estatura }}</td>
 
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-xs" onclick="informacion({{ $dato->id }})">
+                                        <button type="button" class="btn btn-primary btn-xs" onclick="informacionAntropometria({{ $dato->id }})">
                                             <i class="fas fa-eye" title="Ver"></i>&nbsp; Ver
                                         </button>
                                     </td>
