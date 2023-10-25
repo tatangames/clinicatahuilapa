@@ -11,9 +11,12 @@ use App\Models\Paciente;
 use App\Models\PacienteAntecedentes;
 use App\Models\TipeoSanguineo;
 use App\Models\Usuario;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class HistorialClinicoController extends Controller
 {
@@ -70,10 +73,17 @@ class HistorialClinicoController extends Controller
         $arrayIdPacienteAntecedente = PacienteAntecedentes::where('paciente_id', $infoPaciente->id)->get();
 
 
+        $btnAntro = 0;
+        // verificar si ya tiene 1 ampometria, para ocultar boton
+        if(Antropometria::where('consulta_id', $idconsulta)->first()){
+            $btnAntro = 1;
+        }
+
+
         return view('backend.admin.historial.general.vistageneralhistorial', compact('infoPaciente',
             'nombreCompleto', 'antecedentes', 'arrayTipeoSanguineo',
             'arrayAntecedentesMedico', 'arrayIdPacienteAntecedente', 'arrayComplicacionAguda',
-        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta'));
+        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta', 'btnAntro'));
     }
 
 
@@ -166,26 +176,108 @@ class HistorialClinicoController extends Controller
 
 
         $lista = Antropometria::where('consulta_id', $idconsulta)
-            ->orderBy('fecha_hora', 'DESC')
+            ->orderBy('fecha', 'DESC')
             ->get();
 
         foreach ($lista as $dato){
 
-            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha_hora));
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha_hora));
+            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+            $dato->horaFormat = date("h:i A", strtotime($dato->hora));
 
             $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
 
             $dato->nomusuario = $infoUsuario->nombre;
-
-
-
         }
 
 
         return view('backend.admin.historial.antropometria.tablaantropometria', compact('lista'));
     }
 
+
+    public function registrarAntropometria(Request $request){
+
+
+        $regla = array(
+            'fecha' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        DB::beginTransaction();
+
+        try {
+
+            $idusuario = Auth::id();
+
+            $horaCarbon = Carbon::parse(Carbon::now());
+
+            $dato = new Antropometria();
+            $dato->consulta_id = $request->idconsulta;
+            $dato->usuario_id = $idusuario;
+            $dato->fecha = $request->fecha;
+            $dato->hora = $horaCarbon;
+            $dato->frecuencia_cardiaca = $request->freCardiaca;
+            $dato->frecuencia_respiratoria = $request->freRespiratoria;
+            $dato->presion_arterial = $request->presionArterial;
+            $dato->temperatura = $request->temperatura;
+            $dato->perim_abdominal = $request->perimetroAbdominal;
+            $dato->perim_cefalico = $request->perimetroCefalico;
+            $dato->peso_libra = $request->pesoLibra;
+            $dato->peso_kilo = $request->pesoKilo;
+            $dato->estatura = $request->estatura;
+            $dato->imc = $request->imc;
+            $dato->resultado_imc = $request->resultadoImc;
+            $dato->glucometria_capilar = $request->glucometria;
+            $dato->glicohemoglibona_capilar = $request->glicohemoglobina;
+            $dato->cetona_capilar = $request->cetona;
+            $dato->spo2 = $request->sp02;
+            $dato->perim_cintura = $request->perimetroCintura;
+            $dato->perim_cadera = $request->perimetroCadera;
+            $dato->icc = $request->icc;
+            $dato->riesgo_mujer = $request->riesgoMujer;
+            $dato->riesgo_hombre = $request->riesgoHombre;
+            $dato->gasto_energetico_basal = $request->gastoEnergetico;
+            $dato->nota_adicional = $request->otrosDetalles;
+            $dato->save();
+
+            DB::commit();
+            return ['success' => 1];
+
+        }catch(\Throwable $e){
+            DB::rollback();
+            Log::info('error ' . $e);
+            return ['success' => 99];
+        }
+
+    }
+
+
+
+    public function informacionAntropometria(Request $request){
+
+
+        $regla = array(
+            'id' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if(Antropometria::where('id', $request->id)->first()){
+
+
+
+
+
+            return ['success' => 1];
+        }else{
+            return ['success' => 2];
+        }
+
+    }
 
 
 

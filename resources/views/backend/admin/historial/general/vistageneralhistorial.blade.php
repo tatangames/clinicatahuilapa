@@ -449,11 +449,13 @@
                                                     <div class="card card-default">
                                                         <div class="card-header">
                                                             <h3 class="card-title" style="font-weight: bold">Historial de Antrometria</h3>
+                                                            @if($btnAntro == 0)
                                                             <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
-                                                                    onclick="modalAntropometria()" class="button button-3d button-rounded button-pill button-small">
+                                                                    onclick="modalAntropometria()" id="btnAntro" class="button button-3d button-rounded button-pill button-small">
                                                                 <i class="fas fa-plus"></i>
                                                                 Nuevo Antropometría
                                                             </button>
+                                                            @endif
                                                         </div>
                                                     </div>
 
@@ -465,9 +467,6 @@
 
                                                         <div id="tablaAntrometria">
                                                         </div>
-
-
-
 
 
                                                     </div>
@@ -546,7 +545,7 @@
                             <div class="row">
 
                                 <div class="form-group col-md-3">
-                                    <label>Fecha</label>
+                                    <label>Fecha <span style="color: red">*</span></label>
                                     <input type="date" class="form-control" id="fecha-antro" autocomplete="off">
                                 </div>
 
@@ -644,13 +643,345 @@
 
 
 
-                        </div>
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>Glucometria Capilar:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="glucometria-capilar-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Glicohemoglobina Capilar:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);"  class="form-control" id="glicohemoglobina-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Cetonas Capilares:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="cetona-capilar-antro" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+
+
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>SpO2:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="sp02-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Perimetro de Cintura (CM):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();"  class="form-control" id="perimetro-cintura-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Perimetro de Cadera (CM):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();" class="form-control" id="perimetro-cadera-antro" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>ICC :</label>
+                                        <input type="text" disabled class="form-control" id="icc-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Riesgo Mujer:</label>
+                                        <input type="text" disabled  class="form-control" id="riesgo-mujer-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Riesgo Hombre:</label>
+                                        <input type="text" disabled class="form-control" id="riesgo-hombre-antro" autocomplete="off">
+                                    </div>
+
+                                    <div class="form-group col-md-3">
+                                        <label>Gasto Energético Basal:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();"
+                                               class="form-control" id="gasto-energetico-antro" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+                                <br><br>
+
+
+                                    <label>Otros Detalles:</label>
+                                    <div class="form-group">
+                                        <textarea class="form-control" rows="3" id="otros-detalles-antro"></textarea>
+                                    </div>
+
+
+
+
+
+
+
+                            </div>
                         </center>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="nuevo()">Registrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarAntropometria()">Guardar Antropometría</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- MODAL EDITAR ANTROPOMETRIA -->
+
+
+    <div class="modal fade" id="modalAntroEditar">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar Antropometría</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-antropometria-editar">
+                        <center><div class="card-body">
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>Fecha <span style="color: red">*</span></label>
+                                        <input type="date" class="form-control" id="fecha-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Frecuencia Cardiaca (lpm):</label>
+                                        <input type="text" maxlength="150" class="form-control" id="frecuencia-cardia-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Frecuencia Respiratoria (rpm):</label>
+                                        <input type="text" maxlength="150" class="form-control" id="frecuencia-respiratoria-antro-editar" autocomplete="off">
+                                    </div>
+
+                                </div>
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>Presion Arterial (mmHg):</label>
+                                        <input type="text" maxlength="150" class="form-control" id="presion-arterial-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Temperatura (°C):</label>
+                                        <input type="text" class="form-control" id="temperatura-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Perím. Abdominal (cm):</label>
+                                        <input type="text" class="form-control" id="perim-abdominal-antro-editar" value="N/A" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>Perím. Cefálico (cm):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" value="N/A" id="perimetro-cefalico-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Peso (lb):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2_editar();"  class="form-control" id="peso-libra-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Peso (kg):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc3_editar();"  class="form-control" id="peso-kilo-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Estatura (cm):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();"  class="form-control" id="estatura-antro" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>IMC:</label>
+                                        <input type="text" disabled class="form-control" id="imc-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Resultado del IMC:</label>
+                                        <input type="text" disabled class="form-control" id="resultado-imc-antro-editar" autocomplete="off">
+                                    </div>
+
+                                </div>
+
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>Glucometria Capilar:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="glucometria-capilar-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Glicohemoglobina Capilar:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);"  class="form-control" id="glicohemoglobina-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Cetonas Capilares:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="cetona-capilar-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+
+
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>SpO2:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="sp02-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Perimetro de Cintura (CM):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice_editar();"  class="form-control" id="perimetro-cintura-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Perimetro de Cadera (CM):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice_editar();" class="form-control" id="perimetro-cadera-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>ICC :</label>
+                                        <input type="text" disabled class="form-control" id="icc-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Riesgo Mujer:</label>
+                                        <input type="text" disabled  class="form-control" id="riesgo-mujer-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Riesgo Hombre:</label>
+                                        <input type="text" disabled class="form-control" id="riesgo-hombre-antro-editar" autocomplete="off">
+                                    </div>
+
+                                    <div class="form-group col-md-3">
+                                        <label>Gasto Energético Basal:</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice_editar();"
+                                               class="form-control" id="gasto-energetico-antro-editar" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+                                <br><br>
+
+
+                                <label>Otros Detalles:</label>
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="3" id="otros-detalles-antro-editar"></textarea>
+                                </div>
+
+
+
+
+
+
+
+                            </div>
+                        </center>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarAntropometria()">Guardar Antropometría</button>
                 </div>
             </div>
         </div>
@@ -679,6 +1010,11 @@
             var ruta = "{{ URL::to('/admin/historial/antrometria/paciente-consulta') }}/" + idconsulta;
             $('#tablaAntrometria').load(ruta);
 
+
+            var fecha = new Date();
+            $('#fecha-antro').val(fecha.toJSON().slice(0,10));
+
+
             document.getElementById("divcontenedor").style.display = "block";
         });
     </script>
@@ -691,6 +1027,50 @@
 
 
         //********************************* BLOQUE 2 ***************************************
+
+        function recargarTablaAntropometria(){
+            let idconsulta = {{ $idconsulta }};
+            var ruta = "{{ URL::to('/admin/historial/antrometria/paciente-consulta') }}/" + idconsulta;
+            $('#tablaAntrometria').load(ruta);
+        }
+
+        function calcular_indice(){
+            perimetro_cintura = parseFloat($("#perimetro-cintura-antro").val());
+            perimetro_cadera = parseFloat($("#perimetro-cadera-antro").val());
+            valor =(parseFloat(perimetro_cintura/perimetro_cadera)).toFixed(2);
+            if(perimetro_cintura>0 && perimetro_cadera>0){
+                if(valor<0.8){
+                    mujer = "Bajo";
+                    color_mujer = "green";
+                }else if (valor>0.8 && valor<=0.85){
+                    mujer = "Moderado";
+                    color_mujer = "orange";
+                }else if (valor>0.85){
+                    mujer = "Alto";
+                    color_mujer = "red";
+                }
+                $("#riesgo-mujer-antro").val(mujer);
+                if(valor<0.95){
+                    color_hombre = "green";
+                    hombre = "Bajo";
+                }else if (valor>0.95 && valor<=1){
+                    hombre = "Moderado";
+                    color_hombre = "orange";
+                }else if (valor>1){
+                    hombre = "Alto";
+                    color_hombre = "red";
+                }
+                $("#riesgo-hombre-antro").val(hombre);
+                $("#riesgo-hombre-antro").css("color",color_hombre);
+                $("#riesgo-mujer-antro").css("color",color_mujer);
+                $("#riesgo-hombre-antro").css("font-weight","bold");
+                $("#riesgo-mujer-antro").css("font-weight","bold");
+                $("#icc-antro").val(valor);
+            }else{
+                $("#icc-antro").val(0);
+            }
+        }
+
 
 
         function valida_numero(e){
@@ -777,10 +1157,248 @@
         }
 
 
+        //****************
+
+
+        function calcular_imc2_editar(){
+            var peso = $('#peso-libra-antro-editar').val();
+            $('#peso-kilo-antro-editar').val((peso/2.2046).toFixed(2));
+
+            var estatura = $('#estatura-antro-editar').val();
+            var imc = (peso/2.2046)/((estatura/100)*(estatura/100));
+            $('#imc-antro-editar').val(imc.toFixed(2));
+            if(imc.toFixed(2) < 16){
+                var resimc= "Delgadez severa";
+            }
+            else if(imc.toFixed(2) >= 16 && imc.toFixed(2) <= 16.99){
+                var resimc= "Delgadez moderada";
+            }
+            else if(imc.toFixed(2) >= 1 && imc.toFixed(2) <= 18.49){
+                var resimc= "Delgadez leve";
+            }
+            else if(imc.toFixed(2) >= 18.5 && imc.toFixed(2) <= 24.99){
+                var resimc= "Normal";
+            }
+            else if(imc.toFixed(2) >= 25 && imc.toFixed(2) <= 29.99){
+                var resimc= "Preobeso";
+            }
+            else if(imc.toFixed(2) >= 30 && imc.toFixed(2) <= 34.99){
+                var resimc= "Obesidad leve";
+            }
+            else if(imc.toFixed(2) >= 35 && imc.toFixed(2) <= 39.99){
+                var resimc= "Obesidad media";
+            }
+            else if(imc.toFixed(2) >=40){
+                var resimc= "Obesidad mórbida";
+            }
+            $('#resultado-imc-antro-editar').val(resimc);
+        }
+
+        function calcular_imc3_editar(){
+            var peso = $('#peso-kilo-antro-editar').val();
+            $('#peso-libra-antro-editar').val((peso*2.2046).toFixed(2));
+
+            var estatura = $('#estatura-antro-editar').val();
+            var imc = (peso)/((estatura/100)*(estatura/100));
+            $('#imc-antro-editar').val(imc.toFixed(2));
+            if(imc.toFixed(2) < 16){
+                var resimc= "Delgadez severa";
+            }
+            else if(imc.toFixed(2) >= 16 && imc.toFixed(2) <= 16.99){
+                var resimc= "Delgadez moderada";
+            }
+            else if(imc.toFixed(2) >= 1 && imc.toFixed(2) <= 18.49){
+                var resimc= "Delgadez leve";
+            }
+            else if(imc.toFixed(2) >= 18.5 && imc.toFixed(2) <= 24.99){
+                var resimc= "Normal";
+            }
+            else if(imc.toFixed(2) >= 25 && imc.toFixed(2) <= 29.99){
+                var resimc= "Preobeso";
+            }
+            else if(imc.toFixed(2) >= 30 && imc.toFixed(2) <= 34.99){
+                var resimc= "Obesidad leve";
+            }
+            else if(imc.toFixed(2) >= 35 && imc.toFixed(2) <= 39.99){
+                var resimc= "Obesidad media";
+            }
+            else if(imc.toFixed(2) >=40){
+                var resimc= "Obesidad mórbida";
+            }
+            $('#resultado-imc-antro-editar').val(resimc);
+        }
+
+
+        function calcular_indice_editar(){
+            perimetro_cintura = parseFloat($("#perimetro-cintura-antro-editar").val());
+            perimetro_cadera = parseFloat($("#perimetro-cadera-antro-editar").val());
+            valor =(parseFloat(perimetro_cintura/perimetro_cadera)).toFixed(2);
+            if(perimetro_cintura>0 && perimetro_cadera>0){
+                if(valor<0.8){
+                    mujer = "Bajo";
+                    color_mujer = "green";
+                }else if (valor>0.8 && valor<=0.85){
+                    mujer = "Moderado";
+                    color_mujer = "orange";
+                }else if (valor>0.85){
+                    mujer = "Alto";
+                    color_mujer = "red";
+                }
+                $("#riesgo-mujer-antro-editar").val(mujer);
+                if(valor<0.95){
+                    color_hombre = "green";
+                    hombre = "Bajo";
+                }else if (valor>0.95 && valor<=1){
+                    hombre = "Moderado";
+                    color_hombre = "orange";
+                }else if (valor>1){
+                    hombre = "Alto";
+                    color_hombre = "red";
+                }
+                $("#riesgo-hombre-antro-editar").val(hombre);
+                $("#riesgo-hombre-antro-editar").css("color",color_hombre);
+                $("#riesgo-mujer-antro-editar").css("color",color_mujer);
+                $("#riesgo-hombre-antro-editar").css("font-weight","bold");
+                $("#riesgo-mujer-antro-editar").css("font-weight","bold");
+                $("#icc-antro-editar").val(valor);
+            }else{
+                $("#icc-antro-editar").val(0);
+            }
+        }
 
 
 
 
+        function guardarAntropometria(){
+
+
+            var fecha = document.getElementById('fecha-antro').value;
+
+
+            var freCardiaca = document.getElementById('frecuencia-cardia-antro').value;
+            var freRespiratoria = document.getElementById('frecuencia-respiratoria-antro').value;
+            var presionArterial = document.getElementById('presion-arterial-antro').value;
+            var temperatura = document.getElementById('temperatura-antro').value;
+            var perimetroAbdominal = document.getElementById('perim-abdominal-antro').value;
+            var perimetroCefalico = document.getElementById('perimetro-cefalico-antro').value;
+            var pesoLibra = document.getElementById('peso-libra-antro').value;
+            var pesoKilo = document.getElementById('peso-kilo-antro').value;
+            var estatura = document.getElementById('estatura-antro').value;
+            var imc = document.getElementById('imc-antro').value;
+            var resultadoImc = document.getElementById('resultado-imc-antro').value;
+            var glucometria = document.getElementById('glucometria-capilar-antro').value;
+            var glicohemoglobina = document.getElementById('glicohemoglobina-antro').value;
+            var cetona = document.getElementById('cetona-capilar-antro').value;
+            var sp02 = document.getElementById('sp02-antro').value;
+            var perimetroCintura = document.getElementById('perimetro-cintura-antro').value;
+            var perimetroCadera = document.getElementById('perimetro-cadera-antro').value;
+            var icc = document.getElementById('icc-antro').value;
+            var riesgoMujer = document.getElementById('riesgo-mujer-antro').value;
+            var riesgoHombre = document.getElementById('riesgo-hombre-antro').value;
+            var gastoEnergetico = document.getElementById('gasto-energetico-antro').value;
+            var otrosDetalles = document.getElementById('otros-detalles-antro').value;
+
+            if(fecha === ''){
+                toastr.error('Fecha es requerida');
+                return;
+            }
+
+
+            // ID PACIENTE
+            let idconsulta = {{ $idconsulta }};
+
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+            formData.append('fecha', fecha);
+            formData.append('freCardiaca', freCardiaca);
+            formData.append('freRespiratoria', freRespiratoria);
+            formData.append('presionArterial', presionArterial);
+            formData.append('temperatura', temperatura);
+            formData.append('perimetroAbdominal', perimetroAbdominal);
+            formData.append('perimetroCefalico', perimetroCefalico);
+            formData.append('pesoLibra', pesoLibra);
+            formData.append('pesoKilo', pesoKilo);
+            formData.append('estatura', estatura);
+            formData.append('imc', imc);
+            formData.append('resultadoImc', resultadoImc);
+            formData.append('glucometria', glucometria);
+            formData.append('glicohemoglobina', glicohemoglobina);
+            formData.append('cetona', cetona);
+            formData.append('sp02', sp02);
+            formData.append('perimetroCintura', perimetroCintura);
+            formData.append('perimetroCadera', perimetroCadera);
+            formData.append('icc', icc);
+            formData.append('riesgoMujer', riesgoMujer);
+            formData.append('riesgoHombre', riesgoHombre);
+            formData.append('gastoEnergetico', gastoEnergetico);
+            formData.append('otrosDetalles', otrosDetalles);
+
+            axios.post(url+'/historial/registrar/antropometria', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Registrado correctamente');
+                        $('#modalAntro').modal('hide');
+                        document.getElementById("btnAntro").style.display = "none";
+                        document.getElementById("formulario-antropometria").reset();
+
+                        recargarTablaAntropometria();
+
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+
+        }
+
+
+
+        function informacionAntropometria(idantro){
+
+            openLoading();
+
+            axios.post(url+'/medico/informacion',{
+                'id': idantro
+            })
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+                        $('#modalEditar').modal('show');
+                        $('#id-editar').val(response.data.lista.id);
+                        $('#nombre-editar').val(response.data.lista.nombre);
+                        $('#apellido-editar').val(response.data.lista.apellido);
+                        $('#telefono-editar').val(response.data.lista.telefono);
+
+                        document.getElementById("usuario-editar").options.length = 0;
+
+                        $.each(response.data.rr, function( key, val ){
+                            if(response.data.idrr == val.id){
+                                $('#usuario-editar').append('<option value="' +val.id +'" selected="selected">'+val.nombre+'</option>');
+                            }else{
+                                $('#usuario-editar').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                            }
+                        });
+
+
+                    }else{
+                        toastr.error('Información no encontrada');
+                    }
+                })
+                .catch((error) => {
+                    closeLoading();
+                    toastr.error('Información no encontrada');
+                });
+
+        }
 
 
 
@@ -810,7 +1428,6 @@
                     datosCheckboxes.push({ estado, valorAdicional });
                 }
             });
-
 
 
 
@@ -880,6 +1497,7 @@
 
             $('#modalAntro').modal({backdrop: 'static', keyboard: false})
         }
+
 
 
 

@@ -206,7 +206,11 @@ Route::post('/admin/historial/antecedente/actualizacion', [HistorialClinicoContr
 // cargar tabla de antrometria por paciente
 Route::get('/admin/historial/antrometria/paciente-consulta/{idconsulta}', [HistorialClinicoController::class, 'tablaAntrometriaPaciente']);
 
+// registrar formulario de antropometria
+Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoController::class, 'registrarAntropometria']);
 
+// informacion de una antropometria
+Route::post('/admin/historial/informacion/antropometria', [HistorialClinicoController::class, 'informacionAntropometria']);
 
 
 
