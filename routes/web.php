@@ -203,7 +203,8 @@ Route::get('/admin/historial/vista/general/{idconsulta}', [HistorialClinicoContr
 // actualizar listado de checkbox de antecedente del paciente
 Route::post('/admin/historial/antecedente/actualizacion', [HistorialClinicoController::class, 'actualizarListadoPacienteAntecedente']);
 
-
+// cargar tabla de antrometria por paciente
+Route::get('/admin/historial/antrometria/paciente-consulta/{idconsulta}', [HistorialClinicoController::class, 'tablaAntrometriaPaciente']);
 
 
 

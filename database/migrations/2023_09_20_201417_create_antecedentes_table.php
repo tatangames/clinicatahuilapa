@@ -18,8 +18,6 @@ class CreateAntecedentesTable extends Migration
             $table->bigInteger('paciente_id')->unsigned();
             $table->bigInteger('tipeo_sanguineo_id')->unsigned()->nullable();
 
-
-
             $table->text('antecedentes_familiares')->nullable();
             $table->text('alergias')->nullable();
             $table->text('medicamentos_actuales')->nullable();
@@ -29,14 +27,10 @@ class CreateAntecedentesTable extends Migration
             $table->text('nota_antecedentes_quirurgicos')->nullable();
             $table->text('antecedentes_oftalmologicos')->nullable();
             $table->text('antecedentes_deportivos')->nullable();
-
-
             $table->string('menarquia', 300)->nullable();
             $table->string('ciclo_menstrual', 300)->nullable();
             $table->string('pap', 300)->nullable();
             $table->string('mamografia', 300)->nullable();
-
-
             $table->text('otros')->nullable();
 
 

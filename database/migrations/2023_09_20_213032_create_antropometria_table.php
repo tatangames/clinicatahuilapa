@@ -16,6 +16,9 @@ class CreateAntropometriaTable extends Migration
         Schema::create('antropometria', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('consulta_id')->unsigned();
+            $table->bigInteger('usuario_id')->unsigned();
+
+
             $table->dateTime('fecha_hora');
             $table->string('frecuencia_cardiaca', 150)->nullable();
             $table->string('frecuencia_respiratoria', 150)->nullable();
@@ -23,7 +26,10 @@ class CreateAntropometriaTable extends Migration
             $table->decimal('temperatura', 8, 2)->nullable();
             $table->decimal('perim_abdominal', 8, 2)->nullable();
             $table->decimal('perim_cefalico', 8, 2)->nullable();
-            $table->decimal('peso', 8, 2)->nullable();
+
+            $table->decimal('peso_libra', 8, 2)->nullable();
+            $table->decimal('peso_kilo', 8, 2)->nullable();
+
             $table->decimal('estatura', 8, 2)->nullable();
             $table->string('glucometria_capilar', 150)->nullable();
             $table->string('cetonas_capilares', 150)->nullable();
@@ -36,6 +42,9 @@ class CreateAntropometriaTable extends Migration
 
 
             $table->foreign('consulta_id')->references('id')->on('consulta_paciente');
+            $table->foreign('usuario_id')->references('id')->on('usuario');
+
+
         });
     }
 

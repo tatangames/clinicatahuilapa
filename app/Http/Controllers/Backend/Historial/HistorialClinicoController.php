@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Backend\Historial;
 use App\Http\Controllers\Controller;
 use App\Models\Antecedentes;
 use App\Models\AntecedentesMedicos;
+use App\Models\Antropometria;
 use App\Models\Consulta_Paciente;
 use App\Models\Paciente;
 use App\Models\PacienteAntecedentes;
 use App\Models\TipeoSanguineo;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -41,19 +43,10 @@ class HistorialClinicoController extends Controller
 
 
 
-
-
-
-
-
         // ARRAY DE ANTECEDENTES MEDICOS
         $arrayAntecedentesMedico = AntecedentesMedicos::where('tipo_id', 1)
         ->orderBy('nombre', 'ASC')
             ->get();
-
-        $notaAntecedenteMedico = "sdfsdfds";
-
-
 
         // ARRAY COMPLICACIONES AGUDAS
         $arrayComplicacionAguda = AntecedentesMedicos::where('tipo_id', 2)
@@ -80,7 +73,7 @@ class HistorialClinicoController extends Controller
         return view('backend.admin.historial.general.vistageneralhistorial', compact('infoPaciente',
             'nombreCompleto', 'antecedentes', 'arrayTipeoSanguineo',
             'arrayAntecedentesMedico', 'arrayIdPacienteAntecedente', 'arrayComplicacionAguda',
-        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos'));
+        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta'));
     }
 
 
@@ -88,25 +81,11 @@ class HistorialClinicoController extends Controller
 
     public function actualizarListadoPacienteAntecedente(Request $request){
 
-
-
-
-
-        // FORM DATA
-
-        // idpaciente
-        // datocheckbox
-        // textAntecedenteFami
-        // textAlergia
-        // textMedicamento
-        // selectSanguineo
-
-
         DB::beginTransaction();
 
         try {
 
-            PacienteAntecedentes::where('id', $request->idpaciente)->delete();
+            PacienteAntecedentes::where('paciente_id', $request->idpaciente)->delete();
 
             if($request->datocheckbox != null) {
 
@@ -135,25 +114,18 @@ class HistorialClinicoController extends Controller
                     'antecedentes_familiares' => $request->textAntecedenteFami,
                     'alergias' => $request->textAlergia,
                     'medicamentos_actuales' => $request->textMedicamento,
-                    /*'nota_antecedente_medico' => $request->xxx,
-                    'nota_complicaciones_diabetes' => $request->xxx,
-                    'nota_enfermedades_cronicas' => $request->xxx,
-                    'nota_antecedentes_quirurgicos' => $request->xxx,
-                    'antecedentes_oftalmologicos' => $request->xxx,
-                    'antecedentes_deportivos' => $request->xxx,
-                    'menarquia' => $request->xxx,
-                    'ciclo_menstrual' => $request->xxx,
-                    'pap' => $request->xxx,
-                    'mamografia' => $request->xxx,
-                    'otros' => $request->xxx,*/
+                    'nota_antecedente_medico' => $request->notaAnteceMedico,
+                    'nota_complicaciones_diabetes' => $request->notaCompliDiabete,
+                    'nota_enfermedades_cronicas' => $request->notaEnfermCronica,
+                    'nota_antecedentes_quirurgicos' => $request->notaAnteceQuirur,
+                    'antecedentes_oftalmologicos' => $request->notaAnteceOftamo,
+                    'antecedentes_deportivos' => $request->notaAnteceDeportivo,
+                    'menarquia' => $request->datoMenarquia,
+                    'ciclo_menstrual' => $request->datoCicloMenstr,
+                    'pap' => $request->datoPap,
+                    'mamografia' => $request->datoMamografia,
+                    'otros' => $request->otrosDetalles,
                 ]);
-
-                // idpaciente
-                // datocheckbox
-                // textAntecedenteFami
-                // textAlergia
-                // textMedicamento
-                // selectSanguineo
 
 
             }else{
@@ -165,21 +137,19 @@ class HistorialClinicoController extends Controller
                 $crearAntece->antecedentes_familiares = $request->textAntecedenteFami;
                 $crearAntece->alergias = $request->textAlergia;
                 $crearAntece->medicamentos_actuales = $request->textMedicamento;
-                $crearAntece->nota_antecedente_medico = null;
-                $crearAntece->nota_complicaciones_diabetes = null;
-                $crearAntece->nota_enfermedades_cronicas = null;
-                $crearAntece->nota_antecedentes_quirurgicos = null;
-                $crearAntece->antecedentes_oftalmologicos = null;
-                $crearAntece->antecedentes_deportivos = null;
-                $crearAntece->menarquia = null;
-                $crearAntece->ciclo_menstrual = null;
-                $crearAntece->pap = null;
-                $crearAntece->mamografia = null;
-                $crearAntece->otros = null;
+                $crearAntece->nota_antecedente_medico = $request->notaAnteceMedico;
+                $crearAntece->nota_complicaciones_diabetes = $request->notaCompliDiabete;
+                $crearAntece->nota_enfermedades_cronicas = $request->notaEnfermCronica;
+                $crearAntece->nota_antecedentes_quirurgicos = $request->notaAnteceQuirur;
+                $crearAntece->antecedentes_oftalmologicos = $request->notaAnteceOftamo;
+                $crearAntece->antecedentes_deportivos = $request->notaAnteceDeportivo;
+                $crearAntece->menarquia = $request->datoMenarquia;
+                $crearAntece->ciclo_menstrual = $request->datoCicloMenstr;
+                $crearAntece->pap = $request->datoPap;
+                $crearAntece->mamografia = $request->datoMamografia;
+                $crearAntece->otros = $request->otrosDetalles;
                 $crearAntece->save();
-
             }
-
 
             DB::commit();
             return ['success' => 1];
@@ -189,17 +159,31 @@ class HistorialClinicoController extends Controller
             Log::info('error: ' . $e);
             return ['success' => 99];
         }
+    }
+
+
+    public function tablaAntrometriaPaciente($idconsulta){
+
+
+        $lista = Antropometria::where('consulta_id', $idconsulta)
+            ->orderBy('fecha_hora', 'DESC')
+            ->get();
+
+        foreach ($lista as $dato){
+
+            $dato->fechaFormat = date("d-m-Y h:i A", strtotime($dato->fecha_hora));
+            $dato->horaFormat = date("h:i A", strtotime($dato->fecha_hora));
+
+            $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
+
+            $dato->nomusuario = $infoUsuario->nombre;
 
 
 
+        }
 
 
-
-
-
-
-
-
+        return view('backend.admin.historial.antropometria.tablaantropometria', compact('lista'));
     }
 
 

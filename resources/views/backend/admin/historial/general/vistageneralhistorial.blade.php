@@ -50,14 +50,14 @@
                                         <div style="float: left; margin: 16px">
                                             <ul class="nav nav-pills ml-auto p-2">
                                                 <li style="font-size: 16px; font-weight: bold" class="nav-item">
-                                                    <a class="nav-link active" href="#tab_1" onclick="mostrarBloque()" data-toggle="tab">
+                                                    <a class="nav-link active" href="#tab_1"  data-toggle="tab">
                                                         <span>
                                                             <img class="manImg" src="{{ asset('images/personacard.png') }}" height="25px" width="25px">
                                                         </span>ANTECEDENTES
                                                     </a>
                                                 </li>
 
-                                                <li style="margin-left: 15px; font-weight: bold; font-size: 16px" class="nav-item"><a class="nav-link" href="#tab_2" onclick="ocultarBloque()" data-toggle="tab">
+                                                <li style="margin-left: 15px; font-weight: bold; font-size: 16px" class="nav-item"><a class="nav-link" href="#tab_2"  data-toggle="tab">
                                                         <span>
                                                             <img class="manImg" src="{{ asset('images/corazonrojo.png') }}" height="25px" width="25px">
                                                         </span>
@@ -67,7 +67,7 @@
 
 
 
-                                                <li style="margin-left: 15px; font-weight: bold; font-size: 16px" class="nav-item"><a class="nav-link" href="#tab_3" onclick="ocultarBloque()" data-toggle="tab">
+                                                <li style="margin-left: 15px; font-weight: bold; font-size: 16px" class="nav-item"><a class="nav-link" href="#tab_3"  data-toggle="tab">
                                                         <span>
                                                             <img class="manImg" src="{{ asset('images/chequelista.png') }}" height="25px" width="25px">
                                                         </span>
@@ -160,27 +160,29 @@
 
                                                                             @foreach($arrayAntecedentesMedico as $item)
 
-                                                                            <div class="col-12 col-md-3">
+                                                                                <div class="col-12 col-md-3">
+                                                                                    <label class="switch" style="margin: 4px !important;">
 
-                                                                                    {{ $valorTrue = false }}
+                                                                                    @php $valor1True = false @endphp
 
                                                                                     @foreach($arrayIdPacienteAntecedente as $valor)
                                                                                             @if($item->id == $valor->antecedente_medico_id)
-                                                                                                {{ $valorTrue = true }}
+                                                                                                @php $valor1True = true @endphp
                                                                                             @endif
                                                                                     @endforeach
 
-                                                                                    <label class="switch" style="margin: 4px !important;">
+                                                                                    @if($valor1True)
+                                                                                        <input type="checkbox" data-valor='{{ $item->id }}' checked name="arrayCheckAntecedentes[]">
+                                                                                    @else
+                                                                                        <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
+                                                                                    @endif
 
-                                                                                            <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
-                                                                                            <div class="slider round">
-                                                                                            </div>
+                                                                                        <div class="slider round">
+                                                                                        </div>
 
                                                                                     </label>
-
-
-                                                                                <label>{{ $item->nombre }}</label><br>
-                                                                            </div>
+                                                                                    <label>{{ $item->nombre }}</label>
+                                                                                </div>
 
                                                                             @endforeach
 
@@ -214,22 +216,25 @@
                                                                                 <div class="col-12 col-md-3">
                                                                                     <label class="switch" style="margin: 4px !important;">
 
-
+                                                                                        @php $valor2True = false @endphp
 
                                                                                         @foreach($arrayIdPacienteAntecedente as $valor)
                                                                                             @if($item->id == $valor->antecedente_medico_id)
-                                                                                                <input type="checkbox" data-valor='{{ $item->id }}' checked name="arrayCheckAntecedentes[]">
-                                                                                            @else
-                                                                                                <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
+                                                                                                @php $valor2True = true @endphp
                                                                                             @endif
                                                                                         @endforeach
 
-
+                                                                                        @if($valor2True)
+                                                                                            <input type="checkbox" data-valor='{{ $item->id }}' checked name="arrayCheckAntecedentes[]">
+                                                                                        @else
+                                                                                            <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
+                                                                                        @endif
 
                                                                                         <div class="slider round">
                                                                                         </div>
+
                                                                                     </label>
-                                                                                    <label>{{ $item->nombre }}</label><br>
+                                                                                    <label>{{ $item->nombre }}</label>
                                                                                 </div>
 
                                                                             @endforeach
@@ -263,22 +268,27 @@
                                                                                 <div class="col-12 col-md-3">
                                                                                     <label class="switch" style="margin: 4px !important;">
 
+                                                                                        @php $valor3True = false @endphp
 
                                                                                         @foreach($arrayIdPacienteAntecedente as $valor)
                                                                                             @if($item->id == $valor->antecedente_medico_id)
-                                                                                                <input type="checkbox" data-valor='{{ $item->id }}' checked name="arrayCheckAntecedentes[]">
-                                                                                            @else
-                                                                                                <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
+                                                                                                @php $valor3True = true @endphp
                                                                                             @endif
                                                                                         @endforeach
 
-
+                                                                                        @if($valor3True)
+                                                                                            <input type="checkbox" data-valor='{{ $item->id }}' checked name="arrayCheckAntecedentes[]">
+                                                                                        @else
+                                                                                            <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
+                                                                                        @endif
 
                                                                                         <div class="slider round">
                                                                                         </div>
+
                                                                                     </label>
-                                                                                    <label>{{ $item->nombre }}</label><br>
+                                                                                    <label>{{ $item->nombre }}</label>
                                                                                 </div>
+
 
                                                                             @endforeach
 
@@ -312,18 +322,25 @@
                                                                                 <div class="col-12 col-md-3">
                                                                                     <label class="switch" style="margin: 4px !important;">
 
+                                                                                        @php $valor4True = false @endphp
+
                                                                                         @foreach($arrayIdPacienteAntecedente as $valor)
                                                                                             @if($item->id == $valor->antecedente_medico_id)
-                                                                                                <input type="checkbox" data-valor='{{ $item->id }}' checked name="arrayCheckAntecedentes[]">
-                                                                                            @else
-                                                                                                <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
+                                                                                                @php $valor4True = true @endphp
                                                                                             @endif
                                                                                         @endforeach
 
+                                                                                        @if($valor4True)
+                                                                                            <input type="checkbox" data-valor='{{ $item->id }}' checked name="arrayCheckAntecedentes[]">
+                                                                                        @else
+                                                                                            <input type="checkbox" data-valor='{{ $item->id }}' name="arrayCheckAntecedentes[]">
+                                                                                        @endif
+
                                                                                         <div class="slider round">
                                                                                         </div>
+
                                                                                     </label>
-                                                                                    <label>{{ $item->nombre }}</label><br>
+                                                                                    <label>{{ $item->nombre }}</label>
                                                                                 </div>
 
                                                                             @endforeach
@@ -366,7 +383,7 @@
                                                                         <div class="col-md-3">
                                                                             <div class="form-group">
                                                                                 <label>Menarquía</label>
-                                                                                <input type="text" maxlength="300" class="form-control" id="dato-menarquia"> @if($antecedentes != null) {{ $antecedentes->menarquia }} @endif
+                                                                                <input type="text" maxlength="300" class="form-control" id="dato-menarquia" value="@if($antecedentes != null) {{ $antecedentes->menarquia }} @endif">
                                                                             </div>
                                                                         </div>
 
@@ -374,21 +391,21 @@
                                                                             <div class="form-group">
                                                                                 <label>
                                                                                     Ciclo Menstrual</label>
-                                                                                <input type="text" maxlength="300" class="form-control" id="dato-ciclomenstrual"> @if($antecedentes != null) {{ $antecedentes->ciclo_menstrual }} @endif
+                                                                                <input type="text" maxlength="300" class="form-control" id="dato-ciclomenstrual" value="@if($antecedentes != null) {{ $antecedentes->ciclo_menstrual }} @endif">
                                                                             </div>
                                                                         </div>
 
                                                                         <div class="col-md-3">
                                                                             <div class="form-group">
                                                                                 <label>PAP</label>
-                                                                                <input type="text" maxlength="300" class="form-control" id="dato-pap" value="0000-00-00"> @if($antecedentes != null) {{ $antecedentes->pap }} @endif
+                                                                                <input type="text" maxlength="300" class="form-control" id="dato-pap" value="@if($antecedentes != null) {{ $antecedentes->pap }} @else 0000-00-00 @endif" >
                                                                             </div>
                                                                         </div>
 
                                                                         <div class="col-md-3">
                                                                             <div class="form-group">
                                                                                 <label>Mamografía</label>
-                                                                                <input type="text" maxlength="300" class="form-control" id="dato-mamografia" value="0000-00-00"> @if($antecedentes != null) {{ $antecedentes->mamografia }} @endif
+                                                                                <input type="text" maxlength="300" class="form-control" id="dato-mamografia" value="@if($antecedentes != null) {{ $antecedentes->mamografia }} @endif" >
                                                                             </div>
                                                                         </div>
 
@@ -428,29 +445,30 @@
                                             <div class="tab-pane" id="tab_2">
 
                                                 <form>
+
+                                                    <div class="card card-default">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title" style="font-weight: bold">Historial de Antrometria</h3>
+                                                            <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
+                                                                    onclick="modalAntropometria()" class="button button-3d button-rounded button-pill button-small">
+                                                                <i class="fas fa-plus"></i>
+                                                                Nuevo Antropometría
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
                                                     <div class="card-body">
 
-                                                        <table class="table" id="matrizMateriales" style="border: 80px" data-toggle="table">
-                                                            <thead>
-                                                            <tr>
-                                                                <th style="width: 30%; text-align: center">Descripción</th>
-                                                                <th style="width: 20%; text-align: left">Unidad de Medida</th>
-                                                                <th style="width: 15%; text-align: center">Costo</th>
-                                                                <th style="width: 15%; text-align: center">Cantidad</th>
-                                                                <th style="width: 10%; text-align: center">Periodo</th>
 
-                                                                <th style="width: 10%; text-align: center">Opciones</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
+                                                        <!-- CARGAR TABLA DE ANTROPOMETRIA -->
 
-                                                            </tbody>
 
-                                                        </table>
+                                                        <div id="tablaAntrometria">
+                                                        </div>
 
-                                                        <br>
-                                                        <button type="button" class="btn btn-block btn-success" onclick="modalNuevaSolicitud()">Agregar Solicitud de Material</button>
-                                                        <br>
+
+
+
 
                                                     </div>
 
@@ -512,7 +530,131 @@
 
 
 
+    <div class="modal fade" id="modalAntro">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Antropometría</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-antropometria">
+                        <center><div class="card-body">
 
+                            <div class="row">
+
+                                <div class="form-group col-md-3">
+                                    <label>Fecha</label>
+                                    <input type="date" class="form-control" id="fecha-antro" autocomplete="off">
+                                </div>
+
+
+                                <div class="form-group col-md-3">
+                                    <label>Frecuencia Cardiaca (lpm):</label>
+                                    <input type="text" maxlength="150" class="form-control" id="frecuencia-cardia-antro" autocomplete="off">
+                                </div>
+
+
+                                <div class="form-group col-md-3">
+                                    <label>Frecuencia Respiratoria (rpm):</label>
+                                    <input type="text" maxlength="150" class="form-control" id="frecuencia-respiratoria-antro" autocomplete="off">
+                                </div>
+
+                            </div>
+
+
+                                <br><br>
+
+                            <div class="row">
+
+                                <div class="form-group col-md-3">
+                                    <label>Presion Arterial (mmHg):</label>
+                                    <input type="text" maxlength="150" class="form-control" id="presion-arterial-antro" autocomplete="off">
+                                </div>
+
+
+                                <div class="form-group col-md-3">
+                                    <label>Temperatura (°C):</label>
+                                    <input type="text" class="form-control" id="temperatura-antro" autocomplete="off">
+                                </div>
+
+
+                                <div class="form-group col-md-3">
+                                    <label>Perím. Abdominal (cm):</label>
+                                    <input type="text" class="form-control" id="perim-abdominal-antro" value="N/A" autocomplete="off">
+                                </div>
+
+
+                            </div>
+
+
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>Perím. Cefálico (cm):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" value="N/A" id="perimetro-cefalico-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Peso (lb):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();"  class="form-control" id="peso-libra-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Peso (kg):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc3();"  class="form-control" id="peso-kilo-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Estatura (cm):</label>
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();"  class="form-control" id="estatura-antro" autocomplete="off">
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <br><br>
+
+                                <div class="row">
+
+                                    <div class="form-group col-md-3">
+                                        <label>IMC:</label>
+                                        <input type="text" disabled class="form-control" id="imc-antro" autocomplete="off">
+                                    </div>
+
+
+                                    <div class="form-group col-md-3">
+                                        <label>Resultado del IMC:</label>
+                                        <input type="text" disabled class="form-control" id="resultado-imc-antro" autocomplete="off">
+                                    </div>
+
+                                </div>
+
+
+
+                        </div>
+                        </center>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="nuevo()">Registrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 </div>
@@ -532,7 +674,10 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
+            let idconsulta = {{ $idconsulta }};
 
+            var ruta = "{{ URL::to('/admin/historial/antrometria/paciente-consulta') }}/" + idconsulta;
+            $('#tablaAntrometria').load(ruta);
 
             document.getElementById("divcontenedor").style.display = "block";
         });
@@ -543,6 +688,112 @@
         function recargarVista(){
             location.reload();
         }
+
+
+        //********************************* BLOQUE 2 ***************************************
+
+
+        function valida_numero(e){
+            tecla = (document.all) ? e.keyCode : e.which;
+
+            //Tecla de retroceso para borrar, siempre la permite
+            if (tecla==8){
+                return true;
+            }
+
+            // Patron de entrada, en este caso solo acepta numeros
+            patron =/[0-9.]/;
+            tecla_final = String.fromCharCode(tecla);
+            return patron.test(tecla_final);
+        }
+
+
+        function calcular_imc2(){
+            var peso = $('#peso-libra-antro').val();
+            $('#peso-kilo-antro').val((peso/2.2046).toFixed(2));
+
+            var estatura = $('#estatura-antro').val();
+            var imc = (peso/2.2046)/((estatura/100)*(estatura/100));
+            $('#imc-antro').val(imc.toFixed(2));
+            if(imc.toFixed(2) < 16){
+                var resimc= "Delgadez severa";
+            }
+            else if(imc.toFixed(2) >= 16 && imc.toFixed(2) <= 16.99){
+                var resimc= "Delgadez moderada";
+            }
+            else if(imc.toFixed(2) >= 1 && imc.toFixed(2) <= 18.49){
+                var resimc= "Delgadez leve";
+            }
+            else if(imc.toFixed(2) >= 18.5 && imc.toFixed(2) <= 24.99){
+                var resimc= "Normal";
+            }
+            else if(imc.toFixed(2) >= 25 && imc.toFixed(2) <= 29.99){
+                var resimc= "Preobeso";
+            }
+            else if(imc.toFixed(2) >= 30 && imc.toFixed(2) <= 34.99){
+                var resimc= "Obesidad leve";
+            }
+            else if(imc.toFixed(2) >= 35 && imc.toFixed(2) <= 39.99){
+                var resimc= "Obesidad media";
+            }
+            else if(imc.toFixed(2) >=40){
+                var resimc= "Obesidad mórbida";
+            }
+            $('#resultado-imc-antro').val(resimc);
+        }
+
+        function calcular_imc3(){
+            var peso = $('#peso-kilo-antro').val();
+            $('#peso-libra-antro').val((peso*2.2046).toFixed(2));
+
+            var estatura = $('#estatura-antro').val();
+            var imc = (peso)/((estatura/100)*(estatura/100));
+            $('#imc-antro').val(imc.toFixed(2));
+            if(imc.toFixed(2) < 16){
+                var resimc= "Delgadez severa";
+            }
+            else if(imc.toFixed(2) >= 16 && imc.toFixed(2) <= 16.99){
+                var resimc= "Delgadez moderada";
+            }
+            else if(imc.toFixed(2) >= 1 && imc.toFixed(2) <= 18.49){
+                var resimc= "Delgadez leve";
+            }
+            else if(imc.toFixed(2) >= 18.5 && imc.toFixed(2) <= 24.99){
+                var resimc= "Normal";
+            }
+            else if(imc.toFixed(2) >= 25 && imc.toFixed(2) <= 29.99){
+                var resimc= "Preobeso";
+            }
+            else if(imc.toFixed(2) >= 30 && imc.toFixed(2) <= 34.99){
+                var resimc= "Obesidad leve";
+            }
+            else if(imc.toFixed(2) >= 35 && imc.toFixed(2) <= 39.99){
+                var resimc= "Obesidad media";
+            }
+            else if(imc.toFixed(2) >=40){
+                var resimc= "Obesidad mórbida";
+            }
+            $('#resultado-imc-antro').val(resimc);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //************************* BLOQUE 1 ***********************************
+
+
+
 
 
         function guardarAntecedentes(){
@@ -566,8 +817,22 @@
             var notaAntecedenteFamiliar = document.getElementById('text-antecedentes-editar').value;
             var notaAlergia = document.getElementById('text-alergias-editar').value;
             var notaMedicamento = document.getElementById('text-medicamento-actual-editar').value;
-
             var selectSanguineo = document.getElementById('select-tipeo-sanguineo').value;
+
+            var notaAntecedenteMedico = document.getElementById('notas_antecedente_medicos').value;
+            var notaCompliDiabete = document.getElementById('notas_complicacion_diabetes').value;
+            var notaEnfermedadCronica = document.getElementById('notas_enfermedad_cronica').value;
+            var notaAnteceQuirur = document.getElementById('notas_antecedente_quirurgico').value;
+            var notaAnteceOftamolo = document.getElementById('notas_antecedente_quirurgico').value;
+            var notaAnteceDeportivo = document.getElementById('notas_antecedente_deportivos').value;
+
+
+            var datoMenarquia = document.getElementById('dato-menarquia').value;
+            var datoCicloMenstr = document.getElementById('dato-ciclomenstrual').value;
+            var datoPap = document.getElementById('dato-pap').value;
+            var datoMamografia = document.getElementById('dato-mamografia').value;
+
+            var otrosDetalles = document.getElementById('otros-detalles').value;
 
             // ID PACIENTE
             let id = {{ $infoPaciente->id }};
@@ -580,7 +845,17 @@
             formData.append('textAlergia', notaAlergia);
             formData.append('textMedicamento', notaMedicamento);
             formData.append('selectSanguineo', selectSanguineo);
-
+            formData.append('notaAnteceMedico', notaAntecedenteMedico);
+            formData.append('notaCompliDiabete', notaCompliDiabete);
+            formData.append('notaEnfermCronica', notaEnfermedadCronica);
+            formData.append('notaAnteceQuirur', notaAnteceQuirur);
+            formData.append('notaAnteceOftamo', notaAnteceOftamolo);
+            formData.append('notaAnteceDeportivo', notaAnteceDeportivo);
+            formData.append('datoMenarquia', datoMenarquia);
+            formData.append('datoCicloMenstr', datoCicloMenstr);
+            formData.append('datoPap', datoPap);
+            formData.append('datoMamografia', datoMamografia);
+            formData.append('otrosDetalles', otrosDetalles);
 
             axios.post(url+'/historial/antecedente/actualizacion', formData, {
             })
@@ -601,6 +876,10 @@
         }
 
 
+        function modalAntropometria(){
+
+            $('#modalAntro').modal({backdrop: 'static', keyboard: false})
+        }
 
 
 
