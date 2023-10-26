@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" onclick="modalAgregar()" class="button button-3d button-rounded button-pill button-small">
                 <i class="fas fa-pencil-alt"></i>
-                Nuevo Diagnostico
+                Nueva Línea
             </button>
         </div>
     </section>
@@ -61,14 +61,10 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <label>Tipo de Diagnostico</label>
-                                        <input type="text" maxlength="150" autocomplete="off" class="form-control" id="nombre-nuevo">
+                                        <label>Nombre</label>
+                                        <input type="text" maxlength="300" autocomplete="off" class="form-control" id="nombre-nuevo">
                                     </div>
 
-                                    <div class="form-group">
-                                        <label>Descripción</label>
-                                        <input type="text" maxlength="800" autocomplete="off" class="form-control" id="descripcion-nuevo">
-                                    </div>
 
                                 </div>
                             </div>
@@ -100,14 +96,9 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <label>Tipo de Diagnostico</label>
+                                        <label>Nombre</label>
                                         <input type="hidden" id="id-editar">
-                                        <input type="text" maxlength="150" autocomplete="off" class="form-control" id="nombre-editar">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Descripción</label>
-                                        <input type="text" maxlength="800" autocomplete="off" class="form-control" id="descripcion-editar">
+                                        <input type="text" maxlength="300" autocomplete="off" class="form-control" id="nombre-editar">
                                     </div>
 
                                 </div>
@@ -140,7 +131,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-            var ruta = "{{ URL::to('/admin/diagnostico/tabla') }}";
+            var ruta = "{{ URL::to('/admin/linea/tabla') }}";
             $('#tablaDatatable').load(ruta);
 
             document.getElementById("divcontenedor").style.display = "block";
@@ -150,7 +141,7 @@
     <script>
 
         function recargar(){
-            var ruta = "{{ URL::to('/admin/diagnostico/tabla') }}";
+            var ruta = "{{ URL::to('/admin/linea/tabla') }}";
             $('#tablaDatatable').load(ruta);
         }
 
@@ -162,19 +153,17 @@
 
         function nuevo(){
             var nombre = document.getElementById('nombre-nuevo').value;
-            var descripcion = document.getElementById('descripcion-nuevo').value;
 
             if(nombre === ''){
-                toastr.error('Diagnostico es requerido');
+                toastr.error('Nombre es requerido');
                 return;
             }
 
             openLoading();
             var formData = new FormData();
             formData.append('nombre', nombre);
-            formData.append('descripcion', descripcion);
 
-            axios.post(url+'/diagnostico/registro', formData, {
+            axios.post(url+'/linea/registro', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -197,7 +186,7 @@
             openLoading();
             document.getElementById("formulario-editar").reset();
 
-            axios.post(url+'/diagnostico/informacion',{
+            axios.post(url+'/linea/informacion',{
                 'id': id
             })
                 .then((response) => {
@@ -206,7 +195,6 @@
                         $('#modalEditar').modal('show');
                         $('#id-editar').val(id);
                         $('#nombre-editar').val(response.data.info.nombre);
-                        $('#descripcion-editar').val(response.data.info.descripcion);
 
                     }else{
                         toastr.error('Información no encontrada');
@@ -222,10 +210,9 @@
         function editar(){
             var id = document.getElementById('id-editar').value;
             var nombre = document.getElementById('nombre-editar').value;
-            var descripcion = document.getElementById('descripcion-editar').value;
 
             if(nombre === ''){
-                toastr.error('Diagnostico es requerido');
+                toastr.error('Nombre es requerido');
                 return;
             }
 
@@ -233,9 +220,8 @@
             var formData = new FormData();
             formData.append('id', id);
             formData.append('nombre', nombre);
-            formData.append('descripcion', descripcion);
 
-            axios.post(url+'/diagnostico/editar', formData, {
+            axios.post(url+'/linea/editar', formData, {
             })
                 .then((response) => {
                     closeLoading();

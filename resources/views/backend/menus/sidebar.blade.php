@@ -145,6 +145,27 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('admin.vista.linea') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Línea</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.vista.sub.linea') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Sub Línea</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.vista.proveedor') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Proveedores</p>
+                            </a>
+                        </li>
+
                     </ul>
 
 
@@ -152,6 +173,38 @@
 
 
                 </li>
+
+
+
+
+
+                    <li class="nav-item">
+
+                        <a href="#" class="nav-link nav-">
+                            <i class="far fa-user"></i>
+                            <p>
+                                Inventario
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tipo.paciente.nuevo') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-edit nav-icon"></i>
+                                    <p>Tipo de Paciente</p>
+                                </a>
+                            </li>
+
+
+                        </ul>
+
+
+
+
+
+                    </li>
 
 
             </ul>

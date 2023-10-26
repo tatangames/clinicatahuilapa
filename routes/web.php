@@ -16,6 +16,8 @@ use App\Http\Controllers\Backend\Configuracion\DiagnosticoController;
 use App\Http\Controllers\Backend\Configuracion\MotivoConsultaController;
 use App\Http\Controllers\Backend\Asignaciones\AsignacionesController;
 use App\Http\Controllers\Backend\Historial\HistorialClinicoController;
+use App\Http\Controllers\Backend\Configuracion\LineasController;
+use App\Http\Controllers\Backend\Configuracion\ProveedorController;
 
 
 
@@ -131,7 +133,7 @@ Route::post('/admin/tipodocumento/registro', [TipoDocumentoController::class, 'r
 Route::post('/admin/tipodocumento/informacion', [TipoDocumentoController::class, 'informacionNuevoTipoDocumento']);
 Route::post('/admin/tipodocumento/editar', [TipoDocumentoController::class, 'editarNuevoTipoDocumento']);
 
-
+// --- DIAGNOSTICO ---
 Route::get('/admin/diagnostico/vista', [DiagnosticoController::class,'indexNuevoTipoDiagnostico'])->name('admin.tipo.diagnostico.nuevo');
 Route::get('/admin/diagnostico/tabla', [DiagnosticoController::class,'tablaNuevoTipoDiagnostico']);
 Route::post('/admin/diagnostico/registro', [DiagnosticoController::class, 'registroNuevoTipoDiagnostico']);
@@ -218,12 +220,30 @@ Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoContro
 
 
 
+// --- LINEAS ---
+Route::get('/admin/linea/vista', [LineasController::class,'indexVistaLinea'])->name('admin.vista.linea');
+Route::get('/admin/linea/tabla', [LineasController::class,'tablaVistaLinea']);
+Route::post('/admin/linea/registro', [LineasController::class, 'registroNuevaLinea']);
+Route::post('/admin/linea/informacion', [LineasController::class, 'informacionLinea']);
+Route::post('/admin/linea/editar', [LineasController::class, 'editarLinea']);
 
 
 
 
+// --- SUB LINEAS ---
+Route::get('/admin/sub/linea/vista', [LineasController::class,'indexVistaSubLinea'])->name('admin.vista.sub.linea');
+Route::get('/admin/sub/linea/tabla', [LineasController::class,'tablaVistaSubLinea']);
+Route::post('/admin/sub/linea/registro', [LineasController::class, 'registroSubNuevaLinea']);
+Route::post('/admin/sub/linea/informacion', [LineasController::class, 'informacionSubLinea']);
+Route::post('/admin/sub/linea/editar', [LineasController::class, 'editarSubLinea']);
 
 
+// --- PROVEEDORES ---
+Route::get('/admin/proveedores/vista/index', [ProveedorController::class,'indexVistaProveedor'])->name('admin.vista.proveedor');
+Route::get('/admin/proveedores/vista/tabla', [ProveedorController::class,'tablaVistaProveedor']);
+Route::post('/admin/proveedores/registro', [ProveedorController::class, 'registroNuevoProveedor']);
+Route::post('/admin/proveedores/informacion', [ProveedorController::class, 'informacionProveedor']);
+Route::post('/admin/proveedores/editar', [ProveedorController::class, 'editarProveedor']);
 
 
 

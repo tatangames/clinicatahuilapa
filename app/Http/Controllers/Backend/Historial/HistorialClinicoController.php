@@ -255,7 +255,6 @@ class HistorialClinicoController extends Controller
             Log::info('error ' . $e);
             return ['success' => 99];
         }
-
     }
 
 
