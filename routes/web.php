@@ -18,6 +18,7 @@ use App\Http\Controllers\Backend\Asignaciones\AsignacionesController;
 use App\Http\Controllers\Backend\Historial\HistorialClinicoController;
 use App\Http\Controllers\Backend\Configuracion\LineasController;
 use App\Http\Controllers\Backend\Configuracion\ProveedorController;
+use App\Http\Controllers\Backend\Farmacia\FarmaciaController;
 
 
 
@@ -244,6 +245,20 @@ Route::get('/admin/proveedores/vista/tabla', [ProveedorController::class,'tablaV
 Route::post('/admin/proveedores/registro', [ProveedorController::class, 'registroNuevoProveedor']);
 Route::post('/admin/proveedores/informacion', [ProveedorController::class, 'informacionProveedor']);
 Route::post('/admin/proveedores/editar', [ProveedorController::class, 'editarProveedor']);
+
+
+// --- TIPO DE MEDICAMENTO ---
+Route::get('/admin/tipo/medicamento/vista/index', [ProveedorController::class,'indexVistaTipoMedicamento'])->name('admin.vista.tipo.medicamento');
+Route::get('/admin/tipo/medicamento/vista/tabla', [ProveedorController::class,'tablaVistaTipoMedicamento']);
+Route::post('/admin/tipo/medicamento/registro', [ProveedorController::class, 'registroNuevoTipoMedicamento']);
+Route::post('/admin/tipo/medicamento/informacion', [ProveedorController::class, 'informacionTipoMedicamento']);
+Route::post('/admin/tipo/medicamento/editar', [ProveedorController::class, 'editarTipoMedicamento']);
+
+
+// --- FARMACIA - REGISTRO ARTICULO ---
+
+Route::get('/admin/farmacia/registrar/articulo/index', [FarmaciaController::class,'indexRegistroArticulo'])->name('admin.farmacia.registrar.articulo');
+Route::post('/admin/farmacia/registrar/nuevo/articulo', [FarmaciaController::class, 'registrarArticulo']);
 
 
 

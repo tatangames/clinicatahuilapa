@@ -166,15 +166,40 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('admin.vista.tipo.medicamento') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Tipo Medicamento</p>
+                            </a>
+                        </li>
+
                     </ul>
-
-
-
-
-
                 </li>
 
 
+
+                <li class="nav-item">
+
+                    <a href="#" class="nav-link nav-">
+                        <i class="far fa-user"></i>
+                        <p>
+                            Inventario
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.tipo.paciente.nuevo') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Tipo de Paciente</p>
+                            </a>
+                        </li>
+
+
+                    </ul>
+                </li>
 
 
 
@@ -183,7 +208,7 @@
                         <a href="#" class="nav-link nav-">
                             <i class="far fa-user"></i>
                             <p>
-                                Inventario
+                                Farmacia
                                 <i class="fas fa-angle-left right"></i>
                             </p>
                         </a>
@@ -191,20 +216,22 @@
                         <ul class="nav nav-treeview">
 
                             <li class="nav-item">
-                                <a href="{{ route('admin.tipo.paciente.nuevo') }}" target="frameprincipal" class="nav-link">
+                                <a href="{{ route('admin.farmacia.registrar.articulo') }}" target="frameprincipal" class="nav-link">
                                     <i class="far fa-edit nav-icon"></i>
-                                    <p>Tipo de Paciente</p>
+                                    <p>Registrar artículo</p>
                                 </a>
                             </li>
 
 
+
+
+
+
+
                         </ul>
-
-
-
-
-
                     </li>
+
+
 
 
             </ul>
