@@ -42,6 +42,8 @@ class CreateArticuloMedicamentoTable extends Migration
             $table->foreign('con_far_contenido_id')->references('id')->on('contenido_farmaceutica');
             $table->foreign('con_far_administra_id')->references('id')->on('contenido_farmaceutica');
 
+            $table->foreign('farmacia_articulo_id')->references('id')->on('farmacia_articulo');
+
         });
     }
 

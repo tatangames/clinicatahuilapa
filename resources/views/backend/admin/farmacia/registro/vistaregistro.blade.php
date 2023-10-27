@@ -122,7 +122,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-md-10" style="color: #686868">Nombre Generico: </label>
                                                 <div class="col-md-10">
-                                                    <input type="text" maxlength="25" autocomplete="off" class="form-control" id="celular" >
+                                                    <input type="text" maxlength="300" autocomplete="off" class="form-control" id="nombre-generico" >
                                                 </div>
                                             </div>
                                         </div>
@@ -407,6 +407,7 @@
             var nombre = document.getElementById('nombre-descripcion').value;
 
             var existenciaMinima = document.getElementById('existencia-minima').value;
+            var nombreGenerico = document.getElementById('nombre-generico').value;
 
             // bloque medicamentos
             var idEnvase = document.getElementById('select-envase').value;
@@ -414,9 +415,6 @@
             var idConcentracion = document.getElementById('select-concentracion').value;
             var idContenido = document.getElementById('select-contenido').value;
             var idAdministracion = document.getElementById('select-viaadministracion').value;
-
-
-
 
 
             if (idLinea === '') {
@@ -468,13 +466,30 @@
             formData.append('idConcentracion', idConcentracion);
             formData.append('idContenido', idContenido);
             formData.append('idAdministracion', idAdministracion);
-
+            formData.append('nombreGenerico', nombreGenerico);
 
             axios.post(url + '/farmacia/registrar/nuevo/articulo', formData, {})
                 .then((response) => {
                     closeLoading();
 
                     if (response.data.success === 1) {
+
+                        Swal.fire({
+                            title: 'Código Repetido',
+                            text: "El Código de Artículo ya se encuentra registrado",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
+
+                    }
+                    else if (response.data.success === 2) {
                         toastr.success('Registrado correctamente');
                         borrarCampos();
                     } else {
