@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateFarmaciaArticuloTable extends Migration
 {
     /**
-     * Run the migrations.
+     * INGRESO DE UN ARTICULO
      *
      * @return void
      */
@@ -17,7 +17,7 @@ class CreateFarmaciaArticuloTable extends Migration
             $table->id();
 
             $table->bigInteger('linea_id')->unsigned();
-            $table->bigInteger('sublinea_id')->unsigned();
+            $table->bigInteger('sublinea_id')->unsigned()->nullable();
 
             $table->string('nombre', 300);
             $table->string('codigo_articulo', 300)->nullable();

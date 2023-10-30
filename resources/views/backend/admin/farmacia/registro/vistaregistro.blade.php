@@ -244,7 +244,7 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label col-md-10" style="color: #686868">Existencia Mínima: </label>
+                                                <label class="control-label col-md-10" style="color: #686868">Existencia Mínima (para ser notificado): </label>
                                                 <div class="col-md-10">
                                                     <input type="number" onkeypress="return valida_numero(event);" autocomplete="off" class="form-control" id="existencia-minima" >
                                                 </div>
@@ -422,11 +422,6 @@
                 return;
             }
 
-            if (idSubLinea === '') {
-                toastr.error('Sub Línea es requerido');
-                return;
-            }
-
 
             if (nombre === '') {
                 toastr.error('Nombre es requerido');
@@ -436,22 +431,24 @@
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
 
+            if(existenciaMinima === ''){
+                existenciaMinima = 0;
+            }else{
+                if(!existenciaMinima.match(reglaNumeroEntero)) {
+                    toastr.error('Existencia Mínima es requerido');
+                    return;
+                }
 
-            if(!existenciaMinima.match(reglaNumeroEntero)) {
-                toastr.error('Existencia Mínima es requerido');
-                return;
+                if(existenciaMinima < 0){
+                    toastr.error('Existencia Mínima no debe tener negativos');
+                    return;
+                }
+
+                if(existenciaMinima > 9000000){
+                    toastr.error('Existencia Mínima máximo debe ser 9 millones');
+                    return;
+                }
             }
-
-            if(existenciaMinima < 0){
-                toastr.error('Existencia Mínima no debe tener negativos');
-                return;
-            }
-
-            if(existenciaMinima > 9000000){
-                toastr.error('Existencia Mínima máximo debe ser 9 millones');
-                return;
-            }
-
 
             openLoading();
             var formData = new FormData();
@@ -511,6 +508,25 @@
             document.getElementById('select-sublinea').selectedIndex = 0;
             $("#select-sublinea").trigger("change");
             document.getElementById('bloque-medicamentos').style.display = "none";
+
+
+            document.getElementById('select-envase').selectedIndex = 0;
+            $("#select-envase").trigger("change");
+
+
+            document.getElementById('select-formafarmaceutica').selectedIndex = 0;
+            $("#select-formafarmaceutica").trigger("change");
+
+            document.getElementById('select-concentracion').selectedIndex = 0;
+            $("#select-concentracion").trigger("change");
+
+            document.getElementById('select-contenido').selectedIndex = 0;
+            $("#select-contenido").trigger("change");
+
+            document.getElementById('select-viaadministracion').selectedIndex = 0;
+            $("#select-viaadministracion").trigger("change");
+
+
         }
 
 

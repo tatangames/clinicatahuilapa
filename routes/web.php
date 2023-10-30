@@ -255,13 +255,15 @@ Route::post('/admin/tipo/medicamento/informacion', [ProveedorController::class, 
 Route::post('/admin/tipo/medicamento/editar', [ProveedorController::class, 'editarTipoMedicamento']);
 
 
-// --- FARMACIA - REGISTRO ARTICULO ---
+// --- REGISTRO PRIMER ARTICULO EN FARMACIA---
 
 Route::get('/admin/farmacia/registrar/articulo/index', [FarmaciaController::class,'indexRegistroArticulo'])->name('admin.farmacia.registrar.articulo');
 Route::post('/admin/farmacia/registrar/nuevo/articulo', [FarmaciaController::class, 'registrarArticulo']);
 
 
-
+// --- INGRESO DE ARTICULO FARMACIA
+Route::get('/admin/farmacia/ingreso/articulo/index', [FarmaciaController::class,'indexIngresoArticulo'])->name('admin.farmacia.ingreso.articulo');
+Route::post('/admin/buscar/nombre/medicamento',  [FarmaciaController::class,'buscarMedicamento']);
 
 
 

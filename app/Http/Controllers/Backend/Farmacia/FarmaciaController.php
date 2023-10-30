@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\ArticuloMedicamento;
 use App\Models\ContenidoFarmaceutica;
 use App\Models\FarmaciaArticulo;
+use App\Models\FuenteFinanciamiento;
 use App\Models\Linea;
+use App\Models\Proveedores;
 use App\Models\SubLinea;
+use App\Models\TipoFactura;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -56,7 +59,6 @@ class FarmaciaController extends Controller
 
         $regla = array(
             'idLinea' => 'required',
-            'idSubLinea' => 'required',
             'nombre' => 'required',
         );
 
@@ -106,6 +108,78 @@ class FarmaciaController extends Controller
             return ['success' => 99];
         }
     }
+
+
+
+
+    //*************************************************************
+
+    public function indexIngresoArticulo(){
+
+        $arrayTipoFactura = TipoFactura::orderBy('nombre')->get();
+        $arrayFuente = FuenteFinanciamiento::orderBy('nombre')->get();
+        $arrayProveedor = Proveedores::orderBy('nombre')->get();
+
+        return view('backend.admin.farmacia.ingreso.vistaingresoinventario', compact('arrayTipoFactura',
+            'arrayFuente', 'arrayProveedor'));
+    }
+
+
+    public function buscarMedicamento(Request $request){
+
+        if($request->get('query')){
+            $query = $request->get('query');
+            $data = FarmaciaArticulo::where('nombre', 'LIKE', "%{$query}%")
+                ->orWhere('codigo_articulo', 'LIKE', "%{$query}%")
+                ->get();
+
+            foreach ($data as $info){
+
+                if($info->codigo_articulo != null){
+                    $info->nombreunido = $info->codigo_articulo . ' - ' . $info->nombre;
+                }else{
+                    $info->nombreunido = $info->nombre;
+                }
+
+                $info->existencia = 200;
+
+                $info->ultimoprecio = "$12.50";
+
+
+            }
+
+            $output = '<ul class="dropdown-menu" style="display:block; position:relative; overflow: auto; max-height: 300px; width: 550px">';
+            $tiene = true;
+            foreach($data as $row){
+
+                // si solo hay 1 fila, No mostrara el hr, salto de linea
+                if(count($data) == 1){
+                    if(!empty($row)){
+                        $tiene = false;
+                        $output .= '
+                 <li onclick="modificarValor(this)" id="'.$row->id.'" data-ultimoprecio="'.$row->ultimoprecio.'" data-existencia="'.$row->existencia.'"><a href="#" style="margin-left: 3px">'.$row->nombreunido.'</a></li>
+                ';
+                    }
+                }
+
+                else{
+                    if(!empty($row)){
+                        $tiene = false;
+                        $output .= '
+                 <li onclick="modificarValor(this)" id="'.$row->id.'"  data-ultimoprecio="'.$row->ultimoprecio.'" data-existencia="'.$row->existencia.'"><a href="#" style="margin-left: 3px">'.$row->nombreunido.'</a></li>
+                   <hr>
+                ';
+                    }
+                }
+            }
+            $output .= '</ul>';
+            if($tiene){
+                $output = '';
+            }
+            echo $output;
+        }
+    }
+
 
 
 

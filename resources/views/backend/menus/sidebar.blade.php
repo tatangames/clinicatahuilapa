@@ -223,7 +223,12 @@
                             </li>
 
 
-
+                            <li class="nav-item">
+                                <a href="{{ route('admin.farmacia.ingreso.articulo') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-edit nav-icon"></i>
+                                    <p>Ingresar artículo</p>
+                                </a>
+                            </li>
 
 
 

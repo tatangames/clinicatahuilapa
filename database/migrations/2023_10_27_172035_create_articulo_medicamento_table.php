@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateArticuloMedicamentoTable extends Migration
 {
     /**
-     * Run the migrations.
+     * SE REGISTRA CUANDO UN ARTICULO ES TIPO MEDICAMENTO UNICAMENTE
      *
      * @return void
      */
@@ -15,7 +15,6 @@ class CreateArticuloMedicamentoTable extends Migration
     {
         Schema::create('articulo_medicamento', function (Blueprint $table) {
             $table->id();
-
 
             $table->bigInteger('farmacia_articulo_id')->unsigned();
 
@@ -26,11 +25,11 @@ class CreateArticuloMedicamentoTable extends Migration
             // concentracion
             // contenido
             // via administracion
-            $table->bigInteger('con_far_envase_id')->unsigned();
-            $table->bigInteger('con_far_forma_id')->unsigned();
-            $table->bigInteger('con_far_concentracion_id')->unsigned();
-            $table->bigInteger('con_far_contenido_id')->unsigned();
-            $table->bigInteger('con_far_administra_id')->unsigned();
+            $table->bigInteger('con_far_envase_id')->unsigned()->nullable();
+            $table->bigInteger('con_far_forma_id')->unsigned()->nullable();
+            $table->bigInteger('con_far_concentracion_id')->unsigned()->nullable();
+            $table->bigInteger('con_far_contenido_id')->unsigned()->nullable();
+            $table->bigInteger('con_far_administra_id')->unsigned()->nullable();
 
 
             $table->string('nombre_generico', 300)->nullable();
