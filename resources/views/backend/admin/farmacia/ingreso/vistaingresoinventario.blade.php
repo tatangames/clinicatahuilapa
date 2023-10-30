@@ -27,167 +27,176 @@
                 <div class="card-body">
 
 
-                    <form id="formulario-articulo">
-
-                        <div class="card-header">
-                            <h3 class="card-title" style="color: #005eab; font-weight: bold">Datos de Factura</h3>
-                        </div>
 
 
-                        <section class="content">
-                            <div class="container-fluid">
+                    <div class="card-header">
+                        <h3 class="card-title" style="color: #005eab; font-weight: bold">Datos de Factura</h3>
+                    </div>
 
-                                <div class="row">
-                                    <div class="form-group col-md-3" style="margin-top: 5px">
-                                        <label class="control-label" style="color: #686868">N° Factura: </label>
-                                        <div>
-                                            <input type="text" maxlength="50" autocomplete="off" class="form-control" id="numero-factura" >
-                                        </div>
+
+                    <section class="content">
+                        <div class="container-fluid">
+
+                            <div class="row">
+                                <div class="form-group col-md-3" style="margin-top: 5px">
+                                    <label class="control-label" style="color: #686868">N° Factura: </label>
+                                    <div>
+                                        <input type="text" maxlength="50" autocomplete="off" class="form-control" id="numero-factura" >
                                     </div>
-
-                                        <div class="form-group col-md-4" style="margin-top: 5px">
-                                            <label style="color: #686868">Tipo de Factura: </label>
-                                            <div>
-                                                <select class="form-control" id="select-tipofactura">
-                                                    <option value="">Seleccionar Opción</option>
-                                                    @foreach($arrayTipoFactura as $item)
-                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="form-group col-md-4" style="margin-top: 5px">
-                                            <label style="color: #686868">Fuente de Financiamiento: </label>
-                                            <div >
-                                                <select class="form-control" id="select-fuente-financiamiento">
-                                                    <option value="">Seleccionar Opción</option>
-                                                    @foreach($arrayFuente as $item)
-                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
                                 </div>
-                            </div>
-                        </section>
-
-
-                        <div class="card-header" style="margin-top: 25px">
-                            <h3 class="card-title" style="color: #005eab; font-weight: bold">Producto a Ingresar</h3>
-                        </div>
-
-                        <section class="content" style="margin-top: 15px">
-                            <div class="container-fluid">
-
-                                <div class="row">
-
-
-                                    <div class="form-group col-md-6">
-                                        <label class="control-label" style="color: #686868">Buscar Producto: </label>
-
-                                        <table class="table" id="matriz-busqueda" data-toggle="table">
-                                            <tbody>
-                                            <tr>
-                                                <td>
-                                                    <input id="repuesto" data-info='0' autocomplete="off" class='form-control' style='width:100%' onkeyup='buscarMaterial(this)' maxlength='300' type='text'>
-                                                    <div class='droplista' style='position: absolute; z-index: 9; width: 75% !important;'></div>
-                                                </td>
-                                            </tr>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-
-
-                                    <div class="col-md-3" style="margin-top: 11px">
-                                        <div class="form-group">
-                                            <label class="control-label" style="color: #686868">Existencia: </label>
-                                            <div>
-                                                <input type="text" disabled autocomplete="off" class="form-control" id="existencia" >
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-3" style="margin-top: 11px">
-                                        <div class="form-group">
-                                            <label class="control-label" style="color: #686868">Ultimo Costo: </label>
-                                            <div>
-                                                <input type="text" disabled autocomplete="off" class="form-control" id="ultimo-costo" >
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </section>
-
-
-
-
-                        <div class="card-header">
-                            <h3 class="card-title" style="color: #005eab; font-weight: bold">Datos del producto</h3>
-                        </div>
-
-
-                        <section class="content">
-                            <div class="container-fluid">
-
-                                <div class="row">
-                                    <div class="form-group col-md-3" style="margin-top: 5px">
-                                        <label class="control-label" style="color: #686868">Lote: </label>
-                                        <div>
-                                            <input type="text" maxlength="50" autocomplete="off" class="form-control" id="lote" >
-                                        </div>
-                                    </div>
-
-
-                                    <div class="form-group col-md-3" style="margin-top: 5px">
-                                        <label class="control-label" style="color: #686868">Fecha de Vencimiento: </label>
-                                        <div>
-                                            <input type="date" class="form-control" id="fecha-vencimiento">
-                                        </div>
-                                    </div>
-
 
                                     <div class="form-group col-md-4" style="margin-top: 5px">
-                                        <label style="color: #686868">Proveedor: </label>
-                                        <div >
-                                            <select class="form-control" id="select-proveedor">
+                                        <label style="color: #686868">Tipo de Factura: </label>
+                                        <div>
+                                            <select class="form-control" id="select-tipofactura">
                                                 <option value="">Seleccionar Opción</option>
-                                                @foreach($arrayProveedor as $item)
+                                                @foreach($arrayTipoFactura as $item)
                                                     <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row">
 
-                                    <div class="form-group col-md-3" style="margin-top: 15px">
-                                        <label class="control-label" style="color: #686868">Precio Producto: </label>
-                                        <div>
-                                            <input type="text" autocomplete="off" class="form-control" id="precio-producto" >
+                                    <div class="form-group col-md-4" style="margin-top: 5px">
+                                        <label style="color: #686868">Fuente de Financiamiento: </label>
+                                        <div >
+                                            <select class="form-control" id="select-fuente-financiamiento">
+                                                <option value="">Seleccionar Opción</option>
+                                                @foreach($arrayFuente as $item)
+                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
 
+                            </div>
+
+                            <div class="row">
+
+                                <div class="form-group col-md-4" style="margin-top: 5px">
+                                    <label style="color: #686868">Proveedor: </label>
+                                    <div >
+                                        <select class="form-control" id="select-proveedor">
+                                            <option value="">Seleccionar Opción</option>
+                                            @foreach($arrayProveedor as $item)
+                                                <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+
+
+                    <div class="card-header" style="margin-top: 25px">
+                        <h3 class="card-title" style="color: #005eab; font-weight: bold">Producto a Ingresar</h3>
+                    </div>
+
+                    <section class="content" style="margin-top: 15px">
+                        <div class="container-fluid">
+
+                            <div class="row">
+
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" style="color: #686868">Buscar Producto: </label>
+
+                                    <table class="table" id="matriz-busqueda" data-toggle="table">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <input id="inputBuscador" data-info='0' autocomplete="off" class='form-control' style='width:100%' onkeyup='buscarMaterial(this)' maxlength='300' type='text'>
+                                                <div class='droplista' style='position: absolute; z-index: 9; width: 75% !important;'></div>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+
+                                <div class="col-md-3" style="margin-top: 11px">
+                                    <div class="form-group">
+                                        <label class="control-label" style="color: #686868">Existencia: </label>
+                                        <div>
+                                            <input type="text" disabled autocomplete="off" class="form-control" id="existencia" >
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-3" style="margin-top: 11px">
+                                    <div class="form-group">
+                                        <label class="control-label" style="color: #686868">Ultimo Costo: </label>
+                                        <div>
+                                            <input type="text" disabled autocomplete="off" class="form-control" id="ultimo-costo" >
+                                        </div>
+                                    </div>
                                 </div>
 
 
                             </div>
-                        </section>
+
+
+
+
+                        </div>
+                    </section>
+
+
+
+                    <section class="content">
+                        <div class="container-fluid">
+
+                            <div class="row">
+
+                                <div class="form-group col-md-2" style="margin-top: 5px">
+                                    <label class="control-label" style="color: #686868">Cantidad: </label>
+                                    <div>
+                                        <input type="text"  autocomplete="off" class="form-control" id="cantidad" >
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-3" style="margin-top: 5px">
+                                    <label class="control-label" style="color: #686868">Lote: </label>
+                                    <div>
+                                        <input type="text" maxlength="50" autocomplete="off" class="form-control" id="lote" >
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group col-md-3" style="margin-top: 5px">
+                                    <label class="control-label" style="color: #686868">Fecha de Vencimiento: </label>
+                                    <div>
+                                        <input type="date" class="form-control" id="fecha-vencimiento">
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group col-md-3" style="margin-top: 5px">
+                                    <label class="control-label" style="color: #686868">Precio Producto: </label>
+                                    <div>
+                                        <input type="text" autocomplete="off" class="form-control" id="precio-producto" >
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+
+                        </div>
+                    </section>
 
 
 
 
 
-                    </form>
+
 
 
                     <br>
@@ -239,11 +248,23 @@
                         <th style="width: 6%">Precio</th>
                         <th style="width: 6%">Lote</th>
                         <th style="width: 6%">Fecha V.</th>
-                        <th style="width: 6%">N. Factura</th>
                         <th style="width: 5%">Opciones</th>
                     </tr>
                     </thead>
                     <tbody>
+
+                    </tbody>
+                </table>
+
+
+                <table class="table" id="matriz-totales" data-toggle="table" style="float: right">
+                    <thead>
+                    <tr style="float: right">
+                        <th>Precio Total</th>
+                    </tr>
+                    </thead>
+                    <tbody style="float: right">
+                    <td style="width: 125px"> <label type="text" class="form-control" id="precioTotal" >$0.00</label></td>
 
                     </tbody>
                 </table>
@@ -340,7 +361,13 @@
             }
         }
 
+        function preventScroll(){
+            window.scrollTo(0, 0);
+        }
+
         function modificarValor(edrop){
+
+            document.querySelector(".dropdown-menu").addEventListener("click", preventScroll);
 
             // obtener texto del li
             let texto = $(edrop).text();
@@ -360,38 +387,84 @@
 
 
         function agregarFila(){
-            var repuesto = document.querySelector('#repuesto');
-            var nomRepuesto = document.getElementById('repuesto').value;
+
+
+            var lote = document.getElementById('lote').value;
+            var fechaVenc = document.getElementById('fecha-vencimiento').value;
+            var precioProducto = document.getElementById('precio-producto').value;
             var cantidad = document.getElementById('cantidad').value;
 
-            if(repuesto.dataset.info == 0){
-                toastr.error("Repuesto es requerido");
+
+            var reglaNumeroEntero = /^[0-9]\d*$/;
+            var reglaNumeroDosDecimal = /^([0-9]+\.?[0-9]{0,2})$/;
+
+            //**************
+
+            if(cantidad === ''){
+                toastr.error('Cantidad es requerido');
                 return;
             }
 
-            var reglaNumeroDosDecimal = /^([0-9]+\.?[0-9]{0,2})$/;
+            if(!cantidad.match(reglaNumeroEntero)) {
+                toastr.error('Cantidad es requerido');
+                return;
+            }
+
+            if(cantidad < 0){
+                toastr.error('Cantidad Mínima no debe tener negativos');
+                return;
+            }
+
+            if(cantidad > 9000000){
+                toastr.error('Cantidad máximo debe ser 9 millones');
+                return;
+            }
+
+            //**************
+
+            if(lote === ''){
+                toastr.error('Lote es requerido');
+                return;
+            }
+
+            if(fechaVenc === ''){
+                toastr.error('Fecha Vencimiento es requerido');
+                return;
+            }
+
+
+            var inputBuscador = document.querySelector('#inputBuscador');
+            var nomProducto = document.getElementById('inputBuscador').value;
+
+
+            if(inputBuscador.dataset.info == 0){
+                toastr.error("Producto es requerido");
+                return;
+            }
+
 
             //*************
 
-            if(cantidad === ''){
-                toastr.error('Cantidad es requerida');
+            if(precioProducto === ''){
+                toastr.error('Precio Producto es requerido');
                 return;
             }
 
-            if(!cantidad.match(reglaNumeroDosDecimal)) {
-                toastr.error('Cantidad debe ser número Decimal (2 decimales) y no Negativo');
+            if(!precioProducto.match(reglaNumeroDosDecimal)) {
+                toastr.error('Precio Producto debe ser número Decimal (2 decimales)');
                 return;
             }
 
-            if(cantidad <= 0){
-                toastr.error('Cantidad no debe ser negativo o cero');
+            if(precioProducto <= 0){
+                toastr.error('Precio Producto no debe ser negativo o cero');
                 return;
             }
 
-            if(cantidad > 1000000){
-                toastr.error('Cantidad máximo 1 millón');
+            if(precioProducto > 9000000){
+                toastr.error('Precio Producto debe ser máximo 9 millones');
                 return;
             }
+
 
             //**************
 
@@ -405,12 +478,25 @@
                 "</td>" +
 
                 "<td>" +
-                "<input name='descripcionArray[]' disabled data-info='" + repuesto.dataset.info + "' value='" + nomRepuesto + "' class='form-control' type='text'>" +
+                "<input name='arrayNombre[]' disabled data-info='" + inputBuscador.dataset.info + "' value='" + nomProducto + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
-                "<input name='cantidadArray[]' disabled value='" + cantidad + "' class='form-control' type='number'>" +
+                "<input name='arrayCantidad[]' disabled value='" + cantidad + "' class='form-control' type='text'>" +
                 "</td>" +
+
+                "<td>" +
+                "<input name='arrayPrecio[]' disabled value='" + precioProducto + "' class='form-control' type='text'>" +
+                "</td>" +
+
+                "<td>" +
+                "<input name='arrayLote[]' disabled value='" + lote + "' class='form-control' type='text'>" +
+                "</td>" +
+
+                "<td>" +
+                "<input name='arrayFecha[]' disabled value='" + fechaVenc + "' class='form-control' type='text'>" +
+                "</td>" +
+
 
                 "<td>" +
                 "<button type='button' class='btn btn-block btn-danger' onclick='borrarFila(this)'>Borrar</button>" +
@@ -419,6 +505,11 @@
                 "</tr>";
 
             $("#matriz tbody").append(markup);
+
+
+            // CALCULAR TODAS LAS FILAS
+            calcularFilas();
+
 
             Swal.fire({
                 position: 'center',
@@ -429,17 +520,56 @@
             })
 
             $(txtContenedorGlobal).attr('data-info', '0');
-            document.getElementById("formulario-repuesto").reset();
+
+
+            document.getElementById('cantidad').value = '';
+            document.getElementById('fecha-vencimiento').value = '';
+            document.getElementById('precio-producto').value = '';
+            document.getElementById('inputBuscador').value = '';
         }
 
         function borrarFila(elemento){
             var tabla = elemento.parentNode.parentNode;
             tabla.parentNode.removeChild(tabla);
-            setearFila()
+            setearFila();
         }
 
 
+        function setearFila(){
 
+            var table = document.getElementById('matriz');
+            var conteo = 0;
+            for (var r = 1, n = table.rows.length; r < n; r++) {
+                conteo +=1;
+                var element = table.rows[r].cells[0].children[0];
+                document.getElementById(element.id).innerHTML = ""+conteo;
+            }
+
+            calcularFilas();
+        }
+
+
+        function calcularFilas(){
+
+            var cantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
+            var precio = $("input[name='arrayPrecio[]']").map(function(){return $(this).val();}).get();
+
+            var precioTotal = 0;
+
+            for(var a = 0; a < cantidad.length; a++){
+
+                let infoCantidad = cantidad[a];
+                let infoPrecio = precio[a];
+
+                let multiplicado = infoCantidad * infoPrecio;
+
+                precioTotal += multiplicado;
+            }
+
+             let dato = '$' + Number(precioTotal).toFixed(2);
+
+            document.getElementById('precioTotal').innerHTML = dato;
+        }
 
 
     </script>
