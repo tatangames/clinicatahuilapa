@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Backend\Farmacia;
 use App\Http\Controllers\Controller;
 use App\Models\ArticuloMedicamento;
 use App\Models\ContenidoFarmaceutica;
+use App\Models\EntradaMedicamento;
+use App\Models\EntradaMedicamentoDetalle;
 use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
 use App\Models\Linea;
 use App\Models\Proveedores;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
+use App\Models\Usuario;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -141,11 +145,22 @@ class FarmaciaController extends Controller
                     $info->nombreunido = $info->nombre;
                 }
 
-                $info->existencia = 200;
 
-                $info->ultimoprecio = "$12.50";
+                // BUSCAR CANTIDAD Y ULTIMO PRECIO DEL MISMO
 
+                $existencia = EntradaMedicamentoDetalle::where('medicamento_id', $info->id)->sum('cantidad');
+                $info->existencia = $existencia;
 
+                if($filaUltima = EntradaMedicamentoDetalle::where('medicamento_id', $info->id)
+                    ->orderBy('id', 'DESC')
+                    ->first()){
+
+                    $precioUltimo = '$' . number_format((float)$filaUltima->precio, 2, '.', ',');
+
+                    $info->ultimoprecio = $precioUltimo;
+                }else{
+                    $info->ultimoprecio = "No Tiene un Registro aun";
+                }
             }
 
             $output = '<ul class="dropdown-menu" style="display:block; position:relative; overflow: auto; max-height: 300px; width: 550px">';
@@ -185,8 +200,70 @@ class FarmaciaController extends Controller
     public function registrarNuevoMedicamento(Request $request){
 
 
+        $regla = array(
+            'numFactura' => 'required',
+            'tipoFactura' => 'required',
+            'fuenteFina' => 'required',
+            'proveedor' => 'required',
+        );
 
-        return ['success' => 1];
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        DB::beginTransaction();
+
+        try {
+
+            // Obtiene los datos enviados desde el formulario como una cadena JSON y luego decódificala
+            $datosContenedor = json_decode($request->contenedorArray, true); // El segundo argumento convierte el resultado en un arreglo
+
+            $usuario = auth()->user();
+
+            Usuario::where('id', $usuario->id);
+            $fechaCarbon = Carbon::parse(Carbon::now());
+
+            $nuevoMedi = new EntradaMedicamento();
+            $nuevoMedi->numero_factura = $request->numFactura;
+            $nuevoMedi->tipofactura_id = $request->tipoFactura;
+            $nuevoMedi->fuentefina_id = $request->fuenteFina;
+            $nuevoMedi->proveedor_id = $request->proveedor;
+            $nuevoMedi->usuario_id = $usuario->id;
+            $nuevoMedi->fecha = $fechaCarbon;
+            $nuevoMedi->save();
+
+            foreach ($datosContenedor as $filaArray) {
+
+                Log::info($filaArray['infoIdMedicamento']);
+                Log::info($filaArray['infoCantidad']);
+                Log::info($filaArray['infoPrecio']);
+
+                $infoMedicamento = FarmaciaArticulo::where('id', $filaArray['infoIdMedicamento'])->first();
+
+                $detalle = new EntradaMedicamentoDetalle();
+                $detalle->entrada_medicamento_id = $nuevoMedi->id;
+                $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
+                $detalle->nombre_copia = $infoMedicamento->nombre;
+                $detalle->cantidad = $filaArray['infoCantidad'];
+                $detalle->cantidad_fija = $filaArray['infoCantidad'];
+                $detalle->precio = $filaArray['infoPrecio'];
+                $detalle->lote = $filaArray['infoLote'];
+                $detalle->fecha_vencimiento = $filaArray['infoFecha'];
+                $detalle->save();
+            }
+
+
+            DB::commit();
+            return ['success' => 1];
+
+        }catch(\Throwable $e){
+            Log::info('error ' . $e);
+            DB::rollback();
+            return ['success' => 99];
+        }
+
+
     }
 
 

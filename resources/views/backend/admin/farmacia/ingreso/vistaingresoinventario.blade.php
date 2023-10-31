@@ -47,7 +47,7 @@
                                 <div class="form-group col-md-3" style="margin-top: 5px">
                                     <label class="control-label" style="color: #686868">N° Factura: </label>
                                     <div>
-                                        <input type="text" maxlength="50" autocomplete="off" class="form-control" id="numero-factura" >
+                                        <input type="text" maxlength="100" autocomplete="off" class="form-control" id="numero-factura" >
                                     </div>
                                 </div>
 
@@ -170,7 +170,7 @@
                                 <div class="form-group col-md-3" style="margin-top: 5px">
                                     <label class="control-label" style="color: #686868">Lote: </label>
                                     <div>
-                                        <input type="text" maxlength="50" autocomplete="off" class="form-control" id="lote" >
+                                        <input type="text" maxlength="100" autocomplete="off" class="form-control" id="lote" >
                                     </div>
                                 </div>
 
@@ -214,7 +214,6 @@
             </div>
         </div>
     </section>
-
 
 
 
@@ -475,7 +474,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<input name='arrayNombre[]' disabled data-idmedicamento='" + inputBuscador.dataset.info + "' value='" + nomProducto + "' class='form-control' type='text'>" +
+                "<input name='arrayNombre[]' disabled data-idmedicamento='" + inputBuscador.dataset.idmedicamento + "' value='" + nomProducto + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
@@ -751,6 +750,7 @@
             formData.append('tipoFactura', tipoFactura);
             formData.append('fuenteFina', fuenteFina);
             formData.append('proveedor', proveedor);
+
 
             axios.post(url+'/registrar/nuevo/medicamento', formData, {
             })
