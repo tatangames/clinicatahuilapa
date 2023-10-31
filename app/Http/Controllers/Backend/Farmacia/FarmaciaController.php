@@ -157,7 +157,7 @@ class FarmaciaController extends Controller
                     if(!empty($row)){
                         $tiene = false;
                         $output .= '
-                 <li onclick="modificarValor(this)" id="'.$row->id.'" data-ultimoprecio="'.$row->ultimoprecio.'" data-existencia="'.$row->existencia.'"><a href="#" style="margin-left: 3px">'.$row->nombreunido.'</a></li>
+                 <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'" data-ultimoprecio="'.$row->ultimoprecio.'" data-existencia="'.$row->existencia.'">'.$row->nombreunido.'</li>
                 ';
                     }
                 }
@@ -166,7 +166,7 @@ class FarmaciaController extends Controller
                     if(!empty($row)){
                         $tiene = false;
                         $output .= '
-                 <li onclick="modificarValor(this)" id="'.$row->id.'"  data-ultimoprecio="'.$row->ultimoprecio.'" data-existencia="'.$row->existencia.'"><a href="#" style="margin-left: 3px">'.$row->nombreunido.'</a></li>
+                 <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'"  data-ultimoprecio="'.$row->ultimoprecio.'" data-existencia="'.$row->existencia.'">'.$row->nombreunido.'</li>
                    <hr>
                 ';
                     }
@@ -181,6 +181,13 @@ class FarmaciaController extends Controller
     }
 
 
+
+    public function registrarNuevoMedicamento(Request $request){
+
+
+
+        return ['success' => 1];
+    }
 
 
 

@@ -14,6 +14,12 @@
         /*Ajustar tablas*/
         table-layout: fixed;
     }
+
+    .cursor-pointer:hover {
+        cursor: pointer;
+        color: #401fd2;
+        font-weight: bold;
+    }
 </style>
 
 <div id="divcontenedor" style="display: none">
@@ -108,8 +114,8 @@
                                         <tbody>
                                         <tr>
                                             <td>
-                                                <input id="inputBuscador" data-info='0' autocomplete="off" class='form-control' style='width:100%' onkeyup='buscarMaterial(this)' maxlength='300' type='text'>
-                                                <div class='droplista' style='position: absolute; z-index: 9; width: 75% !important;'></div>
+                                                <input id="inputBuscador" data-idmedicamento='0' autocomplete="off" class='form-control' style='width:100%' onkeyup='buscarMaterial(this)' maxlength='300' type='text'>
+                                                <div class='droplista' id="midropmenu" style='position: absolute; z-index: 9; width: 75% !important;'></div>
                                             </td>
                                         </tr>
 
@@ -186,16 +192,8 @@
 
 
                             </div>
-
-
-
                         </div>
                     </section>
-
-
-
-
-
 
 
 
@@ -212,14 +210,10 @@
 
                         </div>
                     </section>
-
-
-
                 </div>
             </div>
         </div>
     </section>
-
 
 
 
@@ -274,7 +268,7 @@
     </section>
 
     <div class="modal-footer justify-content-between" style="margin-top: 25px;">
-        <button type="button" class="btn btn-success" onclick="preguntaGuardar()">Guardar</button>
+        <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Guardar</button>
     </div>
 
 
@@ -319,9 +313,7 @@
             });
 
 
-
             document.getElementById("divcontenedor").style.display = "block";
-
         });
     </script>
 
@@ -341,7 +333,7 @@
 
                 if(texto === ''){
                     // si se limpia el input, setear el atributo id
-                    $(e).attr('data-info', 0);
+                    $(e).attr('data-idmedicamento', 0);
                 }
 
                 axios.post(url+'/buscar/nombre/medicamento', {
@@ -361,13 +353,8 @@
             }
         }
 
-        function preventScroll(){
-            window.scrollTo(0, 0);
-        }
 
         function modificarValor(edrop){
-
-            document.querySelector(".dropdown-menu").addEventListener("click", preventScroll);
 
             // obtener texto del li
             let texto = $(edrop).text();
@@ -375,7 +362,7 @@
             $(txtContenedorGlobal).val(texto);
 
             // agregar el id al atributo del input descripcion
-            $(txtContenedorGlobal).attr('data-info', edrop.id);
+            $(txtContenedorGlobal).attr('data-idmedicamento', edrop.id);
 
             const existencia = edrop.dataset.existencia;
             const ultimoPrecio = edrop.dataset.ultimoprecio;
@@ -385,9 +372,7 @@
         }
 
 
-
         function agregarFila(){
-
 
             var lote = document.getElementById('lote').value;
             var fechaVenc = document.getElementById('fecha-vencimiento').value;
@@ -465,8 +450,20 @@
                 return;
             }
 
+            let precioProductoFormat = "$" + Number(precioProducto).toFixed(2);
 
             //**************
+
+            // Crear un objeto Date a partir del valor del input
+            const fecha = new Date(fechaVenc);
+
+            // Obtener el día, mes y año
+            const dia = fecha.getDate();
+            const mes = fecha.getMonth() + 1; // Los meses comienzan desde 0, así que sumamos 1
+            const anio = fecha.getFullYear();
+
+            let fechaFormat = dia + "/" + mes + "/" + anio;
+
 
             var nFilas = $('#matriz >tbody >tr').length;
             nFilas += 1;
@@ -478,7 +475,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<input name='arrayNombre[]' disabled data-info='" + inputBuscador.dataset.info + "' value='" + nomProducto + "' class='form-control' type='text'>" +
+                "<input name='arrayNombre[]' disabled data-idmedicamento='" + inputBuscador.dataset.info + "' value='" + nomProducto + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
@@ -486,7 +483,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<input name='arrayPrecio[]' disabled value='" + precioProducto + "' class='form-control' type='text'>" +
+                "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='" + precioProductoFormat + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
@@ -494,7 +491,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<input name='arrayFecha[]' disabled value='" + fechaVenc + "' class='form-control' type='text'>" +
+                "<input name='arrayFecha[]' data-fecha='" + fechaVenc + "' disabled value='" + fechaFormat + "' class='form-control' type='text'>" +
                 "</td>" +
 
 
@@ -519,13 +516,15 @@
                 timer: 1500
             })
 
-            $(txtContenedorGlobal).attr('data-info', '0');
+            $(txtContenedorGlobal).attr('data-idmedicamento', '0');
 
 
             document.getElementById('cantidad').value = '';
             document.getElementById('fecha-vencimiento').value = '';
             document.getElementById('precio-producto').value = '';
             document.getElementById('inputBuscador').value = '';
+            document.getElementById('existencia').value = '';
+            document.getElementById('ultimo-costo').value = '';
         }
 
         function borrarFila(elemento){
@@ -552,7 +551,7 @@
         function calcularFilas(){
 
             var cantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
-            var precio = $("input[name='arrayPrecio[]']").map(function(){return $(this).val();}).get();
+            var precio = $("input[name='arrayPrecio[]']").map(function(){return $(this).attr("data-precio");}).get();
 
             var precioTotal = 0;
 
@@ -566,9 +565,246 @@
                 precioTotal += multiplicado;
             }
 
-             let dato = '$' + Number(precioTotal).toFixed(2);
+             let precioFormat = '$' + Number(precioTotal).toFixed(2);
 
-            document.getElementById('precioTotal').innerHTML = dato;
+            document.getElementById('precioTotal').innerHTML = precioFormat;
+        }
+
+
+        function preguntarGuardar(){
+
+            Swal.fire({
+                title: '¿Registrar Medicamento?',
+                text: '',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                allowOutsideClick: false,
+                confirmButtonText: 'SI',
+                cancelButtonText: 'NO'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    registrarMedicamento();
+                }
+            })
+        }
+
+
+        function registrarMedicamento(){
+
+            var numFactura = document.getElementById('numero-factura').value;
+            var tipoFactura = document.getElementById('select-tipofactura').value;
+            var fuenteFina = document.getElementById('select-fuente-financiamiento').value;
+            var proveedor = document.getElementById('select-proveedor').value;
+
+
+            if(numFactura === ''){
+                toastr.error('Número Factura es requerido');
+                return;
+            }
+
+            if(tipoFactura === ''){
+                toastr.error('Tipo Factura es requerido');
+                return;
+            }
+
+            if(fuenteFina === ''){
+                toastr.error('Fuente Financiamiento es requerido');
+                return;
+            }
+
+            if(proveedor === ''){
+                toastr.error('Proveedor es requerido');
+                return;
+            }
+
+
+            var nRegistro = $('#matriz > tbody >tr').length;
+
+            if (nRegistro <= 0){
+                toastr.error('Productos a Ingresar son requeridos');
+                return;
+            }
+
+
+            var arrayIdMedicamento = $("input[name='arrayNombre[]']").map(function(){return $(this).attr("data-idmedicamento");}).get();
+            var arrayCantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
+            var arrayPrecio = $("input[name='arrayPrecio[]']").map(function(){return $(this).attr("data-precio");}).get();
+            var arrayLote = $("input[name='arrayLote[]']").map(function(){return $(this).val();}).get();
+            var arrayFecha = $("input[name='arrayFecha[]']").map(function(){return $(this).attr("data-fecha");}).get();
+
+
+            var reglaNumeroEntero = /^[0-9]\d*$/;
+            var reglaNumeroDosDecimal = /^([0-9]+\.?[0-9]{0,2})$/;
+
+
+            // VALIDACIONES DE CADA FILA, RECORRER 1 ELEMENTO YA QUE TODOS TIENEN LA MISMA CANTIDAD DE FILAS
+
+            for(var a = 0; a < arrayIdMedicamento.length; a++){
+
+                let idMedicamento = arrayIdMedicamento[a];
+                let cantidadProducto = arrayCantidad[a];
+                let precioProducto = arrayPrecio[a];
+                let loteProducto = arrayLote[a];
+                let fechaProducto = arrayFecha[a];
+
+
+                // identifica si el 0 es tipo number o texto
+                if(idMedicamento == 0){
+                    colorRojoTabla(a);
+                    alertaMensaje('info', 'No encontrado', 'En la Fila #' + (a+1) + " El Producto no se encuentra. Por favor borrar la Fila y buscar de nuevo el Producto");
+                    return;
+                }
+
+                // **** VALIDAR CANTIDAD DE PRODUCTO
+
+                if (cantidadProducto === '') {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad de producto es requerida. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (!cantidadProducto.match(reglaNumeroEntero)) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad debe ser decimal (2 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (cantidadProducto <= 0) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad no debe ser negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (cantidadProducto > 9000000) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad máximo 9 millones. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+
+
+                // **** VALIDAR CANTIDAD DE PRODUCTO
+
+                if (precioProducto === '') {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio de producto es requerida. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (!precioProducto.match(reglaNumeroDosDecimal)) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio debe ser decimal (2 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (precioProducto <= 0) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio no debe ser negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (precioProducto > 9000000) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio máximo 9 millones. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+
+                if(loteProducto === ''){
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Lote de Producto no se encuentra. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if(fechaProducto === ''){
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Fecha de Producto no se encuentra. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+            }
+
+            openLoading();
+
+            let formData = new FormData();
+
+
+            const contenedorArray = [];
+
+
+            for(var i = 0; i < arrayIdMedicamento.length; i++){
+
+                let infoIdMedicamento = arrayIdMedicamento[i];
+                let infoCantidad = arrayCantidad[i];
+                let infoPrecio = arrayPrecio[i];
+                let infoLote = arrayLote[i];
+                let infoFecha = arrayFecha[i];
+
+                // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
+                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoPrecio, infoLote, infoFecha });
+            }
+
+
+            formData.append('contenedorArray', JSON.stringify(contenedorArray));
+            formData.append('numFactura', numFactura);
+            formData.append('tipoFactura', tipoFactura);
+            formData.append('fuenteFina', fuenteFina);
+            formData.append('proveedor', proveedor);
+
+            axios.post(url+'/registrar/nuevo/medicamento', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Registrado correctamente');
+                        limpiar();
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+        function limpiar(){
+
+            document.getElementById('inputBuscador').value = '';
+            document.getElementById('existencia').value = '';
+            document.getElementById('ultimo-costo').value = '';
+            document.getElementById('cantidad').value = '';
+            document.getElementById('lote').value = '';
+            document.getElementById('fecha-vencimiento').value = '';
+            document.getElementById('precio-producto').value = '';
+            document.getElementById('precioTotal').innerHTML = "$0.00";
+            document.getElementById('numero-factura').value = '';
+
+
+            document.getElementById('select-proveedor').selectedIndex = 0;
+            $("#select-proveedor").trigger("change");
+
+            document.getElementById('select-tipofactura').selectedIndex = 0;
+            $("#select-tipofactura").trigger("change");
+
+            document.getElementById('select-fuente-financiamiento').selectedIndex = 0;
+            $("#select-fuente-financiamiento").trigger("change");
+
+
+
+
+            $("#matriz tbody tr").remove();
+        }
+
+        function colorRojoTabla(index){
+            $("#matriz tr:eq("+(index+1)+")").css('background', '#F1948A');
+        }
+
+        function colorBlancoTabla(){
+            $("#matriz tbody tr").css('background', 'white');
         }
 
 
