@@ -267,7 +267,19 @@ Route::post('/admin/buscar/nombre/medicamento',  [FarmaciaController::class,'bus
 Route::post('/admin/registrar/nuevo/medicamento',  [FarmaciaController::class,'registrarNuevoMedicamento']);
 
 
+// --- MOTIVO PARA FARMACIA ---
+Route::get('/admin/motivo/farmacia/index', [ProfesionController::class,'indexMotivoFarmacia'])->name('admin.motivo.farmacia.index');
+Route::get('/admin/motivo/farmacia/tabla/index', [ProfesionController::class,'tablaMotivoFarmacia']);
+Route::post('/admin/motivo/farmacia/nuevo', [ProfesionController::class, 'nuevaMotivoFarmacia']);
+Route::post('/admin/motivo/farmacia/informacion', [ProfesionController::class, 'infoMotivoFarmacia']);
+Route::post('/admin/motivo/farmacia/editar', [ProfesionController::class, 'editarMotivoFarmacia']);
 
+
+// --- SALIDA DE MEDICAMENTO POR PARTE DE FARMACIA ---
+Route::get('/admin/salida/medicamento/farmacia/index', [FarmaciaController::class,'indexSalidaFarmacia'])->name('admin.salida.farmacia.index');
+
+// --- CARGAR TABLA PARA ELEGIR PRODUCTO PARA SALIDA DE FARMACIA ---
+Route::get('/admin/buscar/producto/salida/farmacia/{idproducto}', [FarmaciaController::class,'elegirProductoParaSalida']);
 
 
 

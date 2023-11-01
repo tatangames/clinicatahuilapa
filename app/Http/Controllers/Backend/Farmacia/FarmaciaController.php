@@ -10,6 +10,7 @@ use App\Models\EntradaMedicamentoDetalle;
 use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
 use App\Models\Linea;
+use App\Models\MotivoFarmacia;
 use App\Models\Proveedores;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
@@ -262,9 +263,88 @@ class FarmaciaController extends Controller
             DB::rollback();
             return ['success' => 99];
         }
-
-
     }
+
+
+
+
+    //************ ORDEN DE SALIDAS PARA FARMACIA   *****
+
+    public function indexSalidaFarmacia(){
+
+        $arrayMotivo = MotivoFarmacia::orderBy('nombre')->get();
+
+        $arrayProductoFarmacia = FarmaciaArticulo::all();
+
+        $pilaIdProducto = array();
+
+        foreach ($arrayProductoFarmacia as $info){
+
+            // NECESITO UNICAMENTE CANTIDAD MAYOR A 0
+
+            $cantidad = EntradaMedicamentoDetalle::where('medicamento_id', $info->id)->sum('cantidad');
+
+            if($cantidad > 0){
+                array_push($pilaIdProducto, $info->id);
+            }
+        }
+
+
+        $arrayProducto = FarmaciaArticulo::whereIn('id', $pilaIdProducto)->orderBy('nombre', 'ASC')->get();
+
+        foreach ($arrayProducto as $detalle){
+
+            $cantidadTotal = EntradaMedicamentoDetalle::where('medicamento_id', $detalle->id)->sum('cantidad');
+
+            if($detalle->codigo_articulo != null){
+                $detalle->nombretotal = $detalle->codigo_articulo . ' - ' . $detalle->nombre . ' (Existencia: ' . $cantidadTotal . ')';
+            }else{
+                $detalle->nombretotal = $detalle->nombre . ' (Existencia: ' . $cantidadTotal . ')';
+            }
+        }
+
+
+        return view('backend.admin.farmacia.ordensalida.vistaordensalida', compact('arrayMotivo', 'arrayProducto'));
+    }
+
+
+
+
+    public function elegirProductoParaSalida($idproducto){
+
+        $arraySalidas =DB::table('entrada_medicamento AS en')
+                ->join('entrada_medicamento_detalle AS deta', 'en.id', '=', 'deta.entrada_medicamento_id')
+                ->select('en.fecha', 'deta.entrada_medicamento_id', 'deta.medicamento_id', 'deta.cantidad',
+                            'deta.precio', 'deta.lote', 'deta.fecha_vencimiento', 'en.numero_factura', 'deta.id AS identradadetalle')
+                ->where('deta.medicamento_id', $idproducto)
+                ->where('deta.cantidad', '>', 0)
+                ->orderBy('deta.fecha_vencimiento', 'ASC')
+                ->get();
+
+        $conteo = 1;
+        if (count($arraySalidas) == 0) {
+            $conteo = 0;
+        }
+
+
+        foreach ($arraySalidas as $dato){
+
+            $infoDe = FarmaciaArticulo::where('id', $dato->medicamento_id)->first();
+            $dato->nombre = $infoDe->nombre;
+            $dato->fechaVencimiento = date("d-m-Y", strtotime($dato->fecha_vencimiento));
+
+            $dato->fechaEntrada = date("d-m-Y", strtotime($dato->fecha));
+
+            $dato->precio = '$' . number_format((float)$dato->precio, 2, '.', ',');
+        }
+
+
+
+
+        return view('backend.admin.farmacia.ordensalida.tabla.modalproductosalida', compact('conteo', 'arraySalidas'));
+    }
+
+
 
 
 

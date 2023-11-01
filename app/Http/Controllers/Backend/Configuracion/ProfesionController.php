@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\Configuracion;
 
 use App\Http\Controllers\Controller;
+use App\Models\MotivoFarmacia;
 use Illuminate\Http\Request;
 use App\Models\Profesion;
 use Illuminate\Support\Facades\Validator;
@@ -87,4 +88,88 @@ class ProfesionController extends Controller
             return ['success' => 2];
         }
     }
+
+
+
+
+    // ********************** MOTIVO FARMACIA ******************
+
+
+
+
+    public function indexMotivoFarmacia(){
+        return view('backend.admin.configuracion.motivofarmacia.vistamotivo');
+    }
+
+    // retorna tabla de profesiones
+    public function tablaMotivoFarmacia(){
+        $lista = MotivoFarmacia::orderBy('nombre', 'ASC')->get();
+
+        return view('backend.admin.configuracion.motivofarmacia.tablamotivo', compact('lista'));
+    }
+
+    // registrar una nueva profesion
+    public function nuevaMotivoFarmacia(Request $request){
+
+        $regla = array(
+            'nombre' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        $dato = new MotivoFarmacia();
+        $dato->nombre = $request->nombre;
+
+        if($dato->save()){
+            return ['success' => 1];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+    // obtener información de una profesion
+    public function infoMotivoFarmacia(Request $request){
+        $regla = array(
+            'id' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if($lista = MotivoFarmacia::where('id', $request->id)->first()){
+
+            return ['success' => 1, 'lista' => $lista];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+    // editar una Profesion
+    public function editarMotivoFarmacia(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+            'nombre' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if(MotivoFarmacia::where('id', $request->id)->first()){
+
+            MotivoFarmacia::where('id', $request->id)->update([
+                'nombre' => $request->nombre
+            ]);
+
+            return ['success' => 1];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
 }

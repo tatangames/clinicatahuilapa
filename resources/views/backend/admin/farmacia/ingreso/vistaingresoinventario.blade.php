@@ -640,6 +640,8 @@
 
             // VALIDACIONES DE CADA FILA, RECORRER 1 ELEMENTO YA QUE TODOS TIENEN LA MISMA CANTIDAD DE FILAS
 
+            colorBlancoTabla();
+
             for(var a = 0; a < arrayIdMedicamento.length; a++){
 
                 let idMedicamento = arrayIdMedicamento[a];
@@ -792,8 +794,6 @@
 
             document.getElementById('select-fuente-financiamiento').selectedIndex = 0;
             $("#select-fuente-financiamiento").trigger("change");
-
-
 
 
             $("#matriz tbody tr").remove();
