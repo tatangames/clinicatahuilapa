@@ -11,6 +11,8 @@ use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
 use App\Models\Linea;
 use App\Models\MotivoFarmacia;
+use App\Models\OrdenSalida;
+use App\Models\OrdenSalidaDetalle;
 use App\Models\Proveedores;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
@@ -222,7 +224,6 @@ class FarmaciaController extends Controller
 
             $usuario = auth()->user();
 
-            Usuario::where('id', $usuario->id);
             $fechaCarbon = Carbon::parse(Carbon::now());
 
             $nuevoMedi = new EntradaMedicamento();
@@ -235,10 +236,6 @@ class FarmaciaController extends Controller
             $nuevoMedi->save();
 
             foreach ($datosContenedor as $filaArray) {
-
-                Log::info($filaArray['infoIdMedicamento']);
-                Log::info($filaArray['infoCantidad']);
-                Log::info($filaArray['infoPrecio']);
 
                 $infoMedicamento = FarmaciaArticulo::where('id', $filaArray['infoIdMedicamento'])->first();
 
@@ -338,12 +335,78 @@ class FarmaciaController extends Controller
             $dato->precio = '$' . number_format((float)$dato->precio, 2, '.', ',');
         }
 
-
-
-
         return view('backend.admin.farmacia.ordensalida.tabla.modalproductosalida', compact('conteo', 'arraySalidas'));
     }
 
+
+    public function registrarOrdenSalidaFarmacia(Request $request){
+
+
+        $regla = array(
+            'motivo' => 'required',
+            'fecha' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        DB::beginTransaction();
+
+        try {
+
+            // Obtiene los datos enviados desde el formulario como una cadena JSON y luego decódificala
+            $datosContenedor = json_decode($request->contenedorArray, true); // El segundo argumento convierte el resultado en un arreglo
+
+            $usuario = auth()->user();
+            $horaCarbon = Carbon::parse(Carbon::now());
+
+            $orden = new OrdenSalida();
+            $orden->usuario_id = $usuario->id;
+            $orden->motivo_id = $request->motivo;
+            $orden->fecha = $request->fecha;
+            $orden->hora = $horaCarbon;
+            $orden->observaciones = $request->observaciones;
+            $orden->save();
+
+            $fila = 0;
+
+            // REGISTRAR CADA SALIDA
+            foreach ($datosContenedor as $filaArray) {
+                $fila++;
+
+                $infoEntrada = EntradaMedicamentoDetalle::where('id', $filaArray['infoIdEntrada'])->first();
+
+                $resta = $infoEntrada->cantidad - $filaArray['infoCantidad'];
+
+                if($resta < 0){
+                    return ['success' => 1, 'fila' => $fila, 'cantidad' => $infoEntrada->cantidad];
+                }
+
+                // ACTUALIZAR CANTIDAD
+
+                EntradaMedicamentoDetalle::where('id', $filaArray['infoIdEntrada'])->update([
+                    'cantidad' => $resta
+                ]);
+
+                $detalle = new OrdenSalidaDetalle();
+                $detalle->orden_salida_id = $orden->id;
+                $detalle->entrada_medi_detalle_id = $filaArray['infoIdEntrada'];
+                $detalle->cantidad = $filaArray['infoCantidad'];
+                $detalle->save();
+            }
+
+
+            DB::commit();
+            return ['success' => 2];
+
+        }catch(\Throwable $e){
+            Log::info('error ' . $e);
+            DB::rollback();
+            return ['success' => 99];
+        }
+    }
 
 
 

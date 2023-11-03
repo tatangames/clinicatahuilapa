@@ -668,7 +668,7 @@
 
                 if (!cantidadProducto.match(reglaNumeroEntero)) {
                     colorRojoTabla(a);
-                    toastr.error('Fila #' + (a + 1) + ' Cantidad debe ser decimal (2 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad debe ser entero y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
                     return;
                 }
 

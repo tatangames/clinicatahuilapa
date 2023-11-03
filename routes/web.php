@@ -280,6 +280,7 @@ Route::get('/admin/salida/medicamento/farmacia/index', [FarmaciaController::clas
 
 // --- CARGAR TABLA PARA ELEGIR PRODUCTO PARA SALIDA DE FARMACIA ---
 Route::get('/admin/buscar/producto/salida/farmacia/{idproducto}', [FarmaciaController::class,'elegirProductoParaSalida']);
+Route::post('/admin/registrar/orden/salida/medicamento', [FarmaciaController::class, 'registrarOrdenSalidaFarmacia']);
 
 
 

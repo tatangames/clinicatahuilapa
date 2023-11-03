@@ -54,6 +54,12 @@
                                     </div>
                                 </div>
 
+
+                                <div class="form-group " style="margin-top: 5px; margin-left: 30px">
+                                    <label style="color: #686868">Fecha de Salida: </label>
+                                    <input type="date" autocomplete="off" class="form-control" id="fecha-salida">
+                                </div>
+
                             </div>
 
                             <div class="row">
@@ -119,6 +125,12 @@
 
                     </div>
 
+
+                    <label class="col-form-label" style="color: #428bca; font-weight: bold; font-size: 20px">Observaciones:</label>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" id="text-observaciones"></textarea>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -174,6 +186,11 @@
             </div>
         </div>
     </section>
+
+
+
+
+
 
     <div class="modal-footer justify-content-between" style="margin-top: 25px;">
         <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Guardar</button>
@@ -238,15 +255,17 @@
 
         function agregarFila(){
 
-
             const inputSalidas = document.querySelectorAll('input[name="arraysalida[]"]');
 
+            var boolHayItems = true;
 
             inputSalidas.forEach((valor) => {
 
+                boolHayItems = false;
+
                 const nombreMedicamento = valor.dataset.nombremedi;
                 const idEntrada = valor.dataset.identrada;
-                const maxCantidad = valor.dataset.maxcantidad;
+                //const maxCantidad = valor.dataset.maxcantidad;
                 const fechaVencimiento = valor.dataset.fechavencimiento;
                 const fechaEntrada = valor.dataset.fechaentrada;
                 const loteEntrada = valor.dataset.lote;
@@ -269,11 +288,11 @@
                         "</td>" +
 
                         "<td>" +
-                        "<input name='arrayNombre[]' disabled data-idmedicamento='" + idEntrada + "' value='" + nombreMedicamento + "' class='form-control' type='text'>" +
+                        "<input name='arrayNombre[]' disabled data-identrada='" + idEntrada + "' value='" + nombreMedicamento + "' class='form-control' type='text'>" +
                         "</td>" +
 
                         "<td>" +
-                        "<input name='arrayCantidad[]' disabled value='" + inputCantidad + "' class='form-control' type='text'>" +
+                        "<input name='arrayCantidad[]' disabled value='" + inputCantidad + "' class='form-control' type='number'>" +
                         "</td>" +
 
                         "<td>" +
@@ -311,37 +330,241 @@
                         timer: 1500
                     })
 
-                    $(txtContenedorGlobal).attr('data-idmedicamento', '0');
-
-
-                    document.getElementById('cantidad').value = '';
-                    document.getElementById('fecha-vencimiento').value = '';
-                    document.getElementById('precio-producto').value = '';
-                    document.getElementById('inputBuscador').value = '';
-                    document.getElementById('existencia').value = '';
-                    document.getElementById('ultimo-costo').value = '';
+                    ocultarElecciones();
                 }
             });
+
+            if(boolHayItems){
+                toastr.error('Elegir Cantidad de Salida');
+            }
+        }
+
+
+        function ocultarElecciones(){
+
+            document.getElementById('select-producto').selectedIndex = 0;
+            $("#select-producto").trigger("change");
+
+            document.getElementById('tablaProductos').innerHTML = "";
+            document.getElementById('txtSalida').innerHTML = "";
+            document.getElementById('btnAgregarFila').style.display = "none";
+        }
+
+
+        function borrarFila(elemento){
+            var tabla = elemento.parentNode.parentNode;
+            tabla.parentNode.removeChild(tabla);
+            setearFila();
+        }
+
+
+        function setearFila(){
+
+            var table = document.getElementById('matriz');
+            var conteo = 0;
+            for (var r = 1, n = table.rows.length; r < n; r++) {
+                conteo +=1;
+                var element = table.rows[r].cells[0].children[0];
+                document.getElementById(element.id).innerHTML = ""+conteo;
+            }
+
+            calcularFilas();
         }
 
 
         function calcularFilas(){
 
-            var cantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
+           // var arrayCantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
 
-            /*var datosTabla1 = $("#tabla1 input[name='arrayCantidad[]']").map(function() {
+            // PARA ELEGIR DE QUE TABLA VERIFICAR
+            var arrayCantidad = $("#matriz input[name='arrayCantidad[]']").map(function() {
                 return $(this).val();
-            }).get();*/
+            }).get();
 
-            var cantidadTotal = 0;
+            var contador = 0;
 
-            for(var a = 0; a < cantidad.length; a++){
-                cantidadTotal += cantidad[a];
+            for(var a = 0; a < arrayCantidad.length; a++){
+                contador = contador + parseInt(arrayCantidad[a]);
             }
 
-            document.getElementById('cantidadTotal').innerHTML = cantidadTotal;
+            document.getElementById('cantidadTotal').innerHTML = contador;
         }
 
+        function preguntarGuardar(){
+
+            Swal.fire({
+                title: '¿Guardar Salida?',
+                text: '',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                allowOutsideClick: false,
+                confirmButtonText: 'SI',
+                cancelButtonText: 'NO'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    registrarMedicamento();
+                }
+            })
+        }
+
+
+        function registrarMedicamento(){
+
+            var motivo = document.getElementById('select-motivo').value;
+            var fecha = document.getElementById('fecha-salida').value;
+            var observaciones = document.getElementById('text-observaciones').value;
+
+            if(motivo === ''){
+                toastr.error('Motivo es requerido');
+                return;
+            }
+
+            if(fecha === ''){
+                toastr.error('Fecha Salida es requerido');
+                return;
+            }
+
+            var nRegistro = $('#matriz > tbody >tr').length;
+
+            if (nRegistro <= 0){
+                toastr.error('Productos a Despachar son requeridos');
+                return;
+            }
+
+
+            var arrayIdEntrada = $("input[name='arrayNombre[]']").map(function(){return $(this).attr("data-identrada");}).get();
+            var arrayCantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
+
+            var reglaNumeroEntero = /^[0-9]\d*$/;
+
+            // VALIDACIONES DE CADA FILA, RECORRER 1 ELEMENTO YA QUE TODOS TIENEN LA MISMA CANTIDAD DE FILAS
+
+            colorBlancoTabla();
+
+            for(var a = 0; a < arrayIdEntrada.length; a++){
+
+                let idEntrada = arrayIdEntrada[a];
+                let cantidadProducto = arrayCantidad[a];
+
+
+                // identifica si el 0 es tipo number o texto
+                if(idEntrada == 0){
+                    colorRojoTabla(a);
+                    alertaMensaje('info', 'No encontrado', 'En la Fila #' + (a+1) + " El Producto no se encuentra. Por favor borrar la Fila y buscar de nuevo el Producto");
+                    return;
+                }
+
+                // **** VALIDAR CANTIDAD DE PRODUCTO
+
+                if (cantidadProducto === '') {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad de producto es requerida. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (!cantidadProducto.match(reglaNumeroEntero)) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad debe ser entero y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (cantidadProducto <= 0) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad no debe ser negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (cantidadProducto > 9000000) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Cantidad máximo 9 millones. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+            }
+
+            openLoading();
+
+            let formData = new FormData();
+
+
+            const contenedorArray = [];
+
+
+            for(var i = 0; i < arrayIdEntrada.length; i++){
+
+                let infoIdEntrada = arrayIdEntrada[i];
+                let infoCantidad = arrayCantidad[i];
+
+                // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
+                contenedorArray.push({ infoIdEntrada, infoCantidad});
+            }
+
+            formData.append('contenedorArray', JSON.stringify(contenedorArray));
+            formData.append('motivo', motivo);
+            formData.append('fecha', fecha);
+            formData.append('observaciones', observaciones);
+
+            axios.post(url+'/registrar/orden/salida/medicamento', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        let fila = response.data.fila;
+                        let cantidadHay = response.data.cantidad;
+                        colorRojoTabla(fila-1);
+
+                        Swal.fire({
+                            title: 'Cantidad No Disponible',
+                            text: "En la Fila #" + fila + " Se supera las Unidades Disponibles. Verificar los Productos Ingresados y sus Cantidades a Retirar. Actualmente hay: " + cantidadHay,
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
+
+                    }
+                    else if(response.data.success === 2){
+                        toastr.success('Registrado correctamente');
+                        limpiar();
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+
+        function limpiar(){
+
+            document.getElementById('select-producto').selectedIndex = 0;
+            $("#select-producto").trigger("change");
+
+            document.getElementById('select-motivo').selectedIndex = 0;
+            $("#select-motivo").trigger("change");
+
+            document.getElementById('tablaProductos').innerHTML = "";
+            document.getElementById('txtSalida').innerHTML = "";
+            document.getElementById('btnAgregarFila').style.display = "none";
+
+            document.getElementById('fecha-salida').value = "";
+
+            document.getElementById('cantidadTotal').innerHTML = "0";
+
+            $("#matriz tbody tr").remove();
+        }
 
 
 
