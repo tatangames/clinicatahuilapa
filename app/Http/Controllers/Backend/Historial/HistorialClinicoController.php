@@ -83,7 +83,7 @@ class HistorialClinicoController extends Controller
         return view('backend.admin.historial.general.vistageneralhistorial', compact('infoPaciente',
             'nombreCompleto', 'antecedentes', 'arrayTipeoSanguineo',
             'arrayAntecedentesMedico', 'arrayIdPacienteAntecedente', 'arrayComplicacionAguda',
-        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta', 'btnAntro'));
+        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta', 'btnAntro', ));
     }
 
 
@@ -316,6 +316,29 @@ class HistorialClinicoController extends Controller
         ]);
 
        return ['success' => 1];
+    }
+
+
+
+    public function tablaRecetasPaciente($idconsulta){
+
+        /*$lista = Antropometria::where('consulta_id', $idconsulta)
+            ->orderBy('fecha', 'DESC')
+            ->get();
+
+        foreach ($lista as $dato){
+
+            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+            $dato->horaFormat = date("h:i A", strtotime($dato->hora));
+
+            $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
+
+            $dato->nomusuario = $infoUsuario->nombre;
+        }*/
+
+        return "tabla recetas";
+
+        return view('backend.admin.historial.recetas.tablarecetaspaciente', compact('lista'));
     }
 
 

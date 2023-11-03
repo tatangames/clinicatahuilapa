@@ -99,7 +99,7 @@ class AsignacionesController extends Controller
             ->get();
 
 
-        $output = '<ul class="dropdown-menu" style="display:block; position:relative;">';
+        $output = '<ul class="dropdown-menu" style="display:block; position:relative; overflow: auto; max-height: 300px; width: 550px">';
         $tiene = true;
         foreach($data as $row){
 
@@ -108,7 +108,7 @@ class AsignacionesController extends Controller
                 if(!empty($row)){
                     $tiene = false;
                     $output .= '
-             <li onclick="modificarValor(this)" id="'.$row->id.'" ><a href="#" style="margin-left: 3px; font-size: 15px; font-weight: bold; color: black !important;">Exp#'.$row->id . '&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' - ' .$row->num_documento .'</a></li>
+             <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'" ><a href="#" style="margin-left: 3px; font-size: 15px; font-weight: bold; color: black !important;">Exp#'.$row->id . '&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' - ' .$row->num_documento .'</a></li>
             ';
                 }
             }
@@ -117,7 +117,7 @@ class AsignacionesController extends Controller
                 if(!empty($row)){
                     $tiene = false;
                     $output .= '
-             <li onclick="modificarValor(this)" id="'.$row->id.'" style="font-weight: normal; font-size: 16px; color: black !important;"><a href="#" style="margin-left: 3px; font-weight: bold; font-size: 15px; color: black !important;">Exp#'.$row->id . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' - ' .$row->num_documento .'</a></li>
+             <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'" style="font-weight: normal; font-size: 16px; color: black !important;"><a href="#" style="margin-left: 3px; font-weight: bold; font-size: 15px; color: black !important;">Exp#'.$row->id . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' - ' .$row->num_documento .'</a></li>
                <hr>
             ';
                 }

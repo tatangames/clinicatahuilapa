@@ -19,6 +19,12 @@
         background-color: cyan !important;
     }
 
+    .cursor-pointer:hover {
+        cursor: pointer;
+        color: #401fd2;
+        font-weight: bold;
+    }
+
 </style>
 
 <div id="divcontenedor" style="display: none">

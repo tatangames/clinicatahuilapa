@@ -480,25 +480,33 @@
                                             <div class="tab-pane" id="tab_3">
 
                                                 <form>
+
+                                                    <div class="card card-default">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title" style="font-weight: bold">Historial de Recetas</h3>
+
+                                                            <button type="button" style="float: right ;font-weight: bold; background-color: #ffc107; color: white !important;"
+                                                                    onclick="btnRecargarTablaRecetas()" class="button button-3d button-rounded button-pill button-small">
+                                                                <i class="fas fa-plus"></i>
+                                                                Recargar Tabla
+                                                            </button>
+
+                                                            <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
+                                                                    onclick="botonNuevaReceta()" class="button button-3d button-rounded button-pill button-small">
+                                                                <i class="fas fa-plus"></i>
+                                                                Nueva Receta
+                                                            </button>
+
+                                                        </div>
+                                                    </div>
+
                                                     <div class="card-body">
 
-                                                        <table class="table" id="matrizProyectos" style="border: 80px" data-toggle="table">
-                                                            <thead>
-                                                            <tr>
-                                                                <th style="width: 30%; text-align: center">Descripción</th>
-                                                                <th style="width: 10%; text-align: center">Monto ($)</th>
-                                                                <th style="width: 10%; text-align: center">Opciones</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
 
-                                                            </tbody>
 
-                                                        </table>
 
-                                                        <br>
-                                                        <button type="button" class="btn btn-block btn-success" onclick="modalNuevaSolicitudProyecto()">Agregar Solicitud de Proyecto</button>
-                                                        <br>
+                                                        <div id="tablaRecetas">
+                                                        </div>
 
                                                     </div>
 
@@ -1003,12 +1011,21 @@
     <script src="{{ asset('js/alertaPersonalizada.js') }}"></script>
 
     <script type="text/javascript">
-        $(document).ready(function(){
+        $(document).ready(function() {
 
             let idconsulta = {{ $idconsulta }};
 
+            // TABLA ANTROPOMETRIA
+
             var ruta = "{{ URL::to('/admin/historial/antrometria/paciente-consulta') }}/" + idconsulta;
             $('#tablaAntrometria').load(ruta);
+
+
+            // TABLA RECETAS
+
+            var ruta = "{{ URL::to('/admin/historial/recetas/paciente-consulta') }}/" + idconsulta;
+            $('#tablaRecetas').load(ruta);
+
 
 
             var fecha = new Date();
@@ -1608,6 +1625,26 @@
             $('#modalAntro').modal({backdrop: 'static', keyboard: false})
         }
 
+
+
+
+
+
+
+
+
+        //************************** TAB 3: RECETAS *************************************
+
+
+        function btnRecargarTablaRecetas(){
+
+            let idconsulta = {{ $idconsulta }};
+
+            // TABLA RECETAS
+
+            var ruta = "{{ URL::to('/admin/historial/recetas/paciente-consulta') }}/" + idconsulta;
+            $('#tablaRecetas').load(ruta);
+        }
 
 
 
