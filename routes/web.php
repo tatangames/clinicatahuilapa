@@ -287,4 +287,16 @@ Route::post('/admin/registrar/orden/salida/medicamento', [FarmaciaController::cl
 
 
 
+// --- HISTORIAL CLINICO ---
+Route::get('/admin/historial/clinico/vista/{idconsulta}', [HistorialClinicoController::class, 'indexHistorialClinico']);
+Route::get('/admin/historial/clinico/paciente/tabla/{idconsulta}', [HistorialClinicoController::class, 'tablaPacienteHistorialClinico']);
+
+
+// --- BLOQUES PARA CARGAR EN HISTORIAL CLINICO ---
+
+// bloque antecedentes
+Route::get('/admin/historial/bloque/antecedente/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialAntecedente']);
+
+// bloque antrop + sv
+Route::get('/admin/historial/bloque/antropsv/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialAntropSv']);
 

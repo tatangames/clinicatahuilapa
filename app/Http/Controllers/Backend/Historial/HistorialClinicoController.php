@@ -83,7 +83,7 @@ class HistorialClinicoController extends Controller
         return view('backend.admin.historial.general.vistageneralhistorial', compact('infoPaciente',
             'nombreCompleto', 'antecedentes', 'arrayTipeoSanguineo',
             'arrayAntecedentesMedico', 'arrayIdPacienteAntecedente', 'arrayComplicacionAguda',
-        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta', 'btnAntro', ));
+        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta', 'btnAntro'));
     }
 
 
@@ -252,7 +252,7 @@ class HistorialClinicoController extends Controller
 
         }catch(\Throwable $e){
             DB::rollback();
-            Log::info('error ' . $e);
+
             return ['success' => 99];
         }
     }
@@ -340,6 +340,105 @@ class HistorialClinicoController extends Controller
 
         return view('backend.admin.historial.recetas.tablarecetaspaciente', compact('lista'));
     }
+
+
+
+
+    // *** Historial Clinico
+
+
+    public function indexHistorialClinico($idconsulta){
+
+        $infoConsulta = Consulta_Paciente::where('id', $idconsulta)->first();
+        $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+        $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+
+        $miFecha = date("d-m-Y", strtotime($infoPaciente->fecha_nacimiento));
+
+
+        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos . " (" . $edad . " Años)";
+
+        return view('backend.admin.historialclinico.general.vistahistorialclinico', compact('idconsulta',
+            'infoPaciente', 'nombreCompleto', 'miFecha'));
+    }
+
+
+    public function tablaPacienteHistorialClinico($idconsulta){
+
+
+        return "tabla historial clinico";
+
+        return view('backend.admin.historialclinico.general.tablahistorialclinico', compact('idconsulta'));
+    }
+
+
+    // BLOQUE ANTECEDENTES
+    public function bloqueHistorialAntecedente($idconsulta){
+
+        $infoConsulta = Consulta_Paciente::where('id', $idconsulta)->first();
+        $b1_infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+        $b1_antecedentes = null;
+        // buscar si paciente tiene antecedentes
+        if($infoAntecedente = Antecedentes::where('paciente_id', $b1_infoPaciente->id)->first()){
+            $b1_antecedentes = $infoAntecedente;
+        }
+
+
+        // ARRAY TIPEO SANGUINEO
+        $b1_arrayTipeoSanguineo = TipeoSanguineo::orderBy('nombre', 'ASC')->get();
+
+
+
+        // ARRAY DE ANTECEDENTES MEDICOS
+        $b1_arrayAntecedentesMedico = AntecedentesMedicos::where('tipo_id', 1)
+            ->orderBy('nombre', 'ASC')
+            ->get();
+
+        // ARRAY COMPLICACIONES AGUDAS
+        $b1_arrayComplicacionAguda = AntecedentesMedicos::where('tipo_id', 2)
+            ->orderBy('nombre', 'ASC')
+            ->get();
+
+
+        // ARRAY ENFERMEDADES CRONICAS
+        $b1_arrayEnfermedadCronicas = AntecedentesMedicos::where('tipo_id', 3)
+            ->orderBy('nombre', 'ASC')
+            ->get();
+
+
+        // ARRAY ANTECEDENTES CRONICOS
+        $b1_arrayAntecedenteCronicos = AntecedentesMedicos::where('tipo_id', 4)
+            ->orderBy('nombre', 'ASC')
+            ->get();
+
+
+        // ARRAY DE ID DEL PACIENTE SEGUN TIPO DE ANTECEDENTES
+        $b1_arrayIdPacienteAntecedente = PacienteAntecedentes::where('paciente_id', $b1_infoPaciente->id)->get();
+
+
+        $b1_btnAntro = 0;
+        // verificar si ya tiene 1 ampometria, para ocultar boton
+        if(Antropometria::where('consulta_id', $idconsulta)->first()){
+            $b1_btnAntro = 1;
+        }
+
+
+        return view('backend.admin.historialclinico.bloques.bloqueantecedentes', compact('b1_antecedentes', 'b1_arrayTipeoSanguineo',
+            'b1_arrayAntecedentesMedico', 'b1_arrayIdPacienteAntecedente', 'b1_arrayComplicacionAguda',
+            'b1_arrayEnfermedadCronicas', 'b1_arrayAntecedenteCronicos', 'b1_btnAntro', 'b1_infoPaciente'));
+    }
+
+
+
+    public function bloqueHistorialAntropSv($idconsulta){
+
+
+        return view('backend.admin.historialclinico.bloques.bloqueantropsv');
+    }
+
+
 
 
 

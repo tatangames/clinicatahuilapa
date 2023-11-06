@@ -42,7 +42,7 @@
             <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">ASIGNACIÓN DE SALAS</h3>
-                    <p style="float: right; font-weight: bold; font-size: 15px" id="contador">10</p>
+                    <p style="float: right; font-weight: bold; font-size: 15px" id="contador"></p>
                     <img src="{{ asset('images/cronometro2.png') }}" width="35px" height="35px" style="float: right">
                 </div>
 
@@ -374,7 +374,7 @@
                                                     <div class="list-group b-0 mail-list" id="configuracion">
                                                         <input type="button" onclick="vistaAtencionEnfermeria();" class="btn btn-info btn-block waves-effect waves-light" value="Atencion enfermería">
                                                         <input type="button" onclick="orden_salida();" class="btn btn-primary btn-block waves-effect waves-light" value="Farmacia">
-                                                        <input type="button" onclick="historial_medico();" class="btn btn-success btn-block waves-effect waves-light" value="Historial clinico">
+                                                        <input type="button" onclick="vistaHistorialClinico();" class="btn btn-success btn-block waves-effect waves-light" value="Historial clinico">
                                                         <button type="button" onclick="trasladoPacienteModal();" class="btn btn-warning btn-block waves-effect waves-light" style="color: white">Traslado</button>
                                                         <button type="button" onclick="preguntaLiberarSala()" class="btn btn-danger btn-block waves-effect waves-light">Liberar sala</button>
                                                     </div>
@@ -1385,6 +1385,11 @@
             window.location.href="{{ url('/admin/historial/vista/general') }}/" + idconsulta;
         }
 
+
+        function vistaHistorialClinico(){
+            var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
+            window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
+        }
 
 
 
