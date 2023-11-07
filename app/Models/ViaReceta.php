@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cuadro_Clinico extends Model
+class ViaReceta extends Model
 {
     use HasFactory;
-    protected $table = 'cuadro_clinico';
+    protected $table = 'via_receta';
     public $timestamps = false;
 }

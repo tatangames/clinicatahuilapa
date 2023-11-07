@@ -372,9 +372,8 @@
                                                     </h3>
                                                     <hr class="m-t-5">
                                                     <div class="list-group b-0 mail-list" id="configuracion">
-                                                        <input type="button" onclick="vistaAtencionEnfermeria();" class="btn btn-info btn-block waves-effect waves-light" value="Atencion enfermería">
-                                                        <input type="button" onclick="orden_salida();" class="btn btn-primary btn-block waves-effect waves-light" value="Farmacia">
-                                                        <input type="button" onclick="vistaHistorialClinico();" class="btn btn-success btn-block waves-effect waves-light" value="Historial clinico">
+
+                                                        <button type="button" onclick="vistaHistorialClinico();" class="btn btn-success btn-block waves-effect waves-light">Historial Clínico</button>
                                                         <button type="button" onclick="trasladoPacienteModal();" class="btn btn-warning btn-block waves-effect waves-light" style="color: white">Traslado</button>
                                                         <button type="button" onclick="preguntaLiberarSala()" class="btn btn-danger btn-block waves-effect waves-light">Liberar sala</button>
                                                     </div>
@@ -1037,7 +1036,6 @@
                     toastr.error('error al guardar');
                     closeLoading();
                 });
-
         }
 
 
@@ -1332,7 +1330,6 @@
 
         function guardarNuevoTraslado(){
 
-
             openLoading();
 
             var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
@@ -1379,18 +1376,10 @@
         }
 
 
-        function vistaAtencionEnfermeria(){
-
-            var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
-            window.location.href="{{ url('/admin/historial/vista/general') }}/" + idconsulta;
-        }
-
-
         function vistaHistorialClinico(){
             var idconsulta = document.getElementById('idpacientemodal-dentrosala').value;
             window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
         }
-
 
 
 

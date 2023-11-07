@@ -1,5 +1,3 @@
-
-
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -52,26 +50,6 @@
                             </select>
                         </div>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

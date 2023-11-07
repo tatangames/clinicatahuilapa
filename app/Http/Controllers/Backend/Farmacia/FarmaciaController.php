@@ -309,7 +309,7 @@ class FarmaciaController extends Controller
 
     public function elegirProductoParaSalida($idproducto){
 
-        $arraySalidas =DB::table('entrada_medicamento AS en')
+        $arraySalidas = DB::table('entrada_medicamento AS en')
                 ->join('entrada_medicamento_detalle AS deta', 'en.id', '=', 'deta.entrada_medicamento_id')
                 ->select('en.fecha', 'deta.entrada_medicamento_id', 'deta.medicamento_id', 'deta.cantidad',
                             'deta.precio', 'deta.lote', 'deta.fecha_vencimiento', 'en.numero_factura', 'deta.id AS identradadetalle')

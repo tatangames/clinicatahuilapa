@@ -244,7 +244,7 @@
 
                     if(response.data.success === 1){
                         toastr.success('Actualizado correctamente');
-                        $('#modalEditar').modal('hide');
+                       |
                         recargar();
                     }
                     else {

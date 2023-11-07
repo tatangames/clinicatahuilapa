@@ -7,6 +7,8 @@ use App\Models\Antecedentes;
 use App\Models\AntecedentesMedicos;
 use App\Models\Antropometria;
 use App\Models\Consulta_Paciente;
+use App\Models\CuadroClinico;
+use App\Models\Diagnosticos;
 use App\Models\Paciente;
 use App\Models\PacienteAntecedentes;
 use App\Models\TipeoSanguineo;
@@ -172,26 +174,6 @@ class HistorialClinicoController extends Controller
     }
 
 
-    public function tablaAntrometriaPaciente($idconsulta){
-
-
-        $lista = Antropometria::where('consulta_id', $idconsulta)
-            ->orderBy('fecha', 'DESC')
-            ->get();
-
-        foreach ($lista as $dato){
-
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->hora));
-
-            $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
-
-            $dato->nomusuario = $infoUsuario->nombre;
-        }
-
-
-        return view('backend.admin.historial.antropometria.tablaantropometria', compact('lista'));
-    }
 
 
     public function registrarAntropometria(Request $request){
@@ -320,27 +302,6 @@ class HistorialClinicoController extends Controller
 
 
 
-    public function tablaRecetasPaciente($idconsulta){
-
-        /*$lista = Antropometria::where('consulta_id', $idconsulta)
-            ->orderBy('fecha', 'DESC')
-            ->get();
-
-        foreach ($lista as $dato){
-
-            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
-            $dato->horaFormat = date("h:i A", strtotime($dato->hora));
-
-            $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
-
-            $dato->nomusuario = $infoUsuario->nombre;
-        }*/
-
-        return "tabla recetas";
-
-        return view('backend.admin.historial.recetas.tablarecetaspaciente', compact('lista'));
-    }
-
 
 
 
@@ -356,16 +317,19 @@ class HistorialClinicoController extends Controller
 
         $miFecha = date("d-m-Y", strtotime($infoPaciente->fecha_nacimiento));
 
-
         $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos . " (" . $edad . " Años)";
 
+
+        $totalConsulta = Consulta_Paciente::where('paciente_id', $infoConsulta->paciente_id)->count();
+
+        $arrayTipoDiagnostico = Diagnosticos::orderBy('nombre')->get();
+
         return view('backend.admin.historialclinico.general.vistahistorialclinico', compact('idconsulta',
-            'infoPaciente', 'nombreCompleto', 'miFecha'));
+            'infoPaciente', 'nombreCompleto', 'miFecha', 'totalConsulta', 'arrayTipoDiagnostico'));
     }
 
 
     public function tablaPacienteHistorialClinico($idconsulta){
-
 
         return "tabla historial clinico";
 
@@ -434,12 +398,133 @@ class HistorialClinicoController extends Controller
 
     public function bloqueHistorialAntropSv($idconsulta){
 
+        $bloqueAntropSv = Antropometria::where('consulta_id', $idconsulta)
+            ->orderBy('fecha', 'DESC')
+            ->get();
 
-        return view('backend.admin.historialclinico.bloques.bloqueantropsv');
+        foreach ($bloqueAntropSv as $dato){
+
+            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+            $dato->horaFormat = date("h:i A", strtotime($dato->hora));
+
+            $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
+
+            $dato->nomusuario = $infoUsuario->nombre;
+        }
+
+        return view('backend.admin.historialclinico.bloques.bloqueantropsv', compact('bloqueAntropSv'));
     }
 
 
+    function bloqueHistorialRecetas($idconsulta){
 
 
+
+        //return view('backend.admin.historialclinico.bloques.bloquerecetas', compact('arrayRecetas'));
+    }
+
+
+    public function bloqueHistorialCuadroClinico($idconsulta){
+
+        $bloqueCuadroClinico= DB::table('cuadro_clinico AS cl')
+            ->join('consulta_paciente AS con', 'con.id', '=', 'cl.consulta_id')
+            ->select('con.fecha_hora', 'cl.diagnostico_id', 'cl.descripcion',
+                'cl.consulta_id', 'cl.diagnostico_id', 'cl.id')
+            ->where('cl.consulta_id', $idconsulta)
+            ->orderBy('con.fecha_hora', 'ASC')
+            ->get();
+
+        foreach ($bloqueCuadroClinico as $dato){
+
+            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha_hora));
+
+            $infoDiagnostico = Diagnosticos::where('id', $dato->diagnostico_id)->first();
+
+            $dato->nombreDiagnostico = $infoDiagnostico->nombre;
+        }
+
+        return view('backend.admin.historialclinico.bloques.bloquecuadroclinico', compact('bloqueCuadroClinico', 'idconsulta'));
+    }
+
+
+    public function nuevoHistorialClinico(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required',
+            'diagnostico' => 'required'
+        );
+
+        // descripcion
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        DB::beginTransaction();
+
+        try {
+
+            $dato = new CuadroClinico();
+            $dato->consulta_id = $request->idconsulta;
+            $dato->diagnostico_id = $request->diagnostico;
+            $dato->descripcion = $request->descripcion;
+            $dato->save();
+
+            DB::commit();
+            return ['success' => 1];
+
+        }catch(\Throwable $e){
+            DB::rollback();
+
+            return ['success' => 99];
+        }
+    }
+
+
+    public function informacionHistorialClinico(Request $request){
+
+        $regla = array(
+            'id' => 'required' // id de cuadro clinico
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if($info = CuadroClinico::where('id', $request->id)->first()){
+
+            $arrayDiagnostico = Diagnosticos::orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 1, 'info' => $info, 'arraydiagnostico' => $arrayDiagnostico];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+    public function actualizarHistorialClinico(Request $request){
+
+        $regla = array(
+            'idCuadro' => 'required',
+            'diagnostico' => 'required',
+            'descripcion' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if(CuadroClinico::where('id', $request->idCuadro)->first()){
+
+            CuadroClinico::where('id', $request->idCuadro)->update([
+                'diagnostico_id' => $request->diagnostico,
+                'descripcion' => $request->descripcion
+            ]);
+
+            return ['success' => 1];
+        }else{
+            return ['success' => 2];
+        }
+    }
 
 }

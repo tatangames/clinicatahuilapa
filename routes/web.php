@@ -198,28 +198,8 @@ Route::post('/admin/antecedentes/medico/editar', [MedicoController::class, 'edit
 
 
 
-// HISTORIAL CLINICO
 
-// vista general de historial clinico
-Route::get('/admin/historial/vista/general/{idconsulta}', [HistorialClinicoController::class, 'indexVistaGeneralHistorial']);
 
-// actualizar listado de checkbox de antecedente del paciente
-Route::post('/admin/historial/antecedente/actualizacion', [HistorialClinicoController::class, 'actualizarListadoPacienteAntecedente']);
-
-// cargar tabla de antrometria por paciente
-Route::get('/admin/historial/antrometria/paciente-consulta/{idconsulta}', [HistorialClinicoController::class, 'tablaAntrometriaPaciente']);
-
-// registrar formulario de antropometria
-Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoController::class, 'registrarAntropometria']);
-
-// informacion de una antropometria
-Route::post('/admin/historial/informacion/antropometria', [HistorialClinicoController::class, 'informacionAntropometria']);
-
-// actualizar antropometria
-Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoController::class, 'actualizarAntropometria']);
-
-// cargar tabla de recetas por paciente
-Route::get('/admin/historial/recetas/paciente-consulta/{idconsulta}', [HistorialClinicoController::class, 'tablaRecetasPaciente']);
 
 
 
@@ -287,16 +267,53 @@ Route::post('/admin/registrar/orden/salida/medicamento', [FarmaciaController::cl
 
 
 
+
+
 // --- HISTORIAL CLINICO ---
 Route::get('/admin/historial/clinico/vista/{idconsulta}', [HistorialClinicoController::class, 'indexHistorialClinico']);
 Route::get('/admin/historial/clinico/paciente/tabla/{idconsulta}', [HistorialClinicoController::class, 'tablaPacienteHistorialClinico']);
 
 
-// --- BLOQUES PARA CARGAR EN HISTORIAL CLINICO ---
-
+// --- BLOQUE ANTECEDENTES ---
 // bloque antecedentes
 Route::get('/admin/historial/bloque/antecedente/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialAntecedente']);
+
+// actualizar listado de checkbox de antecedente del paciente
+Route::post('/admin/historial/antecedente/actualizacion', [HistorialClinicoController::class, 'actualizarListadoPacienteAntecedente']);
+
+
+
+// --- BLOQUE ANTROP SV ---
 
 // bloque antrop + sv
 Route::get('/admin/historial/bloque/antropsv/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialAntropSv']);
 
+// registrar formulario de antropometria
+Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoController::class, 'registrarAntropometria']);
+
+// informacion de una antropometria
+Route::post('/admin/historial/informacion/antropometria', [HistorialClinicoController::class, 'informacionAntropometria']);
+
+// actualizar antropometria
+Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoController::class, 'actualizarAntropometria']);
+
+
+// --- BLOQUE CUADRO CLINICO ---
+
+// bloque cuadro clinico
+Route::get('/admin/historial/bloque/cuadroclinico/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialCuadroClinico']);
+
+// guardar un nuevo historial clinico
+Route::post('/admin/historial/nuevo/historialclinico', [HistorialClinicoController::class, 'nuevoHistorialClinico']);
+
+// informacion de un cuadro clinico para editar
+Route::post('/admin/historial/informacion/historialclinico', [HistorialClinicoController::class, 'informacionHistorialClinico']);
+
+// actualizar un cuadro clinico
+Route::post('/admin/historial/actualizar/historialclinico', [HistorialClinicoController::class, 'actualizarHistorialClinico']);
+
+
+// --- BLOQUE RECETAS ---
+
+// bloque recetas
+Route::get('/admin/historial/bloque/recetas/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialRecetas']);

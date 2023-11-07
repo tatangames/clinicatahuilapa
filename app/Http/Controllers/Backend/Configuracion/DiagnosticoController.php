@@ -63,7 +63,6 @@ class DiagnosticoController extends Controller
 
         if($infoTipoDiagnostico = Diagnosticos::where('id', $request->id)->first()){
 
-
             return ['success' => 1, 'info' => $infoTipoDiagnostico];
         }else{
             return ['success' => 2];

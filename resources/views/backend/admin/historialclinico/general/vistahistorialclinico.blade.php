@@ -6,6 +6,8 @@
     <link href="{{ asset('css/toastr.min.css') }}" type="text/css" rel="stylesheet" />
     <link href="{{ asset('css/estiloTogglePequeno.css') }}" type="text/css" rel="stylesheet" />
     <link href="{{ asset('css/buttons_estilo.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/select2.min.css') }}" type="text/css" rel="stylesheet">
+    <link href="{{ asset('css/select2-bootstrap-5-theme.min.css') }}" type="text/css" rel="stylesheet">
 @stop
 
 <style>
@@ -25,7 +27,6 @@
         border:3px solid #fff;
         height:auto;
     }
-
 
 </style>
 
@@ -65,6 +66,8 @@
                                                     <p class="" style="color: #2b2a2a;">{{ $nombreCompleto }}</p>
                                                     <p><span class="badge bg-primary" style="font-size: 13px">Fecha Nacimiento:  {{ $miFecha }}</span></p>
                                                     <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Expediente #:  {{ $infoPaciente->id }}</span></p>
+                                                    <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Consulta #:  {{ $totalConsulta }}</span></p>
+
                                                 </div>
 
 
@@ -145,6 +148,23 @@
                                             </li>
 
 
+                                            <li style="margin-left: 15px; font-weight: bold; font-size: 16px" class="nav-item"><a class="nav-link" href="#tab_3"  data-toggle="tab">
+                                                        <span>
+                                                            <img class="manImg" src="{{ asset('images/medicamento.png') }}" height="25px" width="25px">
+                                                        </span>
+                                                    RECETAS
+                                                </a>
+                                            </li>
+
+                                            <li style="margin-left: 15px; font-weight: bold; font-size: 16px" class="nav-item"><a class="nav-link" href="#tab_4"  data-toggle="tab">
+                                                        <span>
+                                                            <img class="manImg" src="{{ asset('images/prescripcion.png') }}" height="25px" width="25px">
+                                                        </span>
+                                                    CUADRO CLINICO
+                                                </a>
+                                            </li>
+
+
                                         </ul>
                                     </div>
 
@@ -176,20 +196,10 @@
                                                     </div>
                                                 </div>
                                             </section>
-
-
-
-
-
-
-
-
                                         </div>
 
                                         <!-- LISTA DE NUEVOS MATERIALES - TABS 2 -->
                                         <div class="tab-pane" id="tab_2">
-
-
                                             <section class="content">
                                                 <div class="container-fluid">
                                                     <div class="row">
@@ -211,6 +221,48 @@
 
 
 
+                                        <!-- LISTA DE RECETAS - TABS 3 -->
+                                        <div class="tab-pane" id="tab_3">
+                                            <section class="content">
+                                                <div class="container-fluid">
+                                                    <div class="row">
+
+                                                        <div class="col-md-12">
+                                                            <div class="card-body">
+
+                                                                <!-- CARGAR TABLA RECETAS -->
+
+                                                                <div id="tablaRecetas">
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+
+                                        <!-- CUADRO CLINICO - TABS 4 -->
+                                        <div class="tab-pane" id="tab_4">
+                                            <section class="content">
+                                                <div class="container-fluid">
+                                                    <div class="row">
+
+                                                        <div class="col-md-12">
+                                                            <div class="card-body">
+
+                                                                <!-- CARGAR TABLA RECETAS -->
+
+                                                                <div id="tablaCuadroClinico">
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+
 
 
                                         <!-- fin - Tabs -->
@@ -231,6 +283,100 @@
 
 
 
+    <!-- MODAL PARA AGREGAR UN NUEVO HISTORIAL CLINICO -->
+    <div class="modal fade" id="modalNuevoHistoClinico">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nuevo Historial Clínico</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-historial-clinico">
+                        <div class="card-body">
+
+                                <div class="form-group col-md-6">
+                                    <label style="color:#191818">Tipo de Diagnóstico</label>
+                                    <br>
+                                    <div>
+                                        <select class="form-control" id="select-tipo-diagnostico">
+                                            <option value="">Seleccionar Opción</option>
+                                        @foreach($arrayTipoDiagnostico as $item)
+                                                <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group" style="margin-top: 20px">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title">Descripción</h3>
+                                    </div>
+                                    <textarea name="editorCuadroClinico" id="editorCuadroClinico"></textarea>
+                                </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarNuevoCuadroClinico()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA EDITAR UN NUEVO HISTORIAL CLINICO -->
+    <div class="modal fade" id="modalEditarHistoClinico">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar Historial Clínico</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-historial-clinico-editar">
+                        <div class="card-body">
+
+                            <div class="form-group">
+                                <input type="hidden" id="idCuadroClinico-editar">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label style="color:#191818">Tipo de Diagnóstico</label>
+                                <br>
+                                <div>
+                                    <select class="form-control" id="select-tipo-diagnostico-editar">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">Descripción</h3>
+                                </div>
+                                <textarea name="editorCuadroClinico-editar" id="editorCuadroClinico-editar"></textarea>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="actualizarCuadroClinico()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 
 </div>
 
@@ -245,6 +391,9 @@
     <script src="{{ asset('js/axios.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/alertaPersonalizada.js') }}"></script>
+    <script src="{{ asset('js/select2.min.js') }}"></script>
+    <script src="{{ asset('js/ckeditor5.js') }}"></script>
+
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -264,7 +413,88 @@
             $('#tablaAntropSv').load(rutaAntrop);
 
 
+            // TABLA RECETAS
+            var rutaRecetas = "{{ URL::to('/admin/historial/bloque/recetas') }}/" + idconsulta;
+            $('#tablaRecetas').load(rutaRecetas);
 
+
+            // TABLA CUADRO CLINICO
+            var rutaCuadroClinico = "{{ URL::to('/admin/historial/bloque/cuadroclinico') }}/" + idconsulta;
+            $('#tablaCuadroClinico').load(rutaCuadroClinico);
+
+
+            $('#select-tipo-diagnostico').select2({
+                theme: "bootstrap-5",
+                "language": {
+                    "noResults": function(){
+                        return "Búsqueda no encontrada";
+                    }
+                },
+            });
+
+            window.varGlobalEditorCuadro;
+            window.varGlobalEditorCuadroEditar;
+
+            ClassicEditor
+                .create( document.querySelector( '#editorCuadroClinico' ), {
+
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strikethrough',
+                            '|',
+                            'numberedList',
+                            'bulletedList',
+                            '|',
+                            'alignment',
+                            '|',
+                            'undo',
+                            'redo'
+                        ]
+                    },
+                    language: 'es'
+
+                })
+                .then( editor => {
+                    varGlobalEditorCuadro = editor;
+                } )
+                .catch( error => {
+                } );
+
+
+            ClassicEditor
+                .create( document.querySelector( '#editorCuadroClinico-editar' ), {
+
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strikethrough',
+                            '|',
+                            'numberedList',
+                            'bulletedList',
+                            '|',
+                            'alignment',
+                            '|',
+                            'undo',
+                            'redo'
+                        ]
+                    },
+                    language: 'es'
+
+                })
+                .then( editor => {
+                    varGlobalEditorCuadroEditar = editor;
+                } )
+                .catch( error => {
+                } );
 
             document.getElementById("divcontenedor").style.display = "block";
         });
@@ -272,12 +502,86 @@
 
     <script>
 
+
+
         function recargarVista(){
             location.reload();
         }
 
         function vistaAtras(){
             history.back();
+        }
+
+        function vistaDatosGenerales(){
+
+            let idpaciente = {{ $infoPaciente->id }};
+
+            window.location.href="{{ url('/admin/asignaciones/info/vista/editarpaciente') }}/" + idpaciente;
+        }
+
+        function finalizarConsulta(){
+            Swal.fire({
+                title: '¿Finalizar Consulta?',
+                text: '',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                closeOnClickOutside: false,
+                allowOutsideClick: false,
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Sí'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    finalizarConsultaPaciente();
+                }
+            })
+        }
+
+        function finalizarConsultaPaciente(){
+
+            openLoading();
+
+            let idconsulta = {{ $idconsulta }};
+
+            let formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+
+            axios.post(url+'/asignaciones/finalizar/consulta', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        Swal.fire({
+                            title: 'Consulta Finalizada',
+                            text: '',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                vistaAsignaciones();
+                            }
+                        })
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+        function vistaAsignaciones(){
+            window.history.back();
+            window.location.href="{{ url('/admin/asignaciones/vista/index') }}";
         }
 
 
@@ -289,6 +593,11 @@
             $('#tablaAntrometria').load(ruta);
         }
 
+        function recargarTablaCuadroClinico(){
+            let idconsulta = {{ $idconsulta }};
+            var rutaCuadroClinico = "{{ URL::to('/admin/historial/bloque/cuadroclinico') }}/" + idconsulta;
+            $('#tablaCuadroClinico').load(rutaCuadroClinico);
+        }
 
 
         function valida_numero(e){
@@ -453,7 +762,7 @@
             }
 
 
-            // ID PACIENTE
+            // ID CONSULTA
             let idconsulta = {{ $idconsulta }};
 
 
@@ -530,8 +839,6 @@
         function informacionAntropometria(idantro){
 
             openLoading();
-
-
 
             axios.post(url+'/historial/informacion/antropometria',{
                 'id': idantro
@@ -763,8 +1070,6 @@
 
 
 
-
-
         //************************** TAB 3: RECETAS *************************************
 
 
@@ -777,6 +1082,7 @@
             var ruta = "{{ URL::to('/admin/historial/recetas/paciente-consulta') }}/" + idconsulta;
             $('#tablaRecetas').load(ruta);
         }
+
 
 
 
