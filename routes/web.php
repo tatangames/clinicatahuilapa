@@ -265,6 +265,14 @@ Route::get('/admin/buscar/producto/salida/farmacia/{idproducto}', [FarmaciaContr
 Route::post('/admin/registrar/orden/salida/medicamento', [FarmaciaController::class, 'registrarOrdenSalidaFarmacia']);
 
 
+// --- VIA PARA RECETA ---
+Route::get('/admin/receta/via/vista', [LineasController::class,'indexVistaViaReceta'])->name('admin.vista.via.receta');
+Route::get('/admin/receta/via/tabla', [LineasController::class,'tablaVistaViaReceta']);
+Route::post('/admin/receta/via/registro', [LineasController::class, 'registroNuevaViaReceta']);
+Route::post('/admin/receta/via/informacion', [LineasController::class, 'informacionViaReceta']);
+Route::post('/admin/receta/via/editar', [LineasController::class, 'editarViaReceta']);
+
+
 
 
 

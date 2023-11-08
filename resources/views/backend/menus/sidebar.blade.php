@@ -181,6 +181,14 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{{ route('admin.vista.via.receta') }}" target="frameprincipal" class="nav-link">
+                                <i class="far fa-edit nav-icon"></i>
+                                <p>Vía Receta</p>
+                            </a>
+                        </li>
+
+
 
 
                     </ul>

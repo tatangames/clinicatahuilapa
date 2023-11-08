@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Configuracion;
 use App\Http\Controllers\Controller;
 use App\Models\Linea;
 use App\Models\SubLinea;
+use App\Models\ViaReceta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -176,6 +177,93 @@ class LineasController extends Controller
 
         return ['success' => 1];
     }
+
+
+
+
+
+
+
+
+
+    // *********** VIAS PARA RECETAS ********
+
+    public function indexVistaViaReceta(){
+
+        return view('backend.admin.configuracion.viareceta.vistaviareceta');
+    }
+
+    public function tablaVistaViaReceta(){
+
+        $arrayVias = ViaReceta::orderBy('nombre')->get();
+
+        return view('backend.admin.configuracion.viareceta.tablaviareceta', compact('arrayVias'));
+    }
+
+
+    public function registroNuevaViaReceta(Request $request){
+
+        $regla = array(
+            'nombre' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        $registro = new ViaReceta();
+        $registro->nombre = $request->nombre;
+
+        if($registro->save()){
+            return ['success' => 1];
+        }else{
+            return ['success' => 99];
+        }
+    }
+
+
+    public function informacionViaReceta(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        if($infoLinea = ViaReceta::where('id', $request->id)->first()){
+
+
+            return ['success' => 1, 'info' => $infoLinea];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+    public function editarViaReceta(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+            'nombre' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        ViaReceta::where('id', $request->id)->update([
+            'nombre' => $request->nombre,
+        ]);
+
+        return ['success' => 1];
+    }
+
+
+
 
 
 
