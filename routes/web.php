@@ -19,6 +19,7 @@ use App\Http\Controllers\Backend\Historial\HistorialClinicoController;
 use App\Http\Controllers\Backend\Configuracion\LineasController;
 use App\Http\Controllers\Backend\Configuracion\ProveedorController;
 use App\Http\Controllers\Backend\Farmacia\FarmaciaController;
+use App\Http\Controllers\Backend\Historial\RecetasController;
 
 
 
@@ -325,3 +326,11 @@ Route::post('/admin/historial/actualizar/historialclinico', [HistorialClinicoCon
 
 // bloque recetas
 Route::get('/admin/historial/bloque/recetas/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialRecetas']);
+
+
+// vista de agregar receta
+Route::get('/admin/recetas/vista/general/{idconsulta}', [RecetasController::class, 'indexVistaNuevaReceta']);
+
+// listado de medicamentos por fuente
+Route::post('/admin/recetas/medicamentos/porfuente', [RecetasController::class, 'listadoMedicamentosPorFuenteFinan']);
+

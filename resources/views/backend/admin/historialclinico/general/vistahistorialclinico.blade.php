@@ -163,12 +163,8 @@
                                                     CUADRO CLINICO
                                                 </a>
                                             </li>
-
-
                                         </ul>
                                     </div>
-
-
                                 </div>
 
 
@@ -831,10 +827,7 @@
                     toastr.error('Error al registrar');
                     closeLoading();
                 });
-
         }
-
-
 
         function informacionAntropometria(idantro){
 
@@ -1066,22 +1059,14 @@
 
 
 
-
-
-
-
-        //************************** TAB 3: RECETAS *************************************
-
-
-        function btnRecargarTablaRecetas(){
+        function vistaNuevaReceta(){
 
             let idconsulta = {{ $idconsulta }};
-
-            // TABLA RECETAS
-
-            var ruta = "{{ URL::to('/admin/historial/recetas/paciente-consulta') }}/" + idconsulta;
-            $('#tablaRecetas').load(ruta);
+            window.location.href="{{ url('/admin/recetas/vista/general') }}/" + idconsulta;
         }
+
+
+
 
 
 

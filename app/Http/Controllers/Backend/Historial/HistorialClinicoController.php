@@ -9,10 +9,13 @@ use App\Models\Antropometria;
 use App\Models\Consulta_Paciente;
 use App\Models\CuadroClinico;
 use App\Models\Diagnosticos;
+use App\Models\FuenteFinanciamiento;
 use App\Models\Paciente;
 use App\Models\PacienteAntecedentes;
+use App\Models\Recetas;
 use App\Models\TipeoSanguineo;
 use App\Models\Usuario;
+use App\Models\ViaReceta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -418,9 +421,25 @@ class HistorialClinicoController extends Controller
 
     function bloqueHistorialRecetas($idconsulta){
 
+        $infoConsulta = Consulta_Paciente::where('id', $idconsulta)->first();
+        $arrayRecetas = Recetas::where('paciente_id', $infoConsulta->paciente_id)
+            ->orderBy('fecha')
+            ->get();
+
+        foreach ($arrayRecetas as $dato){
+
+            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+            $dato->fechaProFormat = date("d-m-Y", strtotime($dato->proxima_cita));
+
+            $infoFuente = FuenteFinanciamiento::where('id', $dato->fuente_finan_id)->first();
+            $infoVia = ViaReceta::where('id', $dato->via_id)->first();
+
+            $dato->nombreFuente = $infoFuente->nombre;
+            $dato->nombreVia = $infoVia->nombre;
+        }
 
 
-        //return view('backend.admin.historialclinico.bloques.bloquerecetas', compact('arrayRecetas'));
+        return view('backend.admin.historialclinico.bloques.bloquerecetas', compact('arrayRecetas'));
     }
 
 

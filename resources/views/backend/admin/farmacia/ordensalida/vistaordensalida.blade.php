@@ -36,7 +36,6 @@
                         <h3 class="card-title" style="color: #005eab; font-weight: bold">Datos de Salida</h3>
                     </div>
 
-
                     <section class="content" style="margin-left: 30px">
                         <div class="container-fluid">
 
@@ -63,7 +62,6 @@
                             </div>
 
                             <div class="row">
-
                                 <div class="form-group col-md-6" style="margin-top: 5px">
                                     <label style="color: #686868">Producto: </label>
                                     <div >
@@ -75,9 +73,8 @@
                                         </select>
                                     </div>
                                 </div>
-
-
                             </div>
+
                         </div>
                     </section>
 
