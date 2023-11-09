@@ -340,6 +340,8 @@ Route::post('/admin/recetas/registro/parapaciente', [RecetasController::class, '
 // vista para editar o ver la receta individual
 Route::get('/admin/recetas/vista/paraeditar/{idreceta}', [RecetasController::class, 'indexVistaEditarVerReceta']);
 
+// actualizar la receta si es permitido por estado
+Route::post('/admin/recetas/actualizar/parapaciente', [RecetasController::class, 'actualizarRecetaMedica']);
 
 
 

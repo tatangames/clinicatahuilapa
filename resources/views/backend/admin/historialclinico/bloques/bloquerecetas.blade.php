@@ -40,11 +40,11 @@
                                     <td>
 
                                         @if($dato->estado == 1)
-                                                <span class="badge bg-primary"></span>
+                                                <span class="badge bg-warning">Pendiente</span>
                                         @elseif($dato->estado == 2)
-                                                <span class="badge bg-primary"></span>
+                                                <span class="badge bg-success">Procesada</span>
                                         @else
-                                                <span class="badge bg-primary"></span>
+                                                <span class="badge bg-danger">Denegada</span>
                                         @endif
 
                                     </td>

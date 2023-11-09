@@ -490,7 +490,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<textarea name='arrayIndicacion[]'  class='form-control' type='text'>indicacionesTexto</textarea>" +
+                "<textarea name='arrayIndicacion[]'  class='form-control' type='text'>" + indicacionesTexto +"</textarea>" +
                 "</td>" +
 
 
@@ -689,7 +689,7 @@
                         Swal.fire({
                             title: "Receta Ya Registrada",
                             text: "Para esta consulta ya se ha registrado una Receta",
-                            icon: 'success',
+                            icon: 'error',
                             showCancelButton: false,
                             allowOutsideClick: false,
                             confirmButtonColor: '#28a745',

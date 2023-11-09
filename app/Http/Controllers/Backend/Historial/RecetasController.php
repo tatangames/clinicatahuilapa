@@ -197,10 +197,26 @@ class RecetasController extends Controller
 
         $arrayDetalle = DB::table('recetas_detalle AS red')
             ->join('farmacia_articulo AS fama', 'fama.id', '=', 'red.medicamento_id')
-            ->select('fama.nombre', 'red.recetas_id', 'red.cantidad', 'red.descripcion')
+            ->select('fama.nombre', 'red.recetas_id', 'red.id AS idfarmacia', 'red.cantidad', 'red.descripcion', 'red.medicamento_id')
             ->where('red.recetas_id', $idreceta)
             ->orderBy('fama.nombre', 'ASC')
             ->get();
+
+        $contador = 0;
+
+        foreach ($arrayDetalle as $info){
+            $contador++;
+
+            $info->contador = $contador;
+
+            $nombreGenerico = "";
+            if($infoGenerico = ArticuloMedicamento::where('farmacia_articulo_id', $info->idfarmacia)->first()){
+                $nombreGenerico = $infoGenerico->nombre_generico;
+            }
+            $info->nombreGenerico = $nombreGenerico;
+
+
+        }
 
         if($infoReceta->estado != 1){
             $titulo = "VER FICHA DE RECETA";
@@ -214,6 +230,77 @@ class RecetasController extends Controller
     }
 
 
+
+    public function actualizarRecetaMedica(Request $request){
+
+        $regla = array(
+            'idreceta' => 'required',
+            'fecha' => 'required',
+            'diagnostico' => 'required',
+            'via' => 'required',
+        );
+
+        // indicacionGeneral
+        // proximaCita
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if($infoReceta = Recetas::where('id', $request->idreceta)->first()){
+
+            if($infoReceta->estado == 2){
+                return ['success' => 1, 'estado' => 'Procesada', 'idconsulta' => $infoReceta->consulta_id];
+            }
+
+            if($infoReceta->estado == 3){
+                return ['success' => 1, 'estado' => 'Denegada', 'idconsulta' => $infoReceta->consulta_id];
+            }
+
+
+            DB::beginTransaction();
+
+            try {
+
+                // BORRAR ANTERIORES
+
+                RecetasDetalle::where('recetas_id', $request->idreceta)->delete();
+
+                $datosContenedor = json_decode($request->contenedorArray, true);
+
+
+                Recetas::where('id', $request->idreceta)->update([
+                    'via_id' => $request->via,
+                    'diagnostico_id' => $request->diagnostico,
+                    'descripcion_general' => $request->indicacionGeneral,
+                    'fecha' => $request->fecha,
+                    'proxima_cita' => $request->proximaCita,
+                ]);
+
+                // REGISTRAR CADA FILA MEDICAMENTO
+                foreach ($datosContenedor as $filaArray) {
+
+                    $detalle = new RecetasDetalle();
+                    $detalle->recetas_id = $request->idreceta;
+                    $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
+                    $detalle->cantidad = $filaArray['infoCantidad'];
+                    $detalle->descripcion = $filaArray['infoIndicacion'];
+                    $detalle->save();
+                }
+
+                DB::commit();
+                return ['success' => 2, 'idconsulta' => $infoReceta->consulta_id];
+
+            }catch(\Throwable $e){
+                Log::info('error: ' . $e);
+                DB::rollback();
+                return ['success' => 99];
+            }
+        }
+        else{
+            return ['success' => 2];
+        }
+    }
 
 
 

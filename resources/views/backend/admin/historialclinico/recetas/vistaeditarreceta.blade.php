@@ -277,9 +277,26 @@
 
 
                     @foreach($arrayDetalle as $item)
-
-
-
+                        <tr>
+                            <td>
+                                <p id="fila" class="form-control" style="max-width: 65px">{{ $item->contador }}</p>
+                            </td>
+                            <td>
+                                <input name="arrayNombre[]" disabled data-idmedicamento="{{ $item->medicamento_id }}" value="{{ $item->nombre }}" class="form-control" type="text">
+                            </td>
+                            <td>
+                                <input disabled value="{{ $item->nombreGenerico }}" class="form-control" type="text">
+                            </td>
+                            <td>
+                                <input name="arrayCantidad[]" disabled value="{{ $item->cantidad }}" class="form-control" type="number">
+                            </td>
+                            <td>
+                                <textarea name="arrayIndicacion[]" class="form-control" type="text">{{ $item->descripcion }}</textarea>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-block btn-danger" onclick="borrarFila(this)">Borrar</button>
+                            </td>
+                        </tr>
 
                     @endforeach
 
@@ -292,8 +309,8 @@
 
 
 
-    <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px; display: none" id="bloqueGuardarTabla">
-        <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Guardar Receta Médica</button>
+    <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px; " id="bloqueGuardarTabla">
+        <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Receta Médica</button>
     </div>
 
 
@@ -512,7 +529,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<textarea name='arrayIndicacion[]'  class='form-control' type='text'>indicacionesTexto</textarea>" +
+                "<textarea name='arrayIndicacion[]'  class='form-control' type='text'>" + indicacionesTexto +"</textarea>" +
                 "</td>" +
 
 
@@ -564,7 +581,7 @@
         function preguntarGuardar(){
 
             Swal.fire({
-                title: '¿Guardar Receta?',
+                title: '¿Actualizar Receta?',
                 text: '',
                 icon: 'info',
                 showCancelButton: true,
@@ -575,13 +592,13 @@
                 cancelButtonText: 'NO'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    registrarMedicamento();
+                    actualizarReceta();
                 }
             })
         }
 
 
-        function registrarMedicamento(){
+        function actualizarReceta(){
 
             var fecha = document.getElementById('fecha').value;
             var diagnostico = document.getElementById('select-dianostico').value;
@@ -679,6 +696,8 @@
 
             const contenedorArray = [];
 
+            let idreceta = {{ $idreceta }};
+
 
             for(var i = 0; i < arrayIdMedicamentos.length; i++){
 
@@ -692,6 +711,7 @@
 
             formData.append('contenedorArray', JSON.stringify(contenedorArray));
 
+            formData.append('idreceta', idreceta)
             formData.append('fecha', fecha);
             formData.append('diagnostico', diagnostico);
             formData.append('via', via);
@@ -699,32 +719,39 @@
             formData.append('proximaCita', proximaCita);
 
 
-            axios.post(url+'/recetas/registro/parapaciente', formData, {
+            axios.post(url+'/recetas/actualizar/parapaciente', formData, {
             })
                 .then((response) => {
                     closeLoading();
 
+                    console.log(response);
+
+                    let idconsulta = response.data.idconsulta;
+
                     if(response.data.success === 1){
 
+                        let estado = response.data.estado;
+
                         Swal.fire({
-                            title: "Receta Ya Registrada",
-                            text: "Para esta consulta ya se ha registrado una Receta",
-                            icon: 'success',
+                            title: "No Modificable",
+                            text: "La Receta cambio de estado a : " + estado,
+                            icon: 'error',
                             showCancelButton: false,
                             allowOutsideClick: false,
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
-                            confirmButtonText: 'Aceptar'
+                            confirmButtonText: 'Recargar'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                salirVistaHistorialClinico();
+                                salirVistaHistorialClinico(idconsulta);
                             }
                         })
-
                     }
+
                     else if(response.data.success === 2){
+
                         Swal.fire({
-                            title: "Receta Registrada",
+                            title: "Receta Actualizada",
                             text: "",
                             icon: 'success',
                             showCancelButton: false,
@@ -734,7 +761,7 @@
                             confirmButtonText: 'Aceptar'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                salirVistaHistorialClinico();
+                                salirVistaHistorialClinico(idconsulta);
                             }
                         })
                     }
@@ -757,9 +784,7 @@
         }
 
 
-        function salirVistaHistorialClinico(){
-
-
+        function salirVistaHistorialClinico(idconsulta){
             window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
         }
 
