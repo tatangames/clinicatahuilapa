@@ -47,7 +47,7 @@
         <div class="container-fluid">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">FICHA PARA RECETA</h3>
+                    <h3 class="card-title">{{ $titulo }}</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -68,49 +68,62 @@
                                     </div>
                                 </div>
                             </div>
-                                <section>
+                            <section>
 
-                                    <div class="row">
+                                <div class="row">
 
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label class="control-label">Fecha:</label>
-                                                <input type="date" class="form-control" id="fecha" value="{{ $fechaActual }}">
-                                            </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Fecha:</label>
+                                            <input type="date" class="form-control" id="fecha" value="{{ $fechaActual }}">
                                         </div>
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Diagnóstico</label>
-
-                                                <select id="select-dianostico" class="form-control">
-                                                    <option value="">Seleccionar Opción</option>
-                                                    @foreach($arrayDiagnostico as $item)
-                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-
-                                            </div>
-                                        </div>
-
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Vía</label>
-
-                                                <select id="select-via" class="form-control">
-                                                    <option value="">Seleccionar Opción</option>
-                                                    @foreach($arrayVia as $item)
-                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-
-                                            </div>
-                                        </div>
-
                                     </div>
 
-                                </section>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Diagnóstico</label>
+
+                                            <select id="select-dianostico" class="form-control">
+                                                <option value="">Seleccionar Opción</option>
+                                                @foreach($arrayDiagnostico as $item)
+
+                                                    @if($infoReceta->diagnostico_id == $item->id)
+                                                        <option value="{{$item->id}}" selected>{{ $item->nombre }}</option>
+
+                                                    @else
+                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                    @endif
+
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Vía</label>
+
+                                            <select id="select-via" class="form-control">
+                                                <option value="">Seleccionar Opción</option>
+                                                @foreach($arrayVia as $item)
+
+                                                    @if($infoReceta->via_id == $item->id)
+                                                        <option value="{{$item->id}}" selected>{{ $item->nombre }}</option>
+                                                    @else
+                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                    @endif
+
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </section>
 
 
 
@@ -123,7 +136,7 @@
                                         <div class="form-group">
                                             <label class="control-label">Indicaciones generales:</label>
 
-                                            <textarea class="form-control" id="text-indicacion-general" rows="3" cols="5"></textarea>
+                                            <textarea class="form-control" id="text-indicacion-general" rows="3" cols="5">{{ $infoReceta->descripcion_general }}</textarea>
 
                                         </div>
                                     </div>
@@ -131,7 +144,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">Proxima Cita:</label>
-                                            <input type="date" class="form-control" id="proxima-cita">
+                                            <input type="date" class="form-control" id="proxima-cita" value="{{ $infoReceta->proxima_cita }}">
                                         </div>
                                     </div>
 
@@ -261,6 +274,15 @@
                     </tr>
                     </thead>
                     <tbody>
+
+
+                    @foreach($arrayDetalle as $item)
+
+
+
+
+                    @endforeach
+
 
                     </tbody>
                 </table>
@@ -653,8 +675,6 @@
 
             openLoading();
 
-            let idconsulta = {{ $idconsulta }};
-
             let formData = new FormData();
 
             const contenedorArray = [];
@@ -671,7 +691,7 @@
             }
 
             formData.append('contenedorArray', JSON.stringify(contenedorArray));
-            formData.append('idconsulta', idconsulta);
+
             formData.append('fecha', fecha);
             formData.append('diagnostico', diagnostico);
             formData.append('via', via);
@@ -739,7 +759,7 @@
 
         function salirVistaHistorialClinico(){
 
-            let idconsulta = {{ $idconsulta }};
+
             window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
         }
 

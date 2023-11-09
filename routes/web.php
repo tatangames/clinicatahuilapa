@@ -334,3 +334,17 @@ Route::get('/admin/recetas/vista/general/{idconsulta}', [RecetasController::clas
 // listado de medicamentos por fuente
 Route::post('/admin/recetas/medicamentos/porfuente', [RecetasController::class, 'listadoMedicamentosPorFuenteFinan']);
 
+// registar la nueva receta al paciente
+Route::post('/admin/recetas/registro/parapaciente', [RecetasController::class, 'registroNuevaRecetaParaPaciente']);
+
+// vista para editar o ver la receta individual
+Route::get('/admin/recetas/vista/paraeditar/{idreceta}', [RecetasController::class, 'indexVistaEditarVerReceta']);
+
+
+
+
+
+
+
+
+

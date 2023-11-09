@@ -954,7 +954,7 @@
                             showCancelButton: false,
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
-                            closeOnClickOutside: false,
+
                             allowOutsideClick: false,
                             cancelButtonText: 'Cancelar',
                             confirmButtonText: 'Recargar'
@@ -985,7 +985,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
-                closeOnClickOutside: false,
+
                 allowOutsideClick: false,
                 cancelButtonText: 'Cancelar',
                 confirmButtonText: 'Sí'
@@ -1018,7 +1018,7 @@
                             showCancelButton: false,
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
-                            closeOnClickOutside: false,
+
                             allowOutsideClick: false,
                             cancelButtonText: 'Cancelar',
                             confirmButtonText: 'Recargar'
@@ -1064,7 +1064,7 @@
                             showCancelButton: false,
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
-                            closeOnClickOutside: false,
+
                             allowOutsideClick: false,
                             cancelButtonText: 'Cancelar',
                             confirmButtonText: 'Recargar'
@@ -1148,7 +1148,7 @@
                             showCancelButton: false,
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
-                            closeOnClickOutside: false,
+
                             allowOutsideClick: false,
                             confirmButtonText: 'Recargar'
                         }).then((result) => {
@@ -1218,7 +1218,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
-                closeOnClickOutside: false,
+
                 allowOutsideClick: false,
                 confirmButtonText: 'Sí',
                 cancelButtonText: 'Cancelar'
@@ -1254,7 +1254,7 @@
                             showCancelButton: false,
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
-                            closeOnClickOutside: false,
+
                             allowOutsideClick: false,
                             confirmButtonText: 'Recargar Vista',
                             cancelButtonText: 'Cancelar'
@@ -1355,7 +1355,7 @@
                             showCancelButton: false,
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
-                            closeOnClickOutside: false,
+
                             allowOutsideClick: false,
                             confirmButtonText: 'Recargar Vista',
                             cancelButtonText: 'Cancelar'

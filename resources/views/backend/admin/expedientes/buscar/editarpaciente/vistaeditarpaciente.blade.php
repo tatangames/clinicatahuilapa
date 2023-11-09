@@ -609,7 +609,7 @@
                 showCancelButton: false,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
-                closeOnClickOutside: false,
+
                 allowOutsideClick: false,
                 confirmButtonText: 'Recargar',
             }).then((result) => {

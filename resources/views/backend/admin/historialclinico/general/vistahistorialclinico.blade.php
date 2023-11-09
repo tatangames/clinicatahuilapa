@@ -523,7 +523,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
-                closeOnClickOutside: false,
+
                 allowOutsideClick: false,
                 cancelButtonText: 'Cancelar',
                 confirmButtonText: 'Sí'
@@ -1066,7 +1066,10 @@
         }
 
 
+        function infoEditarReceta(idreceta){
 
+            window.location.href="{{ url('/admin/recetas/vista/paraeditar') }}/" + idreceta;
+        }
 
 
 

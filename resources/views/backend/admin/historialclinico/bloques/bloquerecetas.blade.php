@@ -33,18 +33,37 @@
 
                             @foreach($arrayRecetas as $dato)
                                 <tr>
-                                    <td>xx</td>
-                                    <td>xx</td>
-                                    <td>xx</td>
-                                    <td>xx</td>
-                                    <td>xx</td>
+                                    <td>{{ $dato->fechaFormat }}</td>
+                                    <td>{{ $dato->nombreusuario }}</td>
+                                    <td>{{ $dato->descripcion_general }}</td>
+                                    <td>{{ $dato->nombreVia }}</td>
+                                    <td>
+
+                                        @if($dato->estado == 1)
+                                                <span class="badge bg-primary"></span>
+                                        @elseif($dato->estado == 2)
+                                                <span class="badge bg-primary"></span>
+                                        @else
+                                                <span class="badge bg-primary"></span>
+                                        @endif
+
+                                    </td>
+
 
                                     <td>
-                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="informacionRecetaMedica({{ $dato->id }})">
-                                            <i class="fas fa-eye" title="Ver"></i>&nbsp; Ver
-                                        </button>
 
-                                        <button type="button" class="btn btn-warning btn-xs" style="color: white" onclick="imprimirRecetaMedica({{ $dato->id }})">
+                                        @if($dato->estado == 1)
+                                            <button type="button" class="btn btn-warning btn-xs" style="color: white" onclick="infoEditarReceta({{ $dato->id }})">
+                                                <i class="fas fa-edit" title="Editar"></i>&nbsp; Editar
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-info btn-xs" style="color: white" onclick="infoEditarReceta({{ $dato->id }})">
+                                                <i class="fas fa-eye" title="Ver"></i>&nbsp; Ver
+                                            </button>
+                                        @endif
+
+
+                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="imprimirRecetaMedica({{ $dato->id }})">
                                             <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
                                         </button>
                                     </td>
@@ -61,10 +80,12 @@
     </div>
 </section>
 
-
 <script>
     $(function () {
         $("#tableRecetas").DataTable({
+            columnDefs: [
+                { type: 'date-euro', targets: 0 } // Suponiendo que la columna de fecha es la primera (índice 0)
+            ],
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -97,7 +118,6 @@
                     "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                     "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
-
             },
             "responsive": true, "lengthChange": true, "autoWidth": false,
         });

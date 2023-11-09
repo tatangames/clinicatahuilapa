@@ -10,6 +10,8 @@ use App\Models\EntradaMedicamentoDetalle;
 use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
 use App\Models\Paciente;
+use App\Models\Recetas;
+use App\Models\RecetasDetalle;
 use App\Models\ViaReceta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -106,6 +108,118 @@ class RecetasController extends Controller
 
         return ['success' => 1, 'dataArray' => $arrayMedicamentos, 'hayfilas' => $hayFilas];
     }
+
+
+
+    public function registroNuevaRecetaParaPaciente(Request $request){
+
+        $regla = array(
+            'idconsulta' => 'required',
+            'fecha' => 'required',
+            'diagnostico' => 'required',
+            'via' => 'required',
+        );
+
+        // indicacionGeneral
+        // proximaCita
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if(Recetas::where('consulta_id', $request->idconsulta)->first()){
+            return ['success' => 1];
+        }
+        else{
+
+            DB::beginTransaction();
+
+            try {
+                $usuario = auth()->user();
+
+
+                $infoConsulta = Consulta_Paciente::where('id', $request->idconsulta)->first();
+                $datosContenedor = json_decode($request->contenedorArray, true);
+
+                $receta = new Recetas();
+                $receta->consulta_id = $request->idconsulta;
+                $receta->paciente_id = $infoConsulta->paciente_id;
+                $receta->via_id = $request->via;
+                $receta->diagnostico = $request->diagnostico;
+                $receta->descripcion_general = $request->indicacionGeneral;
+                $receta->fecha = $request->fecha;
+                $receta->proxima_cita = $request->proximaCita;
+                $receta->estado = 1;
+                $receta->usuario_id = $usuario->id;
+                $receta->save();
+
+
+                // REGISTRAR CADA FILA MEDICAMENTO
+                foreach ($datosContenedor as $filaArray) {
+
+                    $detalle = new RecetasDetalle();
+                    $detalle->recetas_id = $receta->id;
+                    $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
+                    $detalle->cantidad = $filaArray['infoCantidad'];
+                    $detalle->descripcion = $filaArray['infoIndicacion'];
+                    $detalle->save();
+                }
+
+                DB::commit();
+                return ['success' => 2];
+
+            }catch(\Throwable $e){
+                Log::info('error: ' . $e);
+                DB::rollback();
+                return ['success' => 99];
+            }
+        }
+    }
+
+
+
+    public function indexVistaEditarVerReceta($idreceta){
+
+        $infoReceta = Recetas::where('id', $idreceta)->first();
+
+        $infoConsulta = Consulta_Paciente::where('id', $infoReceta->consulta_id)->first();
+        $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+
+        $arrayFuente = FuenteFinanciamiento::orderBy('nombre', 'ASC')->get();
+
+        $arrayDiagnostico = Diagnosticos::orderBy('nombre', 'ASC')->get();
+
+        $arrayVia = ViaReceta::orderBy('nombre', 'ASC')->get();
+
+        $fechaActual = Carbon::now()->toDateString();
+
+        $arrayDetalle = DB::table('recetas_detalle AS red')
+            ->join('farmacia_articulo AS fama', 'fama.id', '=', 'red.medicamento_id')
+            ->select('fama.nombre', 'red.recetas_id', 'red.cantidad', 'red.descripcion')
+            ->where('red.recetas_id', $idreceta)
+            ->orderBy('fama.nombre', 'ASC')
+            ->get();
+
+        if($infoReceta->estado != 1){
+            $titulo = "VER FICHA DE RECETA";
+        }else{
+            $titulo = "MODIFICACIÓN FICHA DE RECETA";
+        }
+
+        return view('backend.admin.historialclinico.recetas.vistaeditarreceta', compact('idreceta',
+            'nombreCompleto', 'infoReceta', 'arrayDiagnostico', 'arrayFuente', 'arrayVia',
+                'fechaActual', 'arrayDetalle', 'titulo'));
+    }
+
+
+
+
+
+
+
+
 
 
 }

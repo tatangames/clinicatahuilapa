@@ -18,8 +18,9 @@ class CreateRecetasTable extends Migration
 
             $table->bigInteger('consulta_id')->unsigned(); // saber que # de consulta fue
             $table->bigInteger('paciente_id')->unsigned(); // obtener las recetas de x paciente
-            $table->bigInteger('fuente_finan_id')->unsigned();
             $table->bigInteger('via_id')->unsigned();
+            $table->bigInteger('diagnostico_id')->unsigned();
+            $table->bigInteger('usuario_id')->unsigned();
 
             $table->text('descripcion_general')->nullable();
             $table->date('fecha');
@@ -35,8 +36,9 @@ class CreateRecetasTable extends Migration
 
             $table->foreign('consulta_id')->references('id')->on('consulta_paciente');
             $table->foreign('paciente_id')->references('id')->on('paciente');
-            $table->foreign('fuente_finan_id')->references('id')->on('fuente_financiamiento');
             $table->foreign('via_id')->references('id')->on('via_receta');
+            $table->foreign('diagnostico_id')->references('id')->on('diagnosticos');
+            $table->foreign('usuario_id')->references('id')->on('usuario');
         });
     }
 

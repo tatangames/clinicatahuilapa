@@ -431,11 +431,12 @@ class HistorialClinicoController extends Controller
             $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
             $dato->fechaProFormat = date("d-m-Y", strtotime($dato->proxima_cita));
 
-            $infoFuente = FuenteFinanciamiento::where('id', $dato->fuente_finan_id)->first();
             $infoVia = ViaReceta::where('id', $dato->via_id)->first();
 
-            $dato->nombreFuente = $infoFuente->nombre;
             $dato->nombreVia = $infoVia->nombre;
+
+            $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
+            $dato->nombreusuario = $infoUsuario->nombre;
         }
 
 
