@@ -332,12 +332,6 @@ class HistorialClinicoController extends Controller
     }
 
 
-    public function tablaPacienteHistorialClinico($idconsulta){
-
-        return "tabla historial clinico";
-
-        return view('backend.admin.historialclinico.general.tablahistorialclinico', compact('idconsulta'));
-    }
 
 
     // BLOQUE ANTECEDENTES
@@ -417,6 +411,14 @@ class HistorialClinicoController extends Controller
 
         return view('backend.admin.historialclinico.bloques.bloqueantropsv', compact('bloqueAntropSv'));
     }
+
+    public function vistaNuevaAntropologia($idconsulta){
+
+        $nombreCompleto = "pepe";
+
+        return view('backend.admin.historialclinico.antropsv.vistaantropologiasv', compact('idconsulta', 'nombreCompleto'));
+    }
+
 
 
     function bloqueHistorialRecetas($idconsulta){

@@ -35,7 +35,8 @@
 
     <section class="content-header">
         <div class="container-fluid">
-                <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="recargarVista()" class="button button-3d button-rounded button-pill button-small">
+                <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;"
+                        onclick="recargarVista()" class="button button-3d button-rounded button-pill button-small">
                     <i class="fas fa-arrow-left"></i>
                     Atras
                 </button>
@@ -1058,6 +1059,9 @@
         }
 
 
+        function vistaAsignaciones(){
+            window.location.href="{{ url('/admin/asignaciones/vista/index') }}";
+        }
 
         function vistaNuevaReceta(){
 
@@ -1072,7 +1076,10 @@
         }
 
 
-
+        function vistaNuevaAntropologia(){
+            let idconsulta = {{ $idconsulta }};
+            window.location.href="{{ url('/admin/vista/nueva/antropologia') }}/" + idconsulta;
+        }
 
 
 

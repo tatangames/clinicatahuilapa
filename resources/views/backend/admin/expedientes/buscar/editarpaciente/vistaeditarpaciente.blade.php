@@ -18,16 +18,18 @@
 
 <div id="divcontenedor" style="display: none">
 
+    <div class="col-md-offset-3 col-md-12" style="margin-top: 20px">
+        <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="vistaAtras()" class="button button-3d button-rounded button-pill button-small">
+            <i class="fas fa-arrow-left"></i>
+            Atras
+        </button>
+    </div>
+
     <section class="content" style="margin-top: 20px">
         <div class="container-fluid">
             <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Editar Expediente</h3>
-                </div>
-
-
-                <div class="col-md-offset-3 col-md-12" align="left">
-                    <button type="button" class="btn btn-warning" style="margin-top: 15px; color: white" onclick="vistaAtras();"> ← Atras</button>
                 </div>
 
 

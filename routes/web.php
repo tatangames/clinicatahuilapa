@@ -280,7 +280,6 @@ Route::post('/admin/receta/via/editar', [LineasController::class, 'editarViaRece
 
 // --- HISTORIAL CLINICO ---
 Route::get('/admin/historial/clinico/vista/{idconsulta}', [HistorialClinicoController::class, 'indexHistorialClinico']);
-Route::get('/admin/historial/clinico/paciente/tabla/{idconsulta}', [HistorialClinicoController::class, 'tablaPacienteHistorialClinico']);
 
 
 // --- BLOQUE ANTECEDENTES ---
@@ -296,6 +295,9 @@ Route::post('/admin/historial/antecedente/actualizacion', [HistorialClinicoContr
 
 // bloque antrop + sv
 Route::get('/admin/historial/bloque/antropsv/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialAntropSv']);
+
+// vista para registar nueva antrop + sv
+Route::get('/admin/vista/nueva/antropologia/{idconsulta}', [HistorialClinicoController::class, 'vistaNuevaAntropologia']);
 
 // registrar formulario de antropometria
 Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoController::class, 'registrarAntropometria']);
