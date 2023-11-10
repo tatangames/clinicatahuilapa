@@ -78,17 +78,13 @@ class HistorialClinicoController extends Controller
         $arrayIdPacienteAntecedente = PacienteAntecedentes::where('paciente_id', $infoPaciente->id)->get();
 
 
-        $btnAntro = 0;
-        // verificar si ya tiene 1 ampometria, para ocultar boton
-        if(Antropometria::where('consulta_id', $idconsulta)->first()){
-            $btnAntro = 1;
-        }
+
 
 
         return view('backend.admin.historial.general.vistageneralhistorial', compact('infoPaciente',
             'nombreCompleto', 'antecedentes', 'arrayTipeoSanguineo',
             'arrayAntecedentesMedico', 'arrayIdPacienteAntecedente', 'arrayComplicacionAguda',
-        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta', 'btnAntro'));
+        'arrayEnfermedadCronicas', 'arrayAntecedenteCronicos', 'idconsulta',));
     }
 
 
@@ -180,7 +176,6 @@ class HistorialClinicoController extends Controller
 
 
     public function registrarAntropometria(Request $request){
-
 
         $regla = array(
             'fecha' => 'required'
@@ -409,7 +404,14 @@ class HistorialClinicoController extends Controller
             $dato->nomusuario = $infoUsuario->nombre;
         }
 
-        return view('backend.admin.historialclinico.bloques.bloqueantropsv', compact('bloqueAntropSv'));
+        $btnAntro = 0;
+        // verificar si ya tiene 1 ampometria, para ocultar boton
+        if(Antropometria::where('consulta_id', $idconsulta)->first()){
+            $btnAntro = 1;
+        }
+
+        return view('backend.admin.historialclinico.bloques.bloqueantropsv', compact('bloqueAntropSv',
+            'btnAntro'));
     }
 
     public function vistaNuevaAntropologia($idconsulta){
@@ -548,5 +550,29 @@ class HistorialClinicoController extends Controller
             return ['success' => 2];
         }
     }
+
+
+
+
+    public function vistaVisualizarAntropologia($idantrop){
+
+        $infoAntrop = Antropometria::where('id', $idantrop)->first();
+        $infoConsulta = Consulta_Paciente::where('id', $infoAntrop->consulta_id)->first();
+        $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+
+        $totalConsulta = "Consulta #: " . Consulta_Paciente::where('paciente_id', $infoPaciente->id)->count();
+
+
+        $idconsulta = $infoConsulta->id;
+
+        return view('backend.admin.historialclinico.antropsv.vistaeditarantropologiasv', compact('idantrop',
+        'nombreCompleto', 'totalConsulta', 'idconsulta', 'infoAntrop'));
+    }
+
+
+
+
 
 }

@@ -1,13 +1,13 @@
 <div class="card card-default">
     <div class="card-header">
         <h3 class="card-title" style="font-weight: bold">Historial de Antropología</h3>
-
+        @if($btnAntro == 0)
         <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
                 onclick="vistaNuevaAntropologia()" class="button button-3d button-rounded button-pill button-small">
             <i class="fas fa-plus"></i>
             Nueva Antropología
         </button>
-
+        @endif
     </div>
 </div>
 
@@ -46,7 +46,7 @@
                                      <td>{{ $dato->estatura }}</td>
 
                                      <td>
-                                         <button type="button" class="btn btn-primary btn-xs" onclick="informacionAntropometria({{ $dato->id }})">
+                                         <button type="button" class="btn btn-primary btn-xs" onclick="vistaVisualizarAntropologia({{ $dato->id }})">
                                              <i class="fas fa-eye" title="Ver"></i>&nbsp; Ver
                                          </button>
                                      </td>
@@ -108,6 +108,11 @@
              "responsive": true, "lengthChange": true, "autoWidth": false,
          });
      });
+
+
+     function vistaVisualizarAntropologia(idantrop){
+         window.location.href="{{ url('/admin/vista/visualizar/antropologia') }}/" + idantrop;
+     }
 
 
  </script>

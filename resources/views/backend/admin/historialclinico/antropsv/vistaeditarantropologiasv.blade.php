@@ -47,7 +47,7 @@
         <div class="container-fluid">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">FICHA PARA REGISTRAR ANTROPOLOGIA</h3>
+                    <h3 class="card-title">VISUALIZAR ANTROPOLOGIA</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -65,6 +65,7 @@
                                                 <div style="margin-left: 15px">
                                                     <h5 style="font-weight: bold">PACIENTE:</h5>
                                                     <p class="" style="color: #2b2a2a;">{{ $nombreCompleto }}</p>
+                                                    <p class="" style="color: #2b2a2a;">{{ $totalConsulta }}</p>
                                                 </div>
 
                                             </div>
@@ -77,19 +78,19 @@
 
                                     <div class="form-group col-md-3">
                                         <label>Fecha <span style="color: red">*</span></label>
-                                        <input type="date" class="form-control" id="fecha-antro" autocomplete="off">
+                                        <input type="date" class="form-control" id="fecha-antro" autocomplete="off" value="{{ $infoAntrop->fecha }}">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Frecuencia Cardiaca (lpm):</label>
-                                        <input type="text" maxlength="150" class="form-control" id="frecuencia-cardia-antro" autocomplete="off">
+                                        <input type="text" maxlength="150" class="form-control" id="frecuencia-cardia-antro" value="{{ $infoAntrop->frecuencia_cardiaca }}" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Frecuencia Respiratoria (rpm):</label>
-                                        <input type="text" maxlength="150" class="form-control" id="frecuencia-respiratoria-antro" autocomplete="off">
+                                        <input type="text" maxlength="150" class="form-control" id="frecuencia-respiratoria-antro" value="{{ $infoAntrop->frecuencia_respiratoria }}" autocomplete="off">
                                     </div>
 
                                 </div>
@@ -101,19 +102,19 @@
 
                                     <div class="form-group col-md-3">
                                         <label>Presion Arterial (mmHg):</label>
-                                        <input type="text" maxlength="150" class="form-control" id="presion-arterial-antro" autocomplete="off">
+                                        <input type="text" maxlength="150" class="form-control" id="presion-arterial-antro" value="{{ $infoAntrop->presion_arterial }}" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Temperatura (°C):</label>
-                                        <input type="text" class="form-control" id="temperatura-antro" autocomplete="off">
+                                        <input type="text" class="form-control" id="temperatura-antro" value="{{ $infoAntrop->temperatura }}" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Perím. Abdominal (cm):</label>
-                                        <input type="text" class="form-control" id="perim-abdominal-antro" value="N/A" autocomplete="off">
+                                        <input type="text" class="form-control" id="perim-abdominal-antro" value="{{ $infoAntrop->perim_abdominal }}" autocomplete="off">
                                     </div>
 
 
@@ -126,25 +127,25 @@
 
                                     <div class="form-group col-md-3">
                                         <label>Perím. Cefálico (cm):</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" value="N/A" id="perimetro-cefalico-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" value="{{ $infoAntrop->perim_cefalico }}" id="perimetro-cefalico-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Peso (lb):</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();"  class="form-control" id="peso-libra-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();" value="{{ $infoAntrop->peso_libra }}"  class="form-control" id="peso-libra-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Peso (kg):</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc3();"  class="form-control" id="peso-kilo-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc3();" value="{{ $infoAntrop->peso_kilo }}"  class="form-control" id="peso-kilo-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Estatura (cm):</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();"  class="form-control" id="estatura-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" onkeyup="calcular_imc2();" value="{{ $infoAntrop->estatura }}" class="form-control" id="estatura-antro" autocomplete="off">
                                     </div>
 
 
@@ -157,13 +158,13 @@
 
                                     <div class="form-group col-md-3">
                                         <label>IMC:</label>
-                                        <input type="text" disabled class="form-control" id="imc-antro" autocomplete="off">
+                                        <input type="text" disabled class="form-control" id="imc-antro" value="{{ $infoAntrop->imc }}" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Resultado del IMC:</label>
-                                        <input type="text" disabled class="form-control" id="resultado-imc-antro" autocomplete="off">
+                                        <input type="text" disabled class="form-control" id="resultado-imc-antro" value="{{ $infoAntrop->resultado_imc }}" autocomplete="off">
                                     </div>
 
                                 </div>
@@ -177,19 +178,19 @@
 
                                     <div class="form-group col-md-3">
                                         <label>Glucometria Capilar:</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="glucometria-capilar-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" value="{{ $infoAntrop->glucometria_capilar }}" id="glucometria-capilar-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Glicohemoglobina Capilar:</label>
-                                        <input type="text" onkeypress="return valida_numero(event);"  class="form-control" id="glicohemoglobina-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);"  class="form-control" value="{{ $infoAntrop->glicohemoglibona_capilar }}" id="glicohemoglobina-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Cetonas Capilares:</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="cetona-capilar-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" value="{{ $infoAntrop->cetona_capilar }}" id="cetona-capilar-antro" autocomplete="off">
                                     </div>
 
 
@@ -202,19 +203,19 @@
 
                                     <div class="form-group col-md-3">
                                         <label>SpO2:</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" id="sp02-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" class="form-control" value="{{ $infoAntrop->spo2 }}" id="sp02-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Perimetro de Cintura (CM):</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();"  class="form-control" id="perimetro-cintura-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();" value="{{ $infoAntrop->perim_cintura }}" class="form-control" id="perimetro-cintura-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Perimetro de Cadera (CM):</label>
-                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();" class="form-control" id="perimetro-cadera-antro" autocomplete="off">
+                                        <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();" value="{{ $infoAntrop->perim_cadera }}" class="form-control" id="perimetro-cadera-antro" autocomplete="off">
                                     </div>
 
 
@@ -227,25 +228,25 @@
 
                                     <div class="form-group col-md-3">
                                         <label>ICC :</label>
-                                        <input type="text" disabled class="form-control" id="icc-antro" autocomplete="off">
+                                        <input type="text" disabled class="form-control" value="{{ $infoAntrop->icc  }}" id="icc-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Riesgo Mujer:</label>
-                                        <input type="text" disabled  class="form-control" id="riesgo-mujer-antro" autocomplete="off">
+                                        <input type="text" disabled  class="form-control" value="{{ $infoAntrop->riesgo_mujer }}" id="riesgo-mujer-antro" autocomplete="off">
                                     </div>
 
 
                                     <div class="form-group col-md-3">
                                         <label>Riesgo Hombre:</label>
-                                        <input type="text" disabled class="form-control" id="riesgo-hombre-antro" autocomplete="off">
+                                        <input type="text" disabled class="form-control" value="{{ $infoAntrop->riesgo_hombre }}" id="riesgo-hombre-antro" autocomplete="off">
                                     </div>
 
                                     <div class="form-group col-md-3">
                                         <label>Gasto Energético Basal:</label>
                                         <input type="text" onkeypress="return valida_numero(event);" onchange="calcular_indice();"
-                                               class="form-control" id="gasto-energetico-antro" autocomplete="off">
+                                               class="form-control" id="gasto-energetico-antro" value="{{ $infoAntrop->gasto_energetico_basal }}" autocomplete="off">
                                     </div>
 
 
@@ -259,16 +260,20 @@
 
                             <label>Otros Detalles:</label>
                             <div class="form-group">
-                                <textarea class="form-control" rows="3" id="otros-detalles-antro"></textarea>
+                                <textarea class="form-control" rows="3" id="otros-detalles-antro">{{ $infoAntrop->nota_adicional }}</textarea>
                             </div>
 
 
                         </div>
+
+
+
+
+
                     </div>
 
-
                     <div style="float: right; margin-top: 30px">
-                        <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarAntropometria()">Guardar Antropometría</button>
+                        <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="actualizarAntropometria()">Actualizar Antropometría</button>
                     </div>
                 </div>
             </div>
@@ -302,6 +307,102 @@
     </script>
 
     <script>
+
+
+
+    function actualizarAntropometria(){
+
+        var fecha = document.getElementById('fecha-antro').value;
+
+        var freCardiaca = document.getElementById('frecuencia-cardia-antro').value;
+        var freRespiratoria = document.getElementById('frecuencia-respiratoria-antro').value;
+        var presionArterial = document.getElementById('presion-arterial-antro').value;
+        var temperatura = document.getElementById('temperatura-antro').value;
+        var perimetroAbdominal = document.getElementById('perim-abdominal-antro').value;
+        var perimetroCefalico = document.getElementById('perimetro-cefalico-antro').value;
+        var pesoLibra = document.getElementById('peso-libra-antro').value;
+        var pesoKilo = document.getElementById('peso-kilo-antro').value;
+        var estatura = document.getElementById('estatura-antro').value;
+        var imc = document.getElementById('imc-antro').value;
+        var resultadoImc = document.getElementById('resultado-imc-antro').value;
+        var glucometria = document.getElementById('glucometria-capilar-antro').value;
+        var glicohemoglobina = document.getElementById('glicohemoglobina-antro').value;
+        var cetona = document.getElementById('cetona-capilar-antro').value;
+        var sp02 = document.getElementById('sp02-antro').value;
+        var perimetroCintura = document.getElementById('perimetro-cintura-antro').value;
+        var perimetroCadera = document.getElementById('perimetro-cadera-antro').value;
+        var icc = document.getElementById('icc-antro').value;
+        var riesgoMujer = document.getElementById('riesgo-mujer-antro').value;
+        var riesgoHombre = document.getElementById('riesgo-hombre-antro').value;
+        var gastoEnergetico = document.getElementById('gasto-energetico-antro').value;
+        var otrosDetalles = document.getElementById('otros-detalles-antro').value;
+
+        if(fecha === ''){
+            toastr.error('Fecha es requerida');
+            return;
+        }
+
+        let idantro = {{ $infoAntrop->id }};
+
+        openLoading();
+        var formData = new FormData();
+        formData.append('idmodal', idantro);
+        formData.append('fecha', fecha);
+        formData.append('freCardiaca', freCardiaca);
+        formData.append('freRespiratoria', freRespiratoria);
+        formData.append('presionArterial', presionArterial);
+        formData.append('temperatura', temperatura);
+        formData.append('perimetroAbdominal', perimetroAbdominal);
+        formData.append('perimetroCefalico', perimetroCefalico);
+        formData.append('pesoLibra', pesoLibra);
+        formData.append('pesoKilo', pesoKilo);
+        formData.append('estatura', estatura);
+        formData.append('imc', imc);
+        formData.append('resultadoImc', resultadoImc);
+        formData.append('glucometria', glucometria);
+        formData.append('glicohemoglobina', glicohemoglobina);
+        formData.append('cetona', cetona);
+        formData.append('sp02', sp02);
+        formData.append('perimetroCintura', perimetroCintura);
+        formData.append('perimetroCadera', perimetroCadera);
+        formData.append('icc', icc);
+        formData.append('riesgoMujer', riesgoMujer);
+        formData.append('riesgoHombre', riesgoHombre);
+        formData.append('gastoEnergetico', gastoEnergetico);
+        formData.append('otrosDetalles', otrosDetalles);
+
+        axios.post(url+'/historial/actualizar/antropometria', formData, {
+        })
+            .then((response) => {
+                closeLoading();
+
+                if(response.data.success === 1){
+                    Swal.fire({
+                        title: 'Actualizado Correctamente',
+                        text: "",
+                        icon: 'success',
+                        showCancelButton: false,
+                        confirmButtonColor: '#28a745',
+                        cancelButtonColor: '#d33',
+                        allowOutsideClick: false,
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonText: 'Aceptar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            vistaHistorialClinico();
+                        }
+                    })
+                }
+                else {
+                    toastr.error('Error al registrar');
+                }
+            })
+            .catch((error) => {
+                toastr.error('Error al registrar');
+                closeLoading();
+            });
+    }
+
 
 
     function vistaHistorialClinico(){
@@ -416,127 +517,6 @@
         }
     }
 
-
-    function guardarAntropometria(){
-
-
-        var fecha = document.getElementById('fecha-antro').value;
-
-
-        var freCardiaca = document.getElementById('frecuencia-cardia-antro').value;
-        var freRespiratoria = document.getElementById('frecuencia-respiratoria-antro').value;
-        var presionArterial = document.getElementById('presion-arterial-antro').value;
-        var temperatura = document.getElementById('temperatura-antro').value;
-        var perimetroAbdominal = document.getElementById('perim-abdominal-antro').value;
-        var perimetroCefalico = document.getElementById('perimetro-cefalico-antro').value;
-        var pesoLibra = document.getElementById('peso-libra-antro').value;
-        var pesoKilo = document.getElementById('peso-kilo-antro').value;
-        var estatura = document.getElementById('estatura-antro').value;
-        var imc = document.getElementById('imc-antro').value;
-        var resultadoImc = document.getElementById('resultado-imc-antro').value;
-        var glucometria = document.getElementById('glucometria-capilar-antro').value;
-        var glicohemoglobina = document.getElementById('glicohemoglobina-antro').value;
-        var cetona = document.getElementById('cetona-capilar-antro').value;
-        var sp02 = document.getElementById('sp02-antro').value;
-        var perimetroCintura = document.getElementById('perimetro-cintura-antro').value;
-        var perimetroCadera = document.getElementById('perimetro-cadera-antro').value;
-        var icc = document.getElementById('icc-antro').value;
-        var riesgoMujer = document.getElementById('riesgo-mujer-antro').value;
-        var riesgoHombre = document.getElementById('riesgo-hombre-antro').value;
-        var gastoEnergetico = document.getElementById('gasto-energetico-antro').value;
-        var otrosDetalles = document.getElementById('otros-detalles-antro').value;
-
-        if(fecha === ''){
-            toastr.error('Fecha es requerida');
-            return;
-        }
-
-
-        // ID CONSULTA
-        let idconsulta = {{ $idconsulta }};
-
-
-        openLoading();
-        var formData = new FormData();
-        formData.append('idconsulta', idconsulta);
-        formData.append('fecha', fecha);
-        formData.append('freCardiaca', freCardiaca);
-        formData.append('freRespiratoria', freRespiratoria);
-        formData.append('presionArterial', presionArterial);
-        formData.append('temperatura', temperatura);
-        formData.append('perimetroAbdominal', perimetroAbdominal);
-        formData.append('perimetroCefalico', perimetroCefalico);
-        formData.append('pesoLibra', pesoLibra);
-        formData.append('pesoKilo', pesoKilo);
-        formData.append('estatura', estatura);
-        formData.append('imc', imc);
-        formData.append('resultadoImc', resultadoImc);
-        formData.append('glucometria', glucometria);
-        formData.append('glicohemoglobina', glicohemoglobina);
-        formData.append('cetona', cetona);
-        formData.append('sp02', sp02);
-        formData.append('perimetroCintura', perimetroCintura);
-        formData.append('perimetroCadera', perimetroCadera);
-        formData.append('icc', icc);
-        formData.append('riesgoMujer', riesgoMujer);
-        formData.append('riesgoHombre', riesgoHombre);
-        formData.append('gastoEnergetico', gastoEnergetico);
-        formData.append('otrosDetalles', otrosDetalles);
-
-        axios.post(url+'/historial/registrar/antropometria', formData, {
-        })
-            .then((response) => {
-                closeLoading();
-
-                if(response.data.success === 1){
-                    Swal.fire({
-                        title: 'Error',
-                        text: "Ya se encuentra un registro con esta consulta",
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#28a745',
-                        cancelButtonColor: '#d33',
-                        allowOutsideClick: false,
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonText: 'Aceptar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            vistaHistorialClinico();
-                        }
-                    })
-                }
-                else if(response.data.success === 2){
-
-                    document.getElementById("formulario-antropometria").reset();
-
-                    Swal.fire({
-                        title: 'Guardado Correctamente',
-                        text: "",
-                        icon: 'success',
-                        showCancelButton: false,
-                        confirmButtonColor: '#28a745',
-                        cancelButtonColor: '#d33',
-                        allowOutsideClick: false,
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonText: 'Aceptar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            vistaHistorialClinico();
-                        }
-                    })
-
-                }
-                else {
-                    toastr.error('Error al registrar');
-                }
-            })
-            .catch((error) => {
-                toastr.error('Error al registrar');
-                closeLoading();
-            });
-    }
-
-
     function valida_numero(e){
         tecla = (document.all) ? e.keyCode : e.which;
 
@@ -588,6 +568,15 @@
             $("#icc-antro").val(0);
         }
     }
+
+
+
+
+
+
+
+
+
 
 
     </script>

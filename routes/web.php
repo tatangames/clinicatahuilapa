@@ -302,6 +302,12 @@ Route::get('/admin/vista/nueva/antropologia/{idconsulta}', [HistorialClinicoCont
 // registrar formulario de antropometria
 Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoController::class, 'registrarAntropometria']);
 
+// vista para editar o ver la antropologia
+Route::get('/admin/vista/visualizar/antropologia/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologia']);
+
+
+
+
 // informacion de una antropometria
 Route::post('/admin/historial/informacion/antropometria', [HistorialClinicoController::class, 'informacionAntropometria']);
 
