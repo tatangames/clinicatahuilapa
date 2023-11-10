@@ -239,25 +239,6 @@ class HistorialClinicoController extends Controller
 
 
 
-    public function informacionAntropometria(Request $request){
-
-        $regla = array(
-            'id' => 'required'
-        );
-
-        $validar = Validator::make($request->all(), $regla);
-
-        if ($validar->fails()){ return ['success' => 0];}
-
-        if($info = Antropometria::where('id', $request->id)->first()){
-
-            return ['success' => 1, 'info' => $info];
-        }else{
-            return ['success' => 2];
-        }
-    }
-
-
     public function actualizarAntropometria(Request $request){
 
         $regla = array(

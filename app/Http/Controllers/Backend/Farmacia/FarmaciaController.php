@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Farmacia;
 
 use App\Http\Controllers\Controller;
 use App\Models\ArticuloMedicamento;
+use App\Models\Consulta_Paciente;
 use App\Models\ContenidoFarmaceutica;
 use App\Models\EntradaMedicamento;
 use App\Models\EntradaMedicamentoDetalle;
@@ -13,7 +14,9 @@ use App\Models\Linea;
 use App\Models\MotivoFarmacia;
 use App\Models\OrdenSalida;
 use App\Models\OrdenSalidaDetalle;
+use App\Models\Paciente;
 use App\Models\Proveedores;
+use App\Models\Recetas;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
 use App\Models\Usuario;
@@ -407,6 +410,70 @@ class FarmaciaController extends Controller
             return ['success' => 99];
         }
     }
+
+
+
+
+    public function indexSalidaFarmaciaPorReceta(){
+
+        return view('backend.admin.farmacia.salidareceta.vistasalidarecetafarmacia');
+    }
+
+
+
+    public function tablaSalidaFarmaciaPorReceta($estado, $desde, $hasta){
+
+
+        $start = Carbon::parse($desde)->startOfDay();
+        $end = Carbon::parse($hasta)->endOfDay();
+
+
+        $arrayRecetas = Recetas::where('estado', $estado)
+            ->whereBetween('fecha', [$start, $end])
+            ->orderBy('fecha', 'ASC')
+            ->get();
+
+        foreach ($arrayRecetas as $info){
+
+            $info->fechaFormat = date("d-m-Y", strtotime($info->fecha));
+
+            $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
+
+            $info->nombrepaciente = $info->nombres . " " . $infoPaciente->apellidos;
+        }
+
+
+        return view('backend.admin.farmacia.salidareceta.tablarecetasalida', compact('arrayRecetas'));
+    }
+
+
+    public function vistaRecetaDetalleProcesar($idreceta){
+
+        $infoReceta = Recetas::where('id', $idreceta)->first();
+
+        $infoConsulta = Consulta_Paciente::where('id', $infoReceta->consulta_id)->first();
+
+        $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+
+        $infoUsuario = Usuario::where('id', $infoReceta->usuario_id)->first();
+
+        $nombreDoctor = $infoUsuario->nombre;
+
+        $fechaReceta = date("d-m-Y", strtotime($infoReceta->fecha));
+
+        $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+
+
+        // DETALLE
+
+
+        return view('backend.admin.farmacia.salidareceta.procesar.vistaprocesarreceta', compact('idreceta',
+        'infoPaciente', 'nombreCompleto', 'nombreDoctor', 'fechaReceta', 'edad'));
+    }
+
+
 
 
 

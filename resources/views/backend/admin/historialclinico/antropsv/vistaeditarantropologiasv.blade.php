@@ -300,15 +300,11 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-
-
             document.getElementById("divcontenedor").style.display = "block";
         });
     </script>
 
     <script>
-
-
 
     function actualizarAntropometria(){
 

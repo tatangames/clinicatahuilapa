@@ -138,7 +138,7 @@
     <section class="content-header">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h2>Detalle de Ingreso</h2>
+                <h2>Detalle de Salida</h2>
             </div>
         </div>
     </section>

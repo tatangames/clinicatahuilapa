@@ -252,11 +252,17 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.salida.farmacia.index') }}" target="frameprincipal" class="nav-link">
                                     <i class="far fa-edit nav-icon"></i>
-                                    <p>Orden de Salida</p>
+                                    <p>Salida Manual</p>
                                 </a>
                             </li>
 
 
+                            <li class="nav-item">
+                                <a href="{{ route('admin.salida.recetas.farmacia.index') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-edit nav-icon"></i>
+                                    <p>Orden de Salida</p>
+                                </a>
+                            </li>
 
 
                         </ul>

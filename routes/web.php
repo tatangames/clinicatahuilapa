@@ -87,37 +87,29 @@ Route::post('/admin/asignaciones/informacion/guardar',  [AsignacionesController:
 Route::post('/admin/asignaciones/finalizar/consulta',  [AsignacionesController::class,'finalizarConsultaPaciente']);
 Route::post('/admin/asignaciones/ingresar/paciente/asala',  [AsignacionesController::class,'ingresarPacienteALaSala']);
 
+
 // EDITAR PACIENTE
 Route::get('/admin/asignaciones/info/vista/editarpaciente/{idpaciente}', [AsignacionesController::class,'vistaEditarPaciente']);
 
 // Informacion del paciente que esta dentro de la sala, informacion para el modal.
 // Ficha Administrativa
 Route::post('/admin/asignaciones/info/paciente/dentrosala',  [AsignacionesController::class,'informacionPacienteDentroDeSala']);
-
 // actualizar razon de uso del paciente dentro de la ficha administrativa
 Route::post('/admin/asignaciones/actualizar/razonuso/paciente',  [AsignacionesController::class,'actualizarRazonUsoPaciente']);
-
 // liberar sala de paciente
 Route::post('/admin/asignaciones/liberarsala/paciente',  [AsignacionesController::class,'liberarSalaPaciente']);
-
 // informacion paciente que esta dentro de una sala y se trasladara a sala de espera de x sala
 Route::post('/admin/asignaciones/informacion/paciente/dentrosala',  [AsignacionesController::class,'informacionPacienteDentroSala']);
-
 // trasladar paciente a nueva sala, pero se ira a sala de espera primero
 Route::post('/admin/asignaciones/traslado/paciente/reseteo',  [AsignacionesController::class,'reseteoTrasladoPacienteNuevaSala']);
-
 // recarga por cronometro
 Route::post('/admin/asignaciones/recargando/cronometro',  [AsignacionesController::class,'recargandoVistaCronometro']);
-
-
-
 
 
 
 // --- CONFIGURACIONES ---
 
 // nuevo tipo de paciente
-
 Route::get('/admin/tipopaciente/vista', [NuevoPacienteController::class,'indexNuevoTipoPaciente'])->name('admin.tipo.paciente.nuevo');
 Route::get('/admin/tipopaciente/tabla', [NuevoPacienteController::class,'tablaNuevoTipoPaciente']);
 Route::post('/admin/tipopaciente/registro', [NuevoPacienteController::class, 'registroNuevoTipoPaciente']);
@@ -128,7 +120,6 @@ Route::post('/admin/tipopaciente/editar', [NuevoPacienteController::class, 'edit
 // --- TIPO DE DOCUMENTO ---
 
 // nuevo tipo de documento
-
 Route::get('/admin/tipodocumento/vista', [TipoDocumentoController::class,'indexNuevoTipoDocumento'])->name('admin.tipo.documento.nuevo');
 Route::get('/admin/tipodocumento/tabla', [TipoDocumentoController::class,'tablaNuevoTipoDocumento']);
 Route::post('/admin/tipodocumento/registro', [TipoDocumentoController::class, 'registroNuevoTipoDocumento']);
@@ -151,45 +142,30 @@ Route::post('/admin/motivoconsulta/informacion', [MotivoConsultaController::clas
 Route::post('/admin/motivoconsulta/editar', [MotivoConsultaController::class, 'editarMotivoConsulta']);
 
 
-///
-//PROFESION
-// retorna vista de Profesion
+
+// --- PROFESION ---
 Route::get('/admin/profesion/index', [ProfesionController::class,'indexProfesion'])->name('admin.profesion.index');
-// retorna tabla de Profesion
 Route::get('/admin/profesion/tabla/index', [ProfesionController::class,'tablaProfesion']);
-// registrar una nueva Profesion
 Route::post('/admin/profesion/nuevo', [ProfesionController::class, 'nuevaProfesion']);
-// obtener información de una Profesion
 Route::post('/admin/profesion/informacion', [ProfesionController::class, 'infoProfesion']);
-// editar una Profesion
 Route::post('/admin/profesion/editar', [ProfesionController::class, 'editarProfesion']);
 
-//ESTADO CIVIL
-// retorna vista de Estado Civil
+// --- ESTADO CIVIL ---
 Route::get('/admin/estadocivil/index', [EstadoCivilController::class,'indexEstadoCivil'])->name('admin.estadocivil.index');
-// retorna tabla de Estado Civil
 Route::get('/admin/estadocivil/tabla/index', [EstadoCivilController::class,'tablaEstadoCivil']);
-// registrar un nuevo Estado Civil
 Route::post('/admin/estadocivil/nuevo', [EstadoCivilController::class, 'nuevoEstadoCivil']);
-// obtener información de un Estado Civil
 Route::post('/admin/estadocivil/informacion', [EstadoCivilController::class, 'infoEstadoCivil']);
-// editar un Estado Civil
 Route::post('/admin/estadocivil/editar', [EstadoCivilController::class, 'editarEstadoCivil']);
 
-//MEDICO
-// retorna vista de medico
+// --- MEDICO ---
 Route::get('/admin/medico/index', [MedicoController::class,'indexMedico'])->name('admin.medico.index');
-// retorna tabla de un Médico
 Route::get('/admin/medico/tabla/index', [MedicoController::class,'tablaMedico']);
-// registrar una nueva medico
 Route::post('/admin/medico/nuevo', [MedicoController::class, 'nuevoMedico']);
-// obtener información de un Médico
 Route::post('/admin/medico/informacion', [MedicoController::class, 'infoMedico']);
-// editar una medico
 Route::post('/admin/medico/editar', [MedicoController::class, 'editarMedico']);
 
 
-// ANTECEDENTES MEDICOS
+// --- ANTECEDENTES MEDICOS ---
 // se guarda tipo de antecedente y su nombre
 Route::get('/admin/antecedentes/medico/index', [MedicoController::class,'indexAntecedentesMedicos'])->name('admin.antecedentes.medico.index');
 Route::get('/admin/antecedentes/medico/tabla/index', [MedicoController::class,'tablaAntecedentesMedico']);
@@ -198,19 +174,12 @@ Route::post('/admin/antecedentes/medico/informacion', [MedicoController::class, 
 Route::post('/admin/antecedentes/medico/editar', [MedicoController::class, 'editarAntecedentesMedico']);
 
 
-
-
-
-
-
-
 // --- LINEAS ---
 Route::get('/admin/linea/vista', [LineasController::class,'indexVistaLinea'])->name('admin.vista.linea');
 Route::get('/admin/linea/tabla', [LineasController::class,'tablaVistaLinea']);
 Route::post('/admin/linea/registro', [LineasController::class, 'registroNuevaLinea']);
 Route::post('/admin/linea/informacion', [LineasController::class, 'informacionLinea']);
 Route::post('/admin/linea/editar', [LineasController::class, 'editarLinea']);
-
 
 
 
@@ -239,7 +208,6 @@ Route::post('/admin/tipo/medicamento/editar', [ProveedorController::class, 'edit
 
 
 // --- REGISTRO PRIMER ARTICULO EN FARMACIA---
-
 Route::get('/admin/farmacia/registrar/articulo/index', [FarmaciaController::class,'indexRegistroArticulo'])->name('admin.farmacia.registrar.articulo');
 Route::post('/admin/farmacia/registrar/nuevo/articulo', [FarmaciaController::class, 'registrarArticulo']);
 
@@ -265,6 +233,30 @@ Route::get('/admin/salida/medicamento/farmacia/index', [FarmaciaController::clas
 Route::get('/admin/buscar/producto/salida/farmacia/{idproducto}', [FarmaciaController::class,'elegirProductoParaSalida']);
 Route::post('/admin/registrar/orden/salida/medicamento', [FarmaciaController::class, 'registrarOrdenSalidaFarmacia']);
 
+// --- SALIDA MEDICAMENTO POR RECETA
+Route::get('/admin/salida/medicamento/porreceta/index', [FarmaciaController::class,'indexSalidaFarmaciaPorReceta'])->name('admin.salida.recetas.farmacia.index');
+Route::get('/admin/salida/medicamento/porreceta/tabla/{idestado}/{fechainicio}/{fechafin}', [FarmaciaController::class,'tablaSalidaFarmaciaPorReceta']);
+
+// vista salida para procesar la receta
+Route::get('/admin/vista/procesar/recetamedica/{idreceta}', [FarmaciaController::class,'vistaRecetaDetalleProcesar']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // --- VIA PARA RECETA ---
 Route::get('/admin/receta/via/vista', [LineasController::class,'indexVistaViaReceta'])->name('admin.vista.via.receta');
@@ -272,9 +264,6 @@ Route::get('/admin/receta/via/tabla', [LineasController::class,'tablaVistaViaRec
 Route::post('/admin/receta/via/registro', [LineasController::class, 'registroNuevaViaReceta']);
 Route::post('/admin/receta/via/informacion', [LineasController::class, 'informacionViaReceta']);
 Route::post('/admin/receta/via/editar', [LineasController::class, 'editarViaReceta']);
-
-
-
 
 
 
@@ -305,14 +294,10 @@ Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoControl
 // vista para editar o ver la antropologia
 Route::get('/admin/vista/visualizar/antropologia/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologia']);
 
-
-
-
-// informacion de una antropometria
-Route::post('/admin/historial/informacion/antropometria', [HistorialClinicoController::class, 'informacionAntropometria']);
-
 // actualizar antropometria
 Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoController::class, 'actualizarAntropometria']);
+
+
 
 
 // --- BLOQUE CUADRO CLINICO ---
