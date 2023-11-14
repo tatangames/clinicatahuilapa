@@ -184,7 +184,11 @@
                                                     <div class="card-body row col-md-4">
                                                         <span style="font-weight: bold">Ingresar Cantidad </span>
 
-                                                        <input onchange="calcularInput(this);" style="font-weight: bold; border: 1px solid black" onkeypress="return valida_numero(event);" type="number" class="form-control miInputColor" name="{{$material->id}}cantidad" data-idreceta="{{ $material->id }}"  data-cantimaxima="{{ $bloqueAdicional->cantidadMaxima }}" data-cantimaximaPadre="{{ $material->cantidad }}" min="0" max="{{ $bloqueAdicional->cantidadMaxima }}">
+                                                        <input onchange="calcularInput(this);" style="font-weight: bold; border: 1px solid black" onkeypress="return valida_numero(event);" type="number" class="form-control miInputColor" name="{{$material->id}}cantidad"
+                                                               data-idreceta="{{ $material->id }}"  data-cantimaxima="{{ $bloqueAdicional->cantidadMaxima }}"
+                                                               data-cantimaximaPadre="{{ $material->cantidad }}"
+                                                               data-identradadetalle="{{ $bloqueAdicional->identradadetalle }}"
+                                                               min="0" max="{{ $bloqueAdicional->cantidadMaxima }}" >
 
                                                     </div>
 
@@ -226,6 +230,39 @@
 
 
 
+
+    <div class="modal fade" id="modalCantiSuperada">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cantidad Superada</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <div class="form-group">
+
+                                    <label style="font-weight: normal" id="label-cantidad-excedida"></label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 
 
@@ -242,8 +279,6 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-
-
 
             document.getElementById("divcontenedor").style.display = "block";
         });
@@ -264,8 +299,9 @@
                 elemento.style.border = '1px solid black';
             });
 
-
            // RECORRER CADA BLOQUE PADRE Y SUS INPUT DINAMICOS
+
+            var minimoUnaSalida = true;
 
 
             $('.material-bloque').each(function () {
@@ -280,18 +316,15 @@
                 var elementos = document.querySelectorAll('input[name="' + unido + '"]');
 
                 elementos.forEach(function (elemento) {
-
                     if(elemento.value !== ''){
+                        if(parseInt(elemento.value) > 0){
+                            minimoUnaSalida = false;
+                        }
                         sumarCantidad = sumarCantidad + parseInt(elemento.value);
                     }
-
-                    //var cantiMaxima = elemento.getAttribute('data-cantimaxima');
-                    //console.log('canti maxima: ' + cantiMaxima); // Muestra el valor de data- para cada elemento
-
                 });
 
-
-                if(sumarCantidad > cantidadRequeridaMaxima){
+                if(sumarCantidad > parseInt(cantidadRequeridaMaxima)){
 
                     // COLOCAR EN ROJO ESOS INPUT DEL MEDICAMENTO ESPECIFICADO
 
@@ -299,32 +332,95 @@
                         elemento.style.border = '1px solid red';
                     });
 
-                    Swal.fire({
-                        title: 'Cantidad Superada',
-                        html: "El Medicamento: " + nombreMedicamento + "<br>"
-                            + "Solicita la Receta: "+ cantidadRequeridaMaxima + " Unidades" +"<br>"
-                            + "Y se quiere Retirar, la cantidad de: "+ sumarCantidad +"<br>"
-                            + "Porfavor bajar las unidades a las Solicitadas " +"<br>"
-                        ,
-                        icon: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#28a745',
-                        cancelButtonColor: '#d33',
-                        allowOutsideClick: false,
-                        confirmButtonText: 'Aceptar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
+                    let texto = "<strong>" + "El Medicamento: " + "</strong>" + nombreMedicamento + "<br>"
+                        + "<strong>" + "Solicita la Receta: " + "</strong>" + cantidadRequeridaMaxima + " Unidades" +"<br>"
+                        + "<strong>" + "Y se quiere Retirar, la cantidad de: " + "</strong>" + sumarCantidad + " Unidades " + "<br>"
+                        + "<strong>" + "Porfavor bajar las unidades a las Solicitadas " + "</strong>" + "<br>"
 
-                        }
-                    })
+                    document.getElementById("label-cantidad-excedida").innerHTML = texto;
 
+                    $('#modalCantiSuperada').modal('show');
                     return false;
                 }
-
             });
+
+            if(minimoUnaSalida){
+                Swal.fire({
+                    title: 'Cantidad es Requerida',
+                    text: 'No se ha elegido ninguna cantidad para algun Medicamento',
+                    icon: 'error',
+                    showCancelButton: false,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    allowOutsideClick: false,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                    }
+                })
+
+                return;
+            }
+
+
+            // AGREGARLOS A UN ARRAY PARA ENVIAR EL SERVIDOR
+
+            openLoading();
+
+            let idReceta = {{ $idreceta }};
+
+            const datosArray = [];
+
+            $('.material-bloque').each(function () {
+                var $bloque = $(this);
+                var iddetalle = $bloque.data('iddetalle');
+                var unido = iddetalle + "cantidad";
+
+                var elementos = document.querySelectorAll('input[name="' + unido + '"]');
+
+                elementos.forEach(function (elemento) {
+                    if(elemento.value !== ''){
+
+                        var idEntradaDetalle = elemento.getAttribute('data-identradadetalle');
+
+                        if(elemento.value !== ''){
+
+                            let salida = parseInt(elemento.value);
+
+                            if(salida !== 0){
+                                // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
+                                datosArray.push({ idEntradaDetalle, salida });
+                            }
+                        }
+                    }
+                });
+            });
+
+
+            var formData = new FormData();
+            formData.append('idreceta', idReceta);
+            formData.append('contenedorArray', JSON.stringify(datosArray));
+
+
+            axios.post(url+'/receta/procesar/guardarsalida', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Actualizado correctamente');
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
         }
-
-
 
 
         function valida_numero(e){
@@ -340,6 +436,7 @@
             tecla_final = String.fromCharCode(tecla);
             return patron.test(tecla_final);
         }
+
 
 
         function calcularInput(input){
@@ -369,8 +466,6 @@
 
             let unidoLabel = idReceta + "label";
             document.getElementById(unidoLabel).innerHTML = "Total: " + sumarCantidad;
-
-            console.log(cantidadMaximaPadre)
 
             if(sumarCantidad > cantidadMaximaPadre){
                 // rojo

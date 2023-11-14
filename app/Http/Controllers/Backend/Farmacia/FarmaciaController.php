@@ -627,6 +627,50 @@ class FarmaciaController extends Controller
         }else{
             return ['success' => 2];
         }
+    }
+
+
+
+    public function guardarSalidaProcesadaDeReceta(Request $request){
+
+        $regla = array(
+            'idreceta' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        $datosContenedor = json_decode($request->contenedorArray, true);
+
+        DB::beginTransaction();
+
+        try {
+
+            // REGISTRAR CADA FILA MEDICAMENTO
+            foreach ($datosContenedor as $filaArray) {
+
+                Log::info('id entrada: ' . $filaArray['idEntradaDetalle']);
+                Log::info('salida: ' . $filaArray['salida']);
+            }
+
+
+
+            //DB::commit();
+            return ['success' => 1];
+
+        }catch(\Throwable $e){
+            DB::rollback();
+
+            return ['success' => 99];
+        }
+
+
+
+
+
+
 
     }
 

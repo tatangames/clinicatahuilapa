@@ -246,6 +246,8 @@ Route::post('/admin/orden/salida/informacion/paradenegar', [FarmaciaController::
 // guardar la denegacion de una receta
 Route::post('/admin/orden/salida/guardar/denegacion', [FarmaciaController::class, 'guardarDenegacionReceta']);
 
+// guardar salida de receta procesada por farmacia
+Route::post('/admin/receta/procesar/guardarsalida', [FarmaciaController::class, 'guardarSalidaProcesadaDeReceta']);
 
 
 
