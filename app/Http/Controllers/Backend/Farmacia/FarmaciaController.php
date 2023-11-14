@@ -17,6 +17,7 @@ use App\Models\OrdenSalidaDetalle;
 use App\Models\Paciente;
 use App\Models\Proveedores;
 use App\Models\Recetas;
+use App\Models\RecetasDetalle;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
 use App\Models\Usuario;
@@ -437,9 +438,24 @@ class FarmaciaController extends Controller
 
             $info->fechaFormat = date("d-m-Y", strtotime($info->fecha));
 
+            $fechaDenegada = "";
+            if($info->fecha_denegada != null){
+                $fechaDenegada = date("d-m-Y", strtotime($info->fecha_denegada));
+            }
+
+            $info->fechaDenegadaFormat = $fechaDenegada;
+
             $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
 
             $info->nombrepaciente = $info->nombres . " " . $infoPaciente->apellidos;
+
+            $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
+            $info->doctor = $infoUsuario->nombre;
+        }
+
+        if($estado == 3){
+            // TABLA PARA DENEGADOS
+            return view('backend.admin.farmacia.salidareceta.tablarecetadenegada', compact('arrayRecetas'));
         }
 
 
@@ -465,14 +481,154 @@ class FarmaciaController extends Controller
 
         $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
 
+        $arrayNombreMedicamento = DB::table('recetas_detalle AS rd')
+            ->join('farmacia_articulo AS fa', 'rd.medicamento_id', '=', 'fa.id')
+            ->select('fa.nombre', 'rd.id', 'rd.recetas_id', 'rd.cantidad')
+            ->where('rd.recetas_id', $idreceta)
+            ->orderBy('fa.nombre', 'ASC')
+            ->get();
 
-        // DETALLE
+        foreach ($arrayNombreMedicamento as $info){
+
+            $info->nombreFormat = $info->nombre . " ( Cantidad: " . $info->cantidad . " )";
+        }
+
+        // ENTRADA DETALLE
+
+
+        $resultsBloque = array();
+        $index = 0;
+
+        $arrayDetalle = DB::table('recetas_detalle AS rd')
+            ->join('farmacia_articulo AS fa', 'rd.medicamento_id', '=', 'fa.id')
+            ->select('fa.nombre', 'rd.id', 'rd.recetas_id', 'rd.cantidad', 'rd.medicamento_id')
+            ->where('rd.recetas_id', $idreceta)
+            ->orderBy('fa.nombre', 'ASC')
+            ->get();
+
+        foreach($arrayDetalle as $secciones) {
+            array_push($resultsBloque, $secciones);
+
+            $nombreGenerico = "";
+            if($infoArti = ArticuloMedicamento::where('farmacia_articulo_id', $secciones->medicamento_id)->first()){
+                $nombreGenerico = $infoArti->nombre_generico;
+            }
+            $secciones->nombreGenerico = $nombreGenerico;
+
+            $listaDetalle = DB::table('entrada_medicamento AS en')
+                ->join('entrada_medicamento_detalle AS deta', 'en.id', '=', 'deta.entrada_medicamento_id')
+                ->select('en.fecha', 'deta.entrada_medicamento_id', 'deta.medicamento_id', 'deta.cantidad',
+                    'deta.precio', 'deta.lote', 'deta.fecha_vencimiento', 'en.numero_factura', 'deta.id AS identradadetalle',
+                    'deta.cantidad AS cantidadMaxima')
+                ->where('deta.medicamento_id', $secciones->medicamento_id)
+                ->where('deta.cantidad', '>', 0)
+                ->orderBy('deta.fecha_vencimiento', 'ASC')
+                ->get();
+
+            $conteo = count($listaDetalle);
+            $secciones->conteo = $conteo;
+
+            foreach ($listaDetalle as $info){
+
+                $info->fechaVencimiento = date("d-m-Y", strtotime($info->fecha_vencimiento));
+                $info->fechaEntrada = date("d-m-Y", strtotime($info->fecha));
+
+
+
+            }
+
+
+            $resultsBloque[$index]->listadetalle = $listaDetalle;
+            $index++;
+        }
+
 
 
         return view('backend.admin.farmacia.salidareceta.procesar.vistaprocesarreceta', compact('idreceta',
-        'infoPaciente', 'nombreCompleto', 'nombreDoctor', 'fechaReceta', 'edad'));
+        'infoPaciente', 'nombreCompleto', 'nombreDoctor', 'fechaReceta', 'edad', 'arrayNombreMedicamento',
+        'arrayDetalle'));
     }
 
+
+    public function infoRecetaParaDenegar(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        if($infoReceta = Recetas::where('id', $request->id)->first()){
+
+            $infoDoctor = Usuario::where('id', $infoReceta->usuario_id)->first();
+
+            $infoPaciente = Paciente::where('id', $infoReceta->paciente_id)->first();
+
+            $paciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+
+
+            return ['success' => 1, 'doctor' => $infoDoctor->nombre, 'paciente' => $paciente];
+        }else{
+            return ['success' => 2];
+        }
+    }
+
+
+
+    public function guardarDenegacionReceta(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+            'descripcion' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        if($infoReceta = Recetas::where('id', $request->id)->first()){
+
+            // ESTADOS
+            // 1: pendiente
+            // 2: procesada
+            // 3: denegada
+
+            if($infoReceta->estado == 2){
+                // procesada yap
+                return ['success' => 1];
+            }
+
+            if($infoReceta->estado == 3){
+                // ya fue denegada
+                return ['success' => 2];
+            }
+
+            if($infoReceta->estado == 1){
+
+                // esta pendiente asi que puede denegar
+
+                $fechaCarbon = Carbon::parse(Carbon::now());
+
+                Recetas::where('id', $request->id)->update([
+                    'estado' => 3,
+                    'nota_denegada' => $request->descripcion,
+                    'fecha_denegada' => $fechaCarbon
+                ]);
+
+                return ['success' => 3];
+            }
+
+            // defecto
+            return ['success' => 3];
+        }else{
+            return ['success' => 2];
+        }
+
+    }
 
 
 

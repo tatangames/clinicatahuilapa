@@ -240,8 +240,11 @@ Route::get('/admin/salida/medicamento/porreceta/tabla/{idestado}/{fechainicio}/{
 // vista salida para procesar la receta
 Route::get('/admin/vista/procesar/recetamedica/{idreceta}', [FarmaciaController::class,'vistaRecetaDetalleProcesar']);
 
+// informacion de receta para denegarla
+Route::post('/admin/orden/salida/informacion/paradenegar', [FarmaciaController::class, 'infoRecetaParaDenegar']);
 
-
+// guardar la denegacion de una receta
+Route::post('/admin/orden/salida/guardar/denegacion', [FarmaciaController::class, 'guardarDenegacionReceta']);
 
 
 

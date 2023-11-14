@@ -8,9 +8,10 @@
                             <thead>
                             <tr>
                                 <th  style="width: 10%">Fecha Receta</th>
+                                <th  style="width: 10%">Fecha Denegada</th>
                                 <th  style="width: 16%">Paciente</th>
                                 <th  style="width: 16%">Recetado Por</th>
-                                <th  style="width: 16%">Descripción</th>
+                                <th  style="width: 16%">Denegado Por</th>
 
                                 <th  style="width: 20%">Opciones</th>
                             </tr>
@@ -20,26 +21,15 @@
                             @foreach($arrayRecetas as $dato)
                                 <tr>
                                     <td>{{ $dato->fechaFormat }} </td>
+                                    <td>{{ $dato->fechaDenegadaFormat }} </td>
+
                                     <td>{{ $dato->nombrepaciente }} </td>
                                     <td>{{ $dato->doctor }} </td>
-                                    <td>{{ $dato->descripcion_general }} </td>
+                                    <td>{{ $dato->nota_denegada }} </td>
                                     <td>
 
-                                        <!-- MUESTRA EN PDF LA RECETA -->
+                                        <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="PDF">PDF</button>
 
-
-                                        @if($dato->estado == 1)
-                                            <button class="btn btn-success button-small" style="color: white; margin: 8px; font-weight: bold" onclick="procesarRecetaMedica({{$dato->id}})" title="Procesar">Procesar</button>
-
-                                            <button class="btn btn-danger button-small" style="color: white; margin: 8px; font-weight: bold" onclick="infoDenegarReceta({{$dato->id}})" title="Denegar">Denegar</button>
-                                        @endif
-                                        @if($dato->estado == 2)
-                                            <button class="btn btn-warning button-small" style="color: white; margin: 8px; font-weight: bold" onclick="Imprimir({{$dato->id}})" title="Imprimir">Imprimir</button>
-                                        @endif
-
-                                        @if($dato->estado == 2)
-                                            <button class="btn btn-warning button-small" style="color: white; margin: 8px; font-weight: bold" onclick="Vdd({{$dato->id}})" title="Ver">Ver</button>
-                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
