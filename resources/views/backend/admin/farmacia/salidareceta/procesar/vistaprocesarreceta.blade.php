@@ -302,7 +302,7 @@
            // RECORRER CADA BLOQUE PADRE Y SUS INPUT DINAMICOS
 
             var minimoUnaSalida = true;
-
+            var bloqueoProcesar = false;
 
             $('.material-bloque').each(function () {
                 var $bloque = $(this);
@@ -332,17 +332,24 @@
                         elemento.style.border = '1px solid red';
                     });
 
+                    bloqueoProcesar = true;
+
                     let texto = "<strong>" + "El Medicamento: " + "</strong>" + nombreMedicamento + "<br>"
                         + "<strong>" + "Solicita la Receta: " + "</strong>" + cantidadRequeridaMaxima + " Unidades" +"<br>"
                         + "<strong>" + "Y se quiere Retirar, la cantidad de: " + "</strong>" + sumarCantidad + " Unidades " + "<br>"
                         + "<strong>" + "Porfavor bajar las unidades a las Solicitadas " + "</strong>" + "<br>"
 
                     document.getElementById("label-cantidad-excedida").innerHTML = texto;
-
-                    $('#modalCantiSuperada').modal('show');
                     return false;
                 }
             });
+
+            if(bloqueoProcesar){
+
+                $('#modalCantiSuperada').modal('show');
+
+                return;
+            }
 
             if(minimoUnaSalida){
                 Swal.fire({
@@ -410,7 +417,50 @@
                     closeLoading();
 
                     if(response.data.success === 1){
-                        toastr.success('Actualizado correctamente');
+
+                        let infoNombre = response.data.nombre;
+                        let infoCantidadHay = response.data.cantidadhay;
+                        let infoLote = response.data.lote;
+                        let infoFechaVenc = response.data.fechavencimiento;
+                        let infoCantidadSalida = response.data.cantidadsalida;
+
+                        Swal.fire({
+                            title: 'Cantidad Superada',
+                            html: "El Medicamento: " + infoNombre + "<br>"
+                                + "LOTE: "+ infoLote +"<br>"
+                                + "Fecha de Vencimiento: "+ infoFechaVenc +"<br>"
+                                + "Donde la Cantidad Actual es: "+ infoCantidadHay +"<br>"
+                                + "Y se quiere Despachar, la cantidad de: "+ infoCantidadSalida +"<br>"
+                            ,
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
+
+                    }
+                    else if(response.data.success === 2){
+
+                        Swal.fire({
+                            title: 'Receta Procesada',
+                            text: "",
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
                     }
                     else {
                         toastr.error('Error al registrar');

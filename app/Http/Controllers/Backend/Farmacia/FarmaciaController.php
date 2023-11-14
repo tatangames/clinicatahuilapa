@@ -18,6 +18,7 @@ use App\Models\Paciente;
 use App\Models\Proveedores;
 use App\Models\Recetas;
 use App\Models\RecetasDetalle;
+use App\Models\SalidaReceta;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
 use App\Models\Usuario;
@@ -648,21 +649,52 @@ class FarmaciaController extends Controller
 
         try {
 
-            // REGISTRAR CADA FILA MEDICAMENTO
+            $usuario = auth()->user();
+            $fechaCarbon = Carbon::parse(Carbon::now());
+
+            $salida = new SalidaReceta();
+            $salida->recetas_id = $request->idreceta;
+            $salida->usuario_id = $usuario->id;
+            $salida->fecha = $fechaCarbon;
+            $salida->save();
+
+
+            // RESTAR ENTRADA DETALLE
             foreach ($datosContenedor as $filaArray) {
 
-                Log::info('id entrada: ' . $filaArray['idEntradaDetalle']);
-                Log::info('salida: ' . $filaArray['salida']);
+                $infoEntradaDeta = EntradaMedicamentoDetalle::where('id', $filaArray['idEntradaDetalle'])->first();
+
+                // RESTAR
+
+                $resta = $infoEntradaDeta->cantidad - $filaArray['salida'];
+
+                if($resta < 0){
+                    // se esta restando de mas a esta entrada
+
+                    $infoMedicamento = FarmaciaArticulo::where('id', $infoEntradaDeta->medicamento_id)->first();
+
+                    $fechaVencimiento = date("d-m-Y", strtotime($infoEntradaDeta->fecha_vencimiento));
+
+
+                    return ['success' => 1, 'nombre' => $infoMedicamento->nombre,
+                        'cantidadhay' => $infoEntradaDeta->cantidad,
+                        'lote' => $infoEntradaDeta->lote,
+                        'fechavencimiento' => $fechaVencimiento,
+                        'cantidadsalida' => $filaArray['salida']];
+                }
+
+                EntradaMedicamentoDetalle::where('id', $filaArray['idEntradaDetalle'])->update([
+                    'cantidad' => $resta
+                ]);
             }
 
 
-
             //DB::commit();
-            return ['success' => 1];
+            return ['success' => 2];
 
         }catch(\Throwable $e){
             DB::rollback();
-
+            Log::info('err ' . $e);
             return ['success' => 99];
         }
 
