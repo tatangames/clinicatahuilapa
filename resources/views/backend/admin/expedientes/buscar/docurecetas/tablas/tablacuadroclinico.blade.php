@@ -1,38 +1,41 @@
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title" style="font-weight: bold">Historial de Cuadros Clinicos</h3>
+    </div>
+</div>
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <table id="tablaEnfermeria" class="table table-bordered table-striped">
+                        <table id="tableCuadroClinico" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th>HORA</th>
-                                <th>PACIENTE</th>
-                                <th>RAZON USO</th>
+                                <th>Fecha de Consulta</th>
+                                <th>Tipo Diagnóstico</th>
+
                                 <th>Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            @foreach($arrayTablaEnfermeria as $dato)
+                            @foreach($bloqueCuadroClinico as $dato)
                                 <tr>
-                                    <td>{{ $dato->horaFormat }}</td>
-                                    <td>{{ $dato->nombrepaciente }}</td>
-                                    <td>{{ $dato->razonUso }}</td>
+                                    <td>{{ $dato->fechaFormat }}</td>
+                                    <td>{{ $dato->nombreDiagnostico }}</td>
+
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-xs" onclick="infoAsignarAsalaPaciente({{ $dato->id }})">
-                                          Asignar
+                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="informacionCuadroClinico({{ $dato->id }})">
+                                            <i class="fas fa-print" title="Editar"></i>&nbsp; Editar
                                         </button>
 
-                                        <button type="button" class="btn btn-danger btn-xs" onclick="infoModalEliminarPaciente({{ $dato->id }})">
-                                          Eliminar
-                                        </button>
-
-                                        <button type="button" class="btn btn-xs" style="color: white; background-color: #ffa616" onclick="infoModalEditarSalas({{ $dato->id }})">
-                                          Editar
+                                        <button type="button" class="btn btn-warning btn-xs" style="color: white" onclick="imprimirCuadroClinico({{ $dato->id }})">
+                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
                                         </button>
                                     </td>
+
                                 </tr>
                             @endforeach
 
@@ -48,7 +51,10 @@
 
 <script>
     $(function () {
-        $("#tablaEnfermeria").DataTable({
+        $("#tableCuadroClinico").DataTable({
+            columnDefs: [
+                { type: 'date-euro', targets: 0 } // Suponiendo que la columna de fecha es la primera (índice 0)
+            ],
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -86,6 +92,9 @@
             "responsive": true, "lengthChange": true, "autoWidth": false,
         });
     });
+
+
+
 
 
 </script>

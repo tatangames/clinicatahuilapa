@@ -32,7 +32,7 @@ class CreateConsultaPacienteTable extends Migration
 
 
             // hora ingreso dentro de una sala, si es movido de nuevo a cola, se resetea a null
-            $table->dateTime('hora_dentrosala');
+            $table->dateTime('hora_dentrosala')->nullable();
 
 
             // 0: no tiene receta asignada

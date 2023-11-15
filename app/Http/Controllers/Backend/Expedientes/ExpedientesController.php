@@ -161,6 +161,9 @@ class ExpedientesController extends Controller
             }else{
                 $dato->profesion = '';
             }
+
+            $infoDoc = Tipo_Documento::where('id', $dato->tipo_documento_id)->first();
+            $dato->tipoDoc = $infoDoc->nombre;
         }
 
         return view('backend.admin.expedientes.buscar.tablabuscarexpediente', compact('arrayExpedientes'));

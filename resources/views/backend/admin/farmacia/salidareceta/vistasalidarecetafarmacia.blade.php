@@ -150,7 +150,6 @@
 
 
         function procesarRecetaMedica(idreceta){
-
             window.location.href="{{ url('/admin/vista/procesar/recetamedica') }}/" + idreceta;
         }
 

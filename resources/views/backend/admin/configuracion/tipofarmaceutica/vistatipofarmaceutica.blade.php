@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" onclick="modalAgregar()" class="button button-3d button-rounded button-pill button-small">
                 <i class="fas fa-pencil-alt"></i>
-                Nuevo Contenido
+                Nuevo Tipo Medicamento
             </button>
         </div>
     </section>

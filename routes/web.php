@@ -20,6 +20,7 @@ use App\Http\Controllers\Backend\Configuracion\LineasController;
 use App\Http\Controllers\Backend\Configuracion\ProveedorController;
 use App\Http\Controllers\Backend\Farmacia\FarmaciaController;
 use App\Http\Controllers\Backend\Historial\RecetasController;
+use App\Http\Controllers\Backend\Expedientes\DocumentoRecetaController;
 
 
 
@@ -85,7 +86,7 @@ Route::get('/admin/asignaciones/tablamodal/consultoria', [AsignacionesController
 Route::post('/admin/asignaciones/informacion/paciente',  [AsignacionesController::class,'informacionPaciente']);
 Route::post('/admin/asignaciones/informacion/guardar',  [AsignacionesController::class,'guardarInformacionEditadaPaciente']);
 Route::post('/admin/asignaciones/finalizar/consulta',  [AsignacionesController::class,'finalizarConsultaPaciente']);
-Route::post('/admin/asignaciones/ingresar/paciente/asala',  [AsignacionesController::class,'ingresarPacienteALaSala']);
+Route::post('/admin/asignaciones/ingresar/paciente/sala',  [AsignacionesController::class,'ingresarPacienteALaSala']);
 
 
 // EDITAR PACIENTE
@@ -250,19 +251,6 @@ Route::post('/admin/orden/salida/guardar/denegacion', [FarmaciaController::class
 Route::post('/admin/receta/procesar/guardarsalida', [FarmaciaController::class, 'guardarSalidaProcesadaDeReceta']);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // --- VIA PARA RECETA ---
 Route::get('/admin/receta/via/vista', [LineasController::class,'indexVistaViaReceta'])->name('admin.vista.via.receta');
 Route::get('/admin/receta/via/tabla', [LineasController::class,'tablaVistaViaReceta']);
@@ -343,6 +331,23 @@ Route::post('/admin/recetas/actualizar/parapaciente', [RecetasController::class,
 
 
 
+// --- DOCUMENTOS Y RECETAS PARA UN PACIENTE UNICAMENTE ---
+
+Route::get('/admin/documentoreceta/vista/{idpaciente}', [DocumentoRecetaController::class, 'indexDocumentosRecetas']);
+
+// antecedentes todos por paciente
+Route::get('/admin/documentoreceta/bloque/antecedentes/{idpaciente}', [DocumentoRecetaController::class, 'tablaAntecedentesPorPaciente']);
+
+
+// antropometria sv todos por paciente
+Route::get('/admin/documentoreceta/bloque/antropometriasv/{idpaciente}', [DocumentoRecetaController::class, 'tablaAntropometriaPorPaciente']);
+
+// todas las recetas para un paciente
+
+Route::get('/admin/documentoreceta/bloque/recetas/{idpaciente}', [DocumentoRecetaController::class, 'tablaRecetasPorPaciente']);
+
+// todos los cuadros clinicos de un paciente
+Route::get('/admin/documentoreceta/bloque/cuadroclinico/{idpaciente}', [DocumentoRecetaController::class, 'tablaCuadroClinicoPorPaciente']);
 
 
 

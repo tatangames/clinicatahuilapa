@@ -24,7 +24,7 @@
     <section class="content-header">
         <div class="container-fluid">
             <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;"
-                    onclick="recargarVista()" class="button button-3d button-rounded button-pill button-small">
+                    onclick="volverAtras()" class="button button-3d button-rounded button-pill button-small">
                 <i class="fas fa-arrow-left"></i>
                 Atras
             </button>
@@ -32,8 +32,6 @@
     </section>
 
 <section>
-
-
 
     <div class="row" style="margin-left: 5px; margin-right: 5px">
         <div class="col-md-6">
@@ -224,11 +222,8 @@
 
 
     <div class="modal-footer float-right" style="margin-top: 25px; margin-bottom: 35px">
-        <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="verificarSalida()">VERIFICAR SALIDA</button>
+        <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="preguntarGuardarSalida()">VERIFICAR SALIDA</button>
     </div>
-
-
-
 
 
     <div class="modal fade" id="modalCantiSuperada">
@@ -288,6 +283,26 @@
 
         function recargarVista(){
             location. reload();
+        }
+
+        function preguntarGuardarSalida(){
+
+            Swal.fire({
+                title: 'Guardar Salida',
+                text: '',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                allowOutsideClick: false,
+                cancelButtonText: 'NO',
+                confirmButtonText: 'SI'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    verificarSalida();
+                }
+            })
+
         }
 
         function verificarSalida(){
@@ -425,7 +440,7 @@
                         let infoCantidadSalida = response.data.cantidadsalida;
 
                         Swal.fire({
-                            title: 'Cantidad Superada',
+                            title: 'Cantidad Insuficiente',
                             html: "El Medicamento: " + infoNombre + "<br>"
                                 + "LOTE: "+ infoLote +"<br>"
                                 + "Fecha de Vencimiento: "+ infoFechaVenc +"<br>"
@@ -437,10 +452,10 @@
                             confirmButtonColor: '#28a745',
                             cancelButtonColor: '#d33',
                             allowOutsideClick: false,
-                            confirmButtonText: 'Aceptar'
+                            confirmButtonText: 'Recargar'
                         }).then((result) => {
                             if (result.isConfirmed) {
-
+                                recargarVista();
                             }
                         })
 
@@ -527,6 +542,9 @@
         }
 
 
+        function volverAtras(){
+            window.location.href="{{ url('/admin/salida/medicamento/porreceta/index') }}";
+        }
 
 
     </script>

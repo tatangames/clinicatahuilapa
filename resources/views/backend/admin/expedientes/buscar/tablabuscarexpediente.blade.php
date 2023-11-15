@@ -7,12 +7,13 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th># Exp</th>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>Documento</th>
-                                <th>Profesión</th>
-                                <th>Opciones</th>
+                                <th style="width: 5%"># Exp</th>
+                                <th style="width: 12%">Nombre</th>
+                                <th style="width: 10%">Apellido</th>
+                                <th style="width: 10%">Tipo Doc.</th>
+                                <th style="width: 10%">Documento</th>
+                                <th style="width: 10%">Profesión</th>
+                                <th style="width: 10%">Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -22,6 +23,7 @@
                                     <td>{{ $dato->id }}</td>
                                     <td>{{ $dato->nombres }}</td>
                                     <td>{{ $dato->apellidos }}</td>
+                                    <td>{{ $dato->tipoDoc }}</td>
                                     <td>{{ $dato->num_documento }}</td>
                                     <td>{{ $dato->profesion }}</td>
 
@@ -30,20 +32,12 @@
                                         <div style="text-align:center;">
 
 
-                                            <button type="button" class="btn btn-success btn-sm" onclick="informacion({{ $dato->id }})">
-                                                <i class="fas fa-file" title="Documentos y Recetas"></i>&nbsp;
+                                            <button type="button"  title="Documentos y Recetas" class="btn btn-success btn-sm" onclick="infoDocumentoReceta({{ $dato->id }})">
+                                                <i class="fas fa-file"></i>&nbsp;
                                             </button>
 
-                                            <button type="button" class="btn btn-primary btn-sm" onclick="infoEditarPaciente({{ $dato->id }})">
-                                                <i class="fas fa-user" title="Datos Generales"></i>&nbsp;
-                                            </button>
-
-                                            <button type="button" class="btn btn-warning btn-sm" onclick="informacion({{ $dato->id }})">
-                                                <i class="fas fa-file-alt" title="Subir Documento"></i>&nbsp;
-                                            </button>
-
-                                            <button type="button" class="btn btn-secondary btn-sm" onclick="informacion({{ $dato->id }})">
-                                                <i class="fas fa-image" title="Subir Imagen"></i>&nbsp;
+                                            <button type="button" title="Datos Generales" class="btn btn-primary btn-sm" onclick="infoEditarPaciente({{ $dato->id }})">
+                                                <i class="fas fa-user" ></i>&nbsp;
                                             </button>
 
                                         </div>

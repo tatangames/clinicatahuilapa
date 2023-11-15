@@ -26,12 +26,6 @@
                 </button>
             </div>
 
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item">Motivo Farmacia</li>
-                    <li class="breadcrumb-item active">Listado de Motivos</li>
-                </ol>
-            </div>
         </div>
     </section>
 

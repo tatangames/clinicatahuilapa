@@ -359,6 +359,16 @@ class AsignacionesController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
+
+        $infoConsulta = Consulta_Paciente::where('id', $request->id)->first();
+
+
+        // VERIFICAR QUE SALA NO ESTE OCUPADA AUN
+        /*if(Consulta_Paciente::where('salaespera_id', $infoConsulta->salaespera_id)
+            ->where('estado_paciente', 2))*/
+
+
+
         $fechaCarbon = Carbon::parse(Carbon::now());
 
 
@@ -416,10 +426,12 @@ class AsignacionesController extends Controller
 
             $arrayrazonuso = Motivo::orderBy('nombre')->get();
 
+            $numeroConsulta = Consulta_Paciente::where('paciente_id', $infoConsulta->paciente_id)->count();
+
             return ['success' => 1, 'infoconsulta' => $infoConsulta,
                 'infopaciente' => $infoPaciente, 'hayfoto' => $hayfoto,
                 'horaentro' => $horaEntroSala, 'entroespera' => $horaEntroEsperar,
-                'arrayrazonuso' => $arrayrazonuso];
+                'arrayrazonuso' => $arrayrazonuso, 'numeroConsulta' => $numeroConsulta];
         }
         else{
             return ['success' => 2];

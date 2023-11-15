@@ -27,11 +27,10 @@
 
     <section class="content" style="margin-top: 20px">
         <div class="container-fluid">
-            <div class="card card-primary">
+            <div class="card card-success">
                 <div class="card-header">
                     <h3 class="card-title">Editar Expediente</h3>
                 </div>
-
 
                 <div class="card-body">
                     <div class="row">
@@ -158,7 +157,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-md-5">Teléfono: </label>
                                                 <div class="col-md-7">
-                                                    <input type="text" maxlength="25" autocomplete="off"
+                                                    <input type="text" maxlength="10" autocomplete="off"
                                                            class="form-control" id="telefono" value="{{ $infoPa->telefono }}">
                                                 </div>
                                             </div>
@@ -167,7 +166,7 @@
                                             <div class="form-group">
                                                 <label class="control-label col-md-3">Celular: </label>
                                                 <div class="col-md-9">
-                                                    <input type="text" maxlength="25" autocomplete="off" class="form-control"
+                                                    <input type="text" maxlength="10" autocomplete="off" class="form-control"
                                                            id="celular" value="{{ $infoPa->celular }}">
                                                 </div>
                                             </div>
@@ -316,8 +315,9 @@
                                         <div class="col-md-6">
 
                                             <div class="col-md-offset-3 col-md-12">
-                                                <button type="button" class="btn btn-warning"
-                                                        style="color: white"
+                                                <button type="button" class="btn"
+                                                        style="color: white; background-color: #ffa616"
+
                                                         onclick="abrirModalFoto();">
                                             <span>
 
@@ -422,7 +422,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            $('#select-medico').select2({
+            $('#select-profesion').select2({
                 theme: "bootstrap-5",
                 "language": {
                     "noResults": function () {
@@ -611,12 +611,11 @@
                 showCancelButton: false,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
-
                 allowOutsideClick: false,
                 confirmButtonText: 'Recargar',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    location. reload();
+                    location.reload();
                 }
             })
         }

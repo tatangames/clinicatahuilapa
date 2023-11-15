@@ -20,7 +20,7 @@
 
     <section class="content" style="margin-top: 20px">
         <div class="container-fluid">
-            <div class="card card-primary">
+            <div class="card card-success">
                 <div class="card-header">
                     <h3 class="card-title">Nuevo Expediente</h3>
                 </div>
@@ -73,7 +73,7 @@
 
 
 
-                                                <div class="form-group row" style="margin-top: 18px">
+                                                <div class="form-group row" style="margin-top: 22px">
                                                     <label class="col-sm-2 col-form-label" style="color: #686868">Tipo
                                                         Paciente: </label>
                                                     <span class="text-danger">*</span>
@@ -147,7 +147,7 @@
                                         <div class="form-group">
                                             <label class="control-label col-md-5">Teléfono: </label>
                                             <div class="col-md-7">
-                                                <input type="text" maxlength="25" autocomplete="off"
+                                                <input type="text" maxlength="10" autocomplete="off"
                                                        class="form-control" id="telefono">
                                             </div>
                                         </div>
@@ -156,7 +156,7 @@
                                         <div class="form-group">
                                             <label class="control-label col-md-3">Celular: </label>
                                             <div class="col-md-9">
-                                                <input type="text" maxlength="25" autocomplete="off" class="form-control" id="celular" >
+                                                <input type="text" maxlength="10" autocomplete="off" class="form-control" id="celular" >
                                             </div>
                                         </div>
                                     </div>
@@ -379,7 +379,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            $('#select-medico').select2({
+            $('#select-profesion').select2({
                 theme: "bootstrap-5",
                 "language": {
                     "noResults": function () {
@@ -388,14 +388,6 @@
                 },
             });
 
-            $('#select-tipopaciente').select2({
-                theme: "bootstrap-5",
-                "language": {
-                    "noResults": function () {
-                        return "Búsqueda no encontrada";
-                    }
-                },
-            });
 
             document.getElementById("divcontenedor").style.display = "block";
 
@@ -554,10 +546,17 @@
             document.getElementById("formulario").reset();
 
             document.getElementById('select-tipopaciente').selectedIndex = 0;
+            $("#select-tipopaciente").trigger("change");
+
             document.getElementById('edad').value = '';
             document.getElementById('select-profesion').selectedIndex = 0;
+            $("#select-profesion").trigger("change");
+
             document.getElementById('select-civil').selectedIndex = 0;
+            $("#select-civil").trigger("change");
+
             document.getElementById('select-documento').selectedIndex = 0;
+            $("#select-documento").trigger("change");
 
             btnBorrarFoto();
         }

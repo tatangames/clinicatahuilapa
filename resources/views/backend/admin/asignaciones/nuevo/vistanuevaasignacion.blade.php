@@ -30,26 +30,19 @@
 <div id="divcontenedor" style="display: none">
 
 
-    <section class="content-header">
-        <div class="row mb-2">
-
-        </div>
-    </section>
-
-
-    <section class="content">
+    <section class="content" style="margin-top: 25px">
         <div class="container-fluid">
-            <div class="card card-primary">
+            <div class="card card-success">
                 <div class="card-header">
-                    <h3 class="card-title">ASIGNACIÓN DE SALAS</h3>
+                    <h3 class="card-title" style="font-weight: bold">ASIGNACIÓN DE SALAS</h3>
                     <p style="float: right; font-weight: bold; font-size: 15px" id="contador"></p>
                     <img src="{{ asset('images/cronometro2.png') }}" width="35px" height="35px" style="float: right">
                 </div>
 
-                <section class="content-header" style="margin-left: 25px">
+                <section class="content-header" style="margin-left: 25px; margin-top: 15px">
                     <div class="row mb-2">
 
-                        <button type="button" style="font-weight: bold; background-color: #36b62e; color: white !important;"
+                        <button type="button" style="font-weight: bold; background-color: #3c8cbb; color: white !important;"
                                 onclick="modalAgregar()" class="button button-3d button-rounded button-pill button-small">
                             <i class="fas fa-pencil-alt"></i>
                             Nueva Asignación
@@ -68,15 +61,14 @@
                                 <div class="container-fluid">
                                     <div class="row ">
 
-
                                         <div class="col-md-6" id="bloque01enfermeria">
 
-                                            <div class="card card-secondary">
+                                            <div class="card card-lightblue">
                                                 <div class="card-header">
                                                     <h3 class="card-title" id="txtConteoEnfermeria">Enfermería ( {{ $conteoEnfermeria }} en Espera )</h3>
                                                     <span class="input-group-btn" style="float: right">
-                                                        <span class="btn waves-effect waves-light btn-primary"  onclick="modalTablaEnfermeria()">
-                                                            <i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        <span class="btn" style="background-color: #ffa616" onclick="modalTablaEnfermeria()">
+                                                            <i class="fa fa-plus" style="color: white; font-size: 16px;">Asignar</i>
                                                         </span>
                                                     </span>
 
@@ -94,13 +86,13 @@
 
                                         <div class="col-md-6" id="bloque02consultoria">
 
-                                            <div class="card card-success">
+                                            <div class="card card-purple">
                                                 <div class="card-header">
                                                     <h3 class="card-title" id="txtConteoConsultoria">Consultorio ( {{ $conteoConsultorio }} en Espera )</h3>
 
                                                     <span class="input-group-btn" style="float: right">
-                                                        <span class="btn waves-effect waves-light btn-primary" onclick="modalTablaConsultoria()">
-                                                            <i class="fa fa-plus" style="color: white">Asignar</i>
+                                                        <span class="btn" style="background-color: #ffa616" onclick="modalTablaConsultoria()">
+                                                            <i class="fa fa-plus" style="color: white; font-size: 16px;">Asignar</i>
                                                         </span>
                                                     </span>
                                                 </div>
@@ -121,8 +113,6 @@
 
                                 </div>
                             </section>
-
-
 
                         </div>
                     </div>
@@ -406,6 +396,12 @@
                                                 <div class="form-group">
                                                     <label class="control-label col-md-12">HORA ENTRO A SALA</label>
                                                     <input type="text" id="txtHoraEntro" autocomplete="off"
+                                                           class="form-control" disabled>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12">CONSULTA #</label>
+                                                    <input type="text" id="txtNumeroConsulta" autocomplete="off"
                                                            class="form-control" disabled>
                                                 </div>
 
@@ -1048,7 +1044,7 @@
             let formData = new FormData();
             formData.append('idconsulta', idconsulta);
 
-            axios.post(url+'/asignaciones/ingresar/paciente/asala', formData, {
+            axios.post(url+'/asignaciones/ingresar/paciente/sala', formData, {
             })
                 .then((response) => {
                     closeLoading();
@@ -1120,6 +1116,7 @@
 
                         $('#txtNombre').val(unido);
                         $('#txtHoraEntroEspera').val(response.data.entroespera);
+                        $('#txtNumeroConsulta').val(response.data.numeroConsulta);
                         $('#txtHoraEntro').val(response.data.horaentro);
 
                         document.getElementById("select-dentrosala-razonuso").options.length = 0;

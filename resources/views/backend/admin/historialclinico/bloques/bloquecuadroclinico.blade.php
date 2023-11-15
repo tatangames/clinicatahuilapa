@@ -21,7 +21,6 @@
                             <thead>
                             <tr>
                                 <th>Fecha de Consulta</th>
-                                <th>Consulta #</th>
                                 <th>Tipo Diagnóstico</th>
 
                                 <th>Opciones</th>
@@ -32,7 +31,6 @@
                             @foreach($bloqueCuadroClinico as $dato)
                                 <tr>
                                     <td>{{ $dato->fechaFormat }}</td>
-                                    <td>{{ $dato->consulta_id }}</td>
                                     <td>{{ $dato->nombreDiagnostico }}</td>
 
                                     <td>

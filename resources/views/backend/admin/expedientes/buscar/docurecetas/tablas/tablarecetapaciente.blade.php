@@ -1,38 +1,55 @@
+<div class="card card-default">
+    <div class="card-header">
+        <h3 class="card-title" style="font-weight: bold">Historial de Recetas</h3>
+    </div>
+</div>
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <table id="tablaEnfermeria" class="table table-bordered table-striped">
+                        <table id="tableRecetas" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th>HORA</th>
-                                <th>PACIENTE</th>
-                                <th>RAZON USO</th>
+                                <th>FECHA</th>
+                                <th>CREADO POR</th>
+                                <th>DIAGNOSTICO</th>
+                                <th>VIA</th>
+                                <th>ESTADO ORDEN</th>
+
                                 <th>Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            @foreach($arrayTablaEnfermeria as $dato)
+                            @foreach($arrayRecetas as $dato)
                                 <tr>
-                                    <td>{{ $dato->horaFormat }}</td>
-                                    <td>{{ $dato->nombrepaciente }}</td>
-                                    <td>{{ $dato->razonUso }}</td>
+                                    <td>{{ $dato->fechaFormat }}</td>
+                                    <td>{{ $dato->nombreusuario }}</td>
+                                    <td>{{ $dato->descripcion_general }}</td>
+                                    <td>{{ $dato->nombreVia }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-xs" onclick="infoAsignarAsalaPaciente({{ $dato->id }})">
-                                          Asignar
-                                        </button>
 
-                                        <button type="button" class="btn btn-danger btn-xs" onclick="infoModalEliminarPaciente({{ $dato->id }})">
-                                          Eliminar
-                                        </button>
+                                        @if($dato->estado == 1)
+                                            <span class="badge bg-warning">Pendiente</span>
+                                        @elseif($dato->estado == 2)
+                                            <span class="badge bg-success">Procesada</span>
+                                        @else
+                                            <span class="badge bg-danger">Denegada</span>
+                                        @endif
 
-                                        <button type="button" class="btn btn-xs" style="color: white; background-color: #ffa616" onclick="infoModalEditarSalas({{ $dato->id }})">
-                                          Editar
+                                    </td>
+
+
+                                    <td>
+
+                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="imprimirRecetaMedica({{ $dato->id }})">
+                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
                                         </button>
                                     </td>
+
                                 </tr>
                             @endforeach
 
@@ -45,10 +62,12 @@
     </div>
 </section>
 
-
 <script>
     $(function () {
-        $("#tablaEnfermeria").DataTable({
+        $("#tableRecetas").DataTable({
+            columnDefs: [
+                { type: 'date-euro', targets: 0 } // Suponiendo que la columna de fecha es la primera (índice 0)
+            ],
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -81,11 +100,13 @@
                     "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                     "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
-
             },
             "responsive": true, "lengthChange": true, "autoWidth": false,
         });
     });
+
+
+
 
 
 </script>
