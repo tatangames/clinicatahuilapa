@@ -7,7 +7,14 @@ use Illuminate\Support\Facades\Schema;
 class CreateContenidoFarmaceuticaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * TIPO FARMACEUTICA
+     *
+     * 1- ENVASE
+     * 2- FORMA FARMACEUTICA
+     * 3- CONCENTRACION
+     * 4- CONTENIDO
+     * 5- VIA ADMINISTRACION
+     *
      *
      * @return void
      */

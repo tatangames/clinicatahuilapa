@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\Configuracion;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContenidoFarmaceutica;
 use App\Models\Diagnosticos;
 use App\Models\ViaReceta;
 use Illuminate\Http\Request;
@@ -150,8 +151,11 @@ class DiagnosticoController extends Controller
         }else{
             return ['success' => 99];
         }
-
     }
+
+
+
+
 
 
 

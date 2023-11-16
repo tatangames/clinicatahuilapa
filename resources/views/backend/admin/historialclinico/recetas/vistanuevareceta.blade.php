@@ -341,7 +341,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="formulario-extravia">
+                    <form id="formulario-extradiagnostico">
                         <div class="card-body">
 
                             <div class="form-group" style="margin-top: 20px">

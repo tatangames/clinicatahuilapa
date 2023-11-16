@@ -20,7 +20,7 @@
 
     <section class="content" style="margin-top: 20px">
         <div class="container-fluid">
-            <div class="card card-primary">
+            <div class="card card-success">
                 <div class="card-header">
                     <h3 class="card-title">AGREGAR ARTICULO</h3>
                 </div>
@@ -131,15 +131,21 @@
                                         <div class="col-md-6">
 
                                                 <div class="form-group">
-                                                    <label class="col-md-10" style="color: #686868">Envase: </label>
-                                                    <div class="col-md-10">
+                                                    <label style="color: #686868">Envase: </label>
+
+                                                    <div class="col-md-10 input-group">
                                                         <select class="form-control" id="select-envase">
                                                             <option value="">Seleccionar Opción</option>
                                                             @foreach($arrayEnvase as $item)
                                                                 <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                             @endforeach
                                                         </select>
+                                                            <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(1)"><i class="fas fa-plus" style="color: white"></i></button>
                                                     </div>
+
+
+
+
                                                 </div>
                                         </div>
 
@@ -155,15 +161,19 @@
                                             <div class="col-md-6">
 
                                                 <div class="form-group">
-                                                    <label class="col-md-10" style="color: #686868">Forma Farmaceutica: </label>
-                                                    <div class="col-md-10">
+                                                    <label style="color: #686868">Forma Farmaceutica: </label>
+
+
+                                                    <div class="col-md-10 input-group">
                                                         <select class="form-control" id="select-formafarmaceutica">
                                                             <option value="">Seleccionar Opción</option>
                                                             @foreach($arrayFormaFarmaceutica as $item)
                                                                 <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                             @endforeach
                                                         </select>
+                                                        <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(2)"><i class="fas fa-plus" style="color: white"></i></button>
                                                     </div>
+
                                                 </div>
                                             </div>
 
@@ -171,15 +181,18 @@
                                             <div class="col-md-6">
 
                                                 <div class="form-group">
-                                                    <label class="col-md-10" style="color: #686868">Concentración: </label>
-                                                    <div class="col-md-10">
+                                                    <label style="color: #686868">Concentración: </label>
+
+                                                    <div class="col-md-10 input-group">
                                                         <select class="form-control" id="select-concentracion">
                                                             <option value="">Seleccionar Opción</option>
                                                             @foreach($arrayConcentracion as $item)
                                                                 <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                             @endforeach
                                                         </select>
+                                                        <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(3)"><i class="fas fa-plus" style="color: white"></i></button>
                                                     </div>
+
                                                 </div>
                                             </div>
 
@@ -197,15 +210,19 @@
                                             <div class="col-md-6">
 
                                                 <div class="form-group">
-                                                    <label class="col-md-10" style="color: #686868">Contenido: </label>
-                                                    <div class="col-md-10">
+                                                    <label style="color: #686868">Contenido: </label>
+
+
+                                                    <div class="col-md-10 input-group">
                                                         <select class="form-control" id="select-contenido">
                                                             <option value="">Seleccionar Opción</option>
                                                             @foreach($arrayContenido as $item)
                                                                 <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                             @endforeach
                                                         </select>
+                                                        <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(4)"><i class="fas fa-plus" style="color: white"></i></button>
                                                     </div>
+
                                                 </div>
                                             </div>
 
@@ -214,14 +231,17 @@
 
                                                 <div class="form-group">
                                                     <label class="col-md-10" style="color: #686868">Via Administración: </label>
-                                                    <div class="col-md-10">
+
+                                                    <div class="col-md-10 input-group">
                                                         <select class="form-control" id="select-viaadministracion">
                                                             <option value="">Seleccionar Opción</option>
                                                             @foreach($arrayAdministracion as $item)
                                                                 <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                             @endforeach
                                                         </select>
+                                                        <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(5)"><i class="fas fa-plus" style="color: white"></i></button>
                                                     </div>
+
                                                 </div>
                                             </div>
 
@@ -280,6 +300,46 @@
             </div>
         </div>
     </section>
+
+
+
+    <div class="modal fade" id="modalExtraInformacion">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="txtTituloExtra"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-extra-datos">
+                        <div class="card-body">
+
+                            <div>
+                                <input id="idtipo-extra-info" type="hidden">
+                            </div>
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Nombre</label>
+                                </div>
+                                <input maxlength="300" id="extranombre-via-nuevo" class="form-control" autocomplete="off">
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarExtraInformacion()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
 
 
@@ -372,6 +432,141 @@
     </script>
 
     <script>
+
+        function verModalExtraInformacion(idtipo){
+
+            document.getElementById("formulario-extra-datos").reset();
+
+            if(idtipo == 1){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Envase";
+            }else if(idtipo == 2){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Forma Farmaceutica";
+            }else if(idtipo == 3){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Concentración";
+            }else if(idtipo == 4){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Contenido";
+            }else{
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Via Administración";
+            }
+
+            $('#idtipo-extra-info').val(idtipo);
+
+            $('#modalExtraInformacion').modal('show');
+        }
+
+
+        function guardarExtraInformacion(){
+
+            var idtipo = document.getElementById("idtipo-extra-info").value;
+            var nombre = document.getElementById("extranombre-via-nuevo").value;
+
+            if(nombre === ''){
+                toastr.error('Nombre es requerido');
+                return;
+            }
+
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('idtipo', idtipo);
+            formData.append('nombre', nombre);
+
+            axios.post(url+'/guardar/contenidofarma/get/listado', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    // 1- ENVASE
+                    // 2- FORMA FARMACEUTICA
+                    // 3- CONCENTRACION
+                    // 4- CONTENIDO
+                    // 5- VIA ADMINISTRACION
+
+                    if(response.data.success === 1){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-envase").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-envase').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-envase").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    else if(response.data.success === 2){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-formafarmaceutica").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-formafarmaceutica').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-formafarmaceutica").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+                    else if(response.data.success === 3){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-concentracion").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-concentracion').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-concentracion").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    else if(response.data.success === 4){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-contenido").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-contenido').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-contenido").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    if(response.data.success === 5){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-viaadministracion").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-viaadministracion').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-viaadministracion").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+
+
+        }
+
+
+
+
+
 
 
         function verificarLinea(){

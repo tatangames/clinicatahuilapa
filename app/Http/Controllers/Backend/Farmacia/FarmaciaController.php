@@ -697,15 +697,58 @@ class FarmaciaController extends Controller
             Log::info('err ' . $e);
             return ['success' => 99];
         }
-
-
-
-
-
-
-
     }
 
+
+
+
+    public function guardarExtraContenidoFarmaceutica(Request $request){
+
+        $regla = array(
+            'idtipo' => 'required',
+            'nombre' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        $dato = new ContenidoFarmaceutica();
+        $dato->tipo_farmaceutica_id = $request->idtipo;
+        $dato->nombre = $request->nombre;
+        $dato->save();
+
+        if($request->idtipo == 1){
+            $lista = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 1)
+                ->orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 1, 'lista' => $lista];
+        }
+        else if($request->idtipo == 2){
+            $lista = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 2)
+                ->orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 2, 'lista' => $lista];
+        }
+        else if($request->idtipo == 3){
+            $lista = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 3)
+                ->orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 3, 'lista' => $lista];
+        }
+        else if($request->idtipo == 4){
+            $lista = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 4)
+                ->orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 4, 'lista' => $lista];
+        }else{
+            $lista = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 5)
+                ->orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 5, 'lista' => $lista];
+        }
+    }
 
 
 

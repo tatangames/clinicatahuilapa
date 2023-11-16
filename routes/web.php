@@ -355,5 +355,6 @@ Route::post('/admin/diagnosticos/guardar/getlistado/completo', [DiagnosticoContr
 // listado de array de vias
 Route::post('/admin/vias/guardar/getlistado/completo', [DiagnosticoController::class, 'registroExtraVia']);
 
-
+// guardar y obtener listado de Contenido Farmaceutica
+Route::post('/admin/guardar/contenidofarma/get/listado', [FarmaciaController::class, 'guardarExtraContenidoFarmaceutica']);
 
