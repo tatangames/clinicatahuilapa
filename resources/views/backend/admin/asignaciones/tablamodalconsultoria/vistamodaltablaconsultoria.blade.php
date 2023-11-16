@@ -29,7 +29,7 @@
                                             Eliminar
                                         </button>
 
-                                        <button type="button" class="btn btn-warning btn-xs" onclick="infoModalEditarSalas({{ $dato->id }})">
+                                        <button type="button" class="btn btn-warning btn-xs" style="color: white; background-color: #ffa616"  onclick="infoModalEditarSalas({{ $dato->id }})">
                                             Editar
                                         </button>
                                     </td>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Configuracion;
 
 use App\Http\Controllers\Controller;
 use App\Models\Diagnosticos;
+use App\Models\ViaReceta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -50,6 +51,14 @@ class DiagnosticoController extends Controller
     }
 
 
+    public function listadoArrayDiagnosticos(){
+
+
+
+        return ['success' => 1, 'listado' => $arrayDiagnostico];
+    }
+
+
     public function informacionNuevoTipoDiagnostico(Request $request){
 
         $regla = array(
@@ -89,6 +98,61 @@ class DiagnosticoController extends Controller
 
         return ['success' => 1];
     }
+
+
+
+    // UTILIZADO CUANDO SE GUARDA EN OTRAS VENTANA Y SE QUIERE SETEAR EL SELECT CON EL NUEVO
+
+    public function registroExtraDiagnostico(Request $request){
+
+        $regla = array(
+            'nombre' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        $registro = new Diagnosticos();
+        $registro->nombre = $request->nombre;
+        $registro->descripcion = $request->descripcion;
+
+        if($registro->save()){
+
+            $arrayLista = Diagnosticos::orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 1, 'lista' => $arrayLista];
+        }else{
+            return ['success' => 99];
+        }
+    }
+
+
+
+    public function registroExtraVia(Request $request){
+
+        $regla = array(
+            'nombre' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        $registro = new ViaReceta();
+        $registro->nombre = $request->nombre;
+
+        if($registro->save()){
+
+            $arrayLista = ViaReceta::orderBy('nombre', 'ASC')->get();
+
+            return ['success' => 1, 'lista' => $arrayLista];
+        }else{
+            return ['success' => 99];
+        }
+
+    }
+
 
 
 }

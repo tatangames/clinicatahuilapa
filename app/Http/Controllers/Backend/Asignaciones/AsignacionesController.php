@@ -108,7 +108,7 @@ class AsignacionesController extends Controller
                 if(!empty($row)){
                     $tiene = false;
                     $output .= '
-             <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'" ><a href="#" style="margin-left: 3px; font-size: 15px; font-weight: bold; color: black !important;">Exp#'.$row->id . '&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' - ' .$row->num_documento .'</a></li>
+             <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'" ><a href="#" style="margin-left: 3px; font-size: 15px; font-weight: bold; color: black !important;">Exp#'.$row->id . '&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' ' .$row->apellidos . ' - ' .$row->num_documento .'</a></li>
             ';
                 }
             }
@@ -117,7 +117,7 @@ class AsignacionesController extends Controller
                 if(!empty($row)){
                     $tiene = false;
                     $output .= '
-             <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'" style="font-weight: normal; font-size: 16px; color: black !important;"><a href="#" style="margin-left: 3px; font-weight: bold; font-size: 15px; color: black !important;">Exp#'.$row->id . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' - ' .$row->num_documento .'</a></li>
+             <li class="cursor-pointer" onclick="modificarValor(this)" id="'.$row->id.'" style="font-weight: normal; font-size: 16px; color: black !important;"><a href="#" style="margin-left: 3px; font-weight: bold; font-size: 15px; color: black !important;">Exp#'.$row->id . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .$row->nombres . ' ' .$row->apellidos . ' - ' .$row->num_documento .'</a></li>
                <hr>
             ';
                 }
@@ -359,18 +359,17 @@ class AsignacionesController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
+        $infoConsulta = Consulta_Paciente::where('id', $request->idconsulta)->first();
 
-        $infoConsulta = Consulta_Paciente::where('id', $request->id)->first();
+        if(Consulta_Paciente::where('estado_paciente', 1)
+            ->where('salaespera_id', $infoConsulta->salaespera_id)
+            ->first()){
 
-
-        // VERIFICAR QUE SALA NO ESTE OCUPADA AUN
-        /*if(Consulta_Paciente::where('salaespera_id', $infoConsulta->salaespera_id)
-            ->where('estado_paciente', 2))*/
-
-
+            // NO PUEDE INGRESAR A LA SALA PORQUE ESTA OCUPADA
+            return ['success' => 1];
+        }
 
         $fechaCarbon = Carbon::parse(Carbon::now());
-
 
         Consulta_Paciente::where('id', $request->idconsulta)->update([
             'estado_paciente' => 1, // paciente dentro a la Sala
@@ -380,7 +379,7 @@ class AsignacionesController extends Controller
         $infoPaciente = Consulta_Paciente::where('id', $request->idconsulta)->first();
         $infoSala = SalasEspera::where('id', $infoPaciente->salaespera_id)->first();
 
-        return ['success' => 1, 'nombresala' => $infoSala->nombre];
+        return ['success' => 2, 'nombresala' => $infoSala->nombre];
     }
 
 
@@ -426,6 +425,7 @@ class AsignacionesController extends Controller
 
             $arrayrazonuso = Motivo::orderBy('nombre')->get();
 
+            // CONTEO DIRECTO
             $numeroConsulta = Consulta_Paciente::where('paciente_id', $infoConsulta->paciente_id)->count();
 
             return ['success' => 1, 'infoconsulta' => $infoConsulta,

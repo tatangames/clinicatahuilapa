@@ -45,7 +45,7 @@
 
     <section class="content" style="margin-top: 20px">
         <div class="container-fluid">
-            <div class="card card-primary">
+            <div class="card card-success">
                 <div class="card-header">
                     <h3 class="card-title">FICHA PARA REGISTRAR ANTROPOLOGIA</h3>
                 </div>
@@ -54,8 +54,6 @@
                         <div class="col-md-12">
 
                             <form id="formulario-antropometria">
-
-
 
                                 <div class="col-md-5">
                                     <div class="card" style="border-radius: 15px;">
@@ -268,7 +266,7 @@
 
 
                     <div style="float: right; margin-top: 30px">
-                        <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarAntropometria()">Guardar Antropometría</button>
+                        <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="saveAntropometriaSv()">Guardar Antropometría</button>
                     </div>
                 </div>
             </div>
@@ -414,6 +412,26 @@
         }else{
             $("#icc-antro").val(0);
         }
+    }
+
+
+
+    function saveAntropometriaSv(){
+
+        Swal.fire({
+            title: '¿Guardar Antropometria?',
+            text: '',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'SI',
+            cancelButtonText: 'NO'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                guardarAntropometria();
+            }
+        })
     }
 
 

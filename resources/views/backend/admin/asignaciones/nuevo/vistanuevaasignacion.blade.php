@@ -1049,7 +1049,25 @@
                 .then((response) => {
                     closeLoading();
 
-                    if(response.data.success === 1){
+                    if(response.data.success === 1) {
+
+                        Swal.fire({
+                            title: 'Sala Ocupada',
+                            text: 'Se encuentra un Paciente dentro de la Sala',
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            allowOutsideClick: false,
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                            }
+                        })
+
+                    }
+                    else if(response.data.success === 2){
 
                         let sala = response.data.nombresala;
 
@@ -1116,6 +1134,8 @@
 
                         $('#txtNombre').val(unido);
                         $('#txtHoraEntroEspera').val(response.data.entroespera);
+
+                        // CONTEO DIRECTO
                         $('#txtNumeroConsulta').val(response.data.numeroConsulta);
                         $('#txtHoraEntro').val(response.data.horaentro);
 

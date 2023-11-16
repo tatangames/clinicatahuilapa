@@ -36,7 +36,7 @@
     <section class="content-header">
         <div class="container-fluid">
                 <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;"
-                        onclick="recargarVista()" class="button button-3d button-rounded button-pill button-small">
+                        onclick="vistaAsignaciones()" class="button button-3d button-rounded button-pill button-small">
                     <i class="fas fa-arrow-left"></i>
                     Atras
                 </button>
@@ -282,7 +282,7 @@
 
     <!-- MODAL PARA AGREGAR UN NUEVO HISTORIAL CLINICO -->
     <div class="modal fade" id="modalNuevoHistoClinico">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Nuevo Historial Clínico</h4>
@@ -294,7 +294,16 @@
                     <form id="formulario-historial-clinico">
                         <div class="card-body">
 
-                                <div class="form-group col-md-6">
+                                <div>
+                                    <button type="button" style="float: right; font-weight: bold; background-color: #ffc107; color: white !important;"
+                                            onclick="nuevoDiagnosticoExtra()" class="button button-3d button-rounded button-pill button-small">
+                                        <i class="fas fa-plus"></i>
+                                        Nuevo Tipo Diagnóstico
+                                    </button>
+                                </div>
+
+
+                                <div class="form-group col-md-8" style="margin-top: 20px">
                                     <label style="color:#191818">Tipo de Diagnóstico</label>
                                     <br>
                                     <div>
@@ -372,6 +381,44 @@
     </div>
 
 
+    <div class="modal fade" id="modalExtraDiagnostico">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nuevo Tipo de Diagnóstico</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-extradiagnostico">
+                        <div class="card-body">
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Nombre <span style="color: red">*</span></label>
+                                </div>
+                                <input maxlength="150" id="extranombre-diagnostico-nuevo" class="form-control" autocomplete="off">
+                            </div>
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Descripción (opcional)</label>
+                                </div>
+                                <input maxlength="800" id="extradescripcion-diagnostico-nuevo" class="form-control" autocomplete="off">
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarExtraDiagnostico()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -509,6 +556,57 @@
             history.back();
         }
 
+
+        function nuevoDiagnosticoExtra(){
+            document.getElementById("formulario-extradiagnostico").reset();
+            $('#modalExtraDiagnostico').modal('show');
+        }
+
+
+        function guardarExtraDiagnostico(){
+
+            var nombre = document.getElementById('extranombre-diagnostico-nuevo').value;
+            var descripcion = document.getElementById('extradescripcion-diagnostico-nuevo').value;
+
+            if(nombre === ''){
+                toastr.error('Nombre es requerido');
+                return;
+            }
+
+            openLoading();
+            var formData = new FormData();
+
+            formData.append('nombre', nombre);
+            formData.append('descripcion', descripcion);
+
+            axios.post(url+'/diagnosticos/guardar/getlistado/completo', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-tipo-diagnostico").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-tipo-diagnostico').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-tipo-diagnostico").trigger("change");
+
+                        $('#modalExtraDiagnostico').modal('hide');
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
+
+
         function vistaDatosGenerales(){
 
             let idpaciente = {{ $infoPaciente->id }};
@@ -524,7 +622,6 @@
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
-
                 allowOutsideClick: false,
                 cancelButtonText: 'Cancelar',
                 confirmButtonText: 'Sí'

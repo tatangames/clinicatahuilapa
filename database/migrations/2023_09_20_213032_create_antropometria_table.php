@@ -18,7 +18,7 @@ class CreateAntropometriaTable extends Migration
             $table->bigInteger('consulta_id')->unsigned();
             $table->bigInteger('usuario_id')->unsigned(); // quien lleno esta hoja
 
-            $table->dateTime('fecha');
+            $table->date('fecha');
             $table->time('hora');
             $table->string('frecuencia_cardiaca', 150)->nullable();
             $table->string('frecuencia_respiratoria', 150)->nullable();

@@ -65,7 +65,6 @@
                                                 <div style="margin-left: 15px">
                                                     <h5 style="font-weight: bold">PACIENTE:</h5>
                                                     <p class="" style="color: #2b2a2a;">{{ $nombreCompleto }}</p>
-                                                    <p class="" style="color: #2b2a2a;">{{ $totalConsulta }}</p>
                                                 </div>
 
                                             </div>

@@ -299,6 +299,7 @@ class HistorialClinicoController extends Controller
         $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos . " (" . $edad . " Años)";
 
 
+        // CONTEO DIRECTO
         $totalConsulta = Consulta_Paciente::where('paciente_id', $infoConsulta->paciente_id)->count();
 
         $arrayTipoDiagnostico = Diagnosticos::orderBy('nombre')->get();
@@ -385,14 +386,14 @@ class HistorialClinicoController extends Controller
             $dato->nomusuario = $infoUsuario->nombre;
         }
 
-        $btnAntro = 0;
+        $btnAntrosV = 0;
         // verificar si ya tiene 1 ampometria, para ocultar boton
         if(Antropometria::where('consulta_id', $idconsulta)->first()){
-            $btnAntro = 1;
+            $btnAntrosV = 1;
         }
 
         return view('backend.admin.historialclinico.bloques.bloqueantropsv', compact('bloqueAntropSv',
-            'btnAntro'));
+            'btnAntrosV'));
     }
 
     public function vistaNuevaAntropologia($idconsulta){
@@ -543,13 +544,10 @@ class HistorialClinicoController extends Controller
 
         $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
 
-        $totalConsulta = "Consulta #: " . Consulta_Paciente::where('paciente_id', $infoPaciente->id)->count();
-
-
         $idconsulta = $infoConsulta->id;
 
         return view('backend.admin.historialclinico.antropsv.vistaeditarantropologiasv', compact('idantrop',
-        'nombreCompleto', 'totalConsulta', 'idconsulta', 'infoAntrop'));
+        'nombreCompleto', 'idconsulta', 'infoAntrop'));
     }
 
 

@@ -35,7 +35,7 @@
 
     <section class="content-header">
         <div class="container-fluid">
-            <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="recargarVista()" class="button button-3d button-rounded button-pill button-small">
+            <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="vistaAtras()" class="button button-3d button-rounded button-pill button-small">
                 <i class="fas fa-arrow-left"></i>
                 Atras
             </button>
@@ -45,13 +45,27 @@
 
     <section class="content" style="margin-top: 20px">
         <div class="container-fluid">
-            <div class="card card-primary">
+            <div class="card card-success">
                 <div class="card-header">
                     <h3 class="card-title">FICHA PARA RECETA</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
+
+
+                                <button type="button" style="float: right; font-weight: bold; background-color: #2c96d5; color: white !important;"
+                                        onclick="nuevoDiagnosticoExtra()" class="button button-3d button-rounded button-pill button-small">
+                                    <i class="fas fa-plus"></i>
+                                    Nuevo Tipo Diagnóstico
+                                </button>
+
+                                <button type="button" style="float: right; font-weight: bold; background-color: #2c96d5; color: white !important;"
+                                        onclick="nuevaViaExtra()" class="button button-3d button-rounded button-pill button-small">
+                                    <i class="fas fa-plus"></i>
+                                    Nueva Vía
+                                </button>
+
 
                             <div class="col-md-5">
                                 <div class="card" style="border-radius: 15px;">
@@ -70,6 +84,8 @@
                             </div>
                                 <section>
 
+
+
                                     <div class="row">
 
                                         <div class="col-md-3">
@@ -83,7 +99,7 @@
                                             <div class="form-group">
                                                 <label class="control-label">Diagnóstico</label>
 
-                                                <select id="select-dianostico" class="form-control">
+                                                <select id="select-diagnostico" class="form-control">
                                                     <option value="">Seleccionar Opción</option>
                                                     @foreach($arrayDiagnostico as $item)
                                                         <option value="{{$item->id}}">{{ $item->nombre }}</option>
@@ -116,6 +132,9 @@
 
 
                             <section>
+
+
+
 
                                 <div class="row">
 
@@ -270,6 +289,82 @@
 
 
 
+
+    <div class="modal fade" id="modalExtraDiagnostico">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nuevo Tipo de Diagnóstico</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-extradiagnostico">
+                        <div class="card-body">
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Nombre <span style="color: red">*</span></label>
+                                </div>
+                                <input maxlength="150" id="extranombre-diagnostico-nuevo" class="form-control" autocomplete="off">
+                            </div>
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Descripción (opcional)</label>
+                                </div>
+                                <input maxlength="800" id="extradescripcion-diagnostico-nuevo" class="form-control" autocomplete="off">
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarExtraDiagnostico()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="modalExtraVia">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nueva Vía</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-extravia">
+                        <div class="card-body">
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Nombre</label>
+                                </div>
+                                <input maxlength="300" id="extranombre-via-nuevo" class="form-control" autocomplete="off">
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarExtraVia()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px; display: none" id="bloqueGuardarTabla">
         <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Guardar Receta Médica</button>
     </div>
@@ -296,7 +391,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-            $('#select-dianostico').select2({
+            $('#select-diagnostico').select2({
                 theme: "bootstrap-5",
                 "language": {
                     "noResults": function () {
@@ -335,8 +430,115 @@
         }
 
         function vistaAtras(){
-            history.back();
+            let idconsulta = {{ $idconsulta }};
+            window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
         }
+
+
+
+        function nuevoDiagnosticoExtra(){
+            document.getElementById("formulario-extradiagnostico").reset();
+            $('#modalExtraDiagnostico').modal('show');
+        }
+
+
+        function nuevaViaExtra(){
+            document.getElementById("formulario-extravia").reset();
+            $('#modalExtraVia').modal('show');
+        }
+
+
+
+
+        function guardarExtraDiagnostico(){
+
+            var nombre = document.getElementById('extranombre-diagnostico-nuevo').value;
+            var descripcion = document.getElementById('extradescripcion-diagnostico-nuevo').value;
+
+            if(nombre === ''){
+                toastr.error('Nombre es requerido');
+                return;
+            }
+
+            openLoading();
+            var formData = new FormData();
+
+            formData.append('nombre', nombre);
+            formData.append('descripcion', descripcion);
+
+            axios.post(url+'/diagnosticos/guardar/getlistado/completo', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-diagnostico").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-diagnostico').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-diagnostico").trigger("change");
+
+                        $('#modalExtraDiagnostico').modal('hide');
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
+
+
+        function guardarExtraVia(){
+
+            var nombre = document.getElementById('extranombre-via-nuevo').value;
+
+            if(nombre === ''){
+                toastr.error('Nombre es requerido');
+                return;
+            }
+
+            openLoading();
+            var formData = new FormData();
+
+            formData.append('nombre', nombre);
+
+            axios.post(url+'/vias/guardar/getlistado/completo', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-via").options.length = 0;
+
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-via').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-via").trigger("change");
+
+                        $('#modalExtraVia').modal('hide');
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+
+        }
+
+
+
+
 
 
         function cargarTablaProducto(){
@@ -562,7 +764,7 @@
         function registrarMedicamento(){
 
             var fecha = document.getElementById('fecha').value;
-            var diagnostico = document.getElementById('select-dianostico').value;
+            var diagnostico = document.getElementById('select-diagnostico').value;
             var via = document.getElementById('select-via').value;
             var indicacionGeneral = document.getElementById('text-indicacion-general').value;
             var proximaCita = document.getElementById('proxima-cita').value;

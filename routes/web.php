@@ -349,7 +349,11 @@ Route::get('/admin/documentoreceta/bloque/recetas/{idpaciente}', [DocumentoRecet
 // todos los cuadros clinicos de un paciente
 Route::get('/admin/documentoreceta/bloque/cuadroclinico/{idpaciente}', [DocumentoRecetaController::class, 'tablaCuadroClinicoPorPaciente']);
 
+// listado de array de diagnosticos
+Route::post('/admin/diagnosticos/guardar/getlistado/completo', [DiagnosticoController::class, 'registroExtraDiagnostico']);
 
+// listado de array de vias
+Route::post('/admin/vias/guardar/getlistado/completo', [DiagnosticoController::class, 'registroExtraVia']);
 
 
 

@@ -1,7 +1,10 @@
 <div class="card card-default">
     <div class="card-header">
         <h3 class="card-title" style="font-weight: bold">Historial de Antropología</h3>
-        @if($btnAntro == 0)
+
+        <!-- SOLO 1 POR CONSULTA -->
+
+        @if($btnAntrosV == 0)
         <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
                 onclick="vistaNuevaAntropologia()" class="button button-3d button-rounded button-pill button-small">
             <i class="fas fa-plus"></i>
