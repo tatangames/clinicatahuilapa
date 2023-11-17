@@ -689,7 +689,7 @@ class FarmaciaController extends Controller
             }
 
 
-            //DB::commit();
+            DB::commit();
             return ['success' => 2];
 
         }catch(\Throwable $e){
@@ -965,20 +965,134 @@ class FarmaciaController extends Controller
 
 
 
+    // ---------- CATALOGO DE FARMACIA -----------
+
+
+    public function indexCatalogoFarmacia(){
 
 
 
+        return view('backend.admin.farmacia.catalogo.vistacatalogofarmacia');
+    }
+
+
+    public function tablaCatalogoFarmacia(){
+
+
+        $arrayListado = FarmaciaArticulo::orderBy('nombre', 'ASC')->get();
+
+        foreach ($arrayListado as $dato){
+
+            $infoLinea = Linea::where('id', $dato->linea_id)->first();
+            $dato->nombreLinea = $infoLinea->nombre;
+
+            $nomSubLinea = "";
+
+            if($infoSubLinea = SubLinea::where('id', $dato->sublinea_id)->first()){
+                $nomSubLinea = $infoSubLinea->nombre;
+            }
+            $dato->nombreSubLinea = $nomSubLinea;
+        }
+
+        return view('backend.admin.farmacia.catalogo.tablacatalogofarmacia', compact('arrayListado'));
+    }
 
 
 
+    public function vistaEditarArticuloCatalogo($idarticulo){
+
+        $infoArticulo = FarmaciaArticulo::where('id', $idarticulo)->first();
+
+        $arrayLinea = Linea::orderBy('nombre','ASC')->get();
+        $arraySubLinea = SubLinea::orderBy('nombre','ASC')->get();
+
+
+        // array envase
+        $arrayEnvase = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 1)->orderBy('nombre')->get();
+
+        // array forma farmaceutica
+        $arrayFormaFarmaceutica = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 2)->orderBy('nombre')->get();
+
+
+        // array concentracion
+        $arrayConcentracion = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 3)->orderBy('nombre')->get();
+
+
+        // array contenido
+        $arrayContenido = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 4)->orderBy('nombre')->get();
+
+
+        // array forma administracion
+        $arrayAdministracion = ContenidoFarmaceutica::where('tipo_farmaceutica_id', 5)->orderBy('nombre')->get();
+
+
+        $tieneExtras = 0;
+        $infoArticuloMedi = null;
+        $nombreGenerico = "";
+        if($infoMedi = ArticuloMedicamento::where('farmacia_articulo_id', $idarticulo)->first()){
+            $tieneExtras = 1;
+            $infoArticuloMedi = $infoMedi;
+            $nombreGenerico = $infoMedi->nombre_generico;
+        }
+
+
+        return view('backend.admin.farmacia.catalogo.vistaeditarcatalogo', compact('infoArticulo',
+        'arrayLinea', 'arraySubLinea', 'arrayEnvase', 'arrayFormaFarmaceutica', 'arrayConcentracion',
+            'arrayContenido', 'arrayAdministracion', 'tieneExtras',
+            'infoArticuloMedi', 'idarticulo', 'nombreGenerico'));
+    }
 
 
 
+    public function actualizarArticuloCatalogo(Request $request){
+
+        $regla = array(
+            'idArticulo' => 'required',
+            'idLinea' => 'required',
+            'nombre' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
 
 
+        DB::beginTransaction();
+
+        try {
+
+            Log::info($request->all());
 
 
+            FarmaciaArticulo::where('id', $request->idArticulo)->update([
+                'linea_id' => $request->idLinea,
+                'sublinea_id' => $request->idSubLinea,
+                'nombre' => $request->nombre,
+                'codigo_articulo' => $request->codigoArticulo,
+                'existencia_minima' => $request->existencia,
+            ]);
 
+            if(ArticuloMedicamento::where('farmacia_articulo_id', $request->idArticulo)->first()){
+
+                ArticuloMedicamento::where('farmacia_articulo_id', $request->idArticulo)->update([
+                    'con_far_envase_id' => $request->idEnvase,
+                    'con_far_forma_id' => $request->idFormaFarma,
+                    'con_far_concentracion_id' => $request->idConcentracion,
+                    'con_far_contenido_id' => $request->idContenido,
+                    'con_far_administra_id' => $request->idAdministracion,
+                    'nombre_generico' => $request->nombreGenerico,
+                ]);
+            }
+
+            DB::commit();
+            return ['success' => 1];
+
+        }catch(\Throwable $e){
+            Log::info('error ' . $e);
+            DB::rollback();
+            return ['success' => 99];
+        }
+    }
 
 
 

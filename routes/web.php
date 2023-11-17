@@ -367,6 +367,18 @@ Route::get('/admin/existencia/individual/entrada/detalle/{idarticulo}', [Farmaci
 Route::get('/admin/existencia/individual/entrada/detalle/tabla/{idarticulo}', [FarmaciaController::class, 'tablaEntradaDetalleArticuloCantidad']);
 
 
+// --- CATALOGO DE FARMACIA ---
+Route::get('/admin/catalogo/farmacia/vista', [FarmaciaController::class, 'indexCatalogoFarmacia'])->name('admin.catalogo.farmacia.index');
+Route::get('/admin/catalogo/farmacia/tabla', [FarmaciaController::class, 'tablaCatalogoFarmacia']);
+// vista para editar un articulo
+Route::get('/admin/catalogo/individual/vista/editar/{idarticulo}', [FarmaciaController::class, 'vistaEditarArticuloCatalogo']);
+// actualizar
+Route::post('/admin/catalogo/individual/actualizar', [FarmaciaController::class, 'actualizarArticuloCatalogo']);
+
+
+
+
+
 
 
 
