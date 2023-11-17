@@ -106,9 +106,8 @@ class DocumentoRecetaController extends Controller
         $pilaIdAntro = array();
 
         foreach ($listaID as $info){
-            array_push($pilaIdAntro, $listaID->id);
+            array_push($pilaIdAntro, $info->id);
         }
-
 
         $bloqueAntropSv = Antropometria::whereIn('id', $pilaIdAntro)
             ->orderBy('fecha', 'DESC')

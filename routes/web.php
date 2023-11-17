@@ -358,3 +358,46 @@ Route::post('/admin/vias/guardar/getlistado/completo', [DiagnosticoController::c
 // guardar y obtener listado de Contenido Farmaceutica
 Route::post('/admin/guardar/contenidofarma/get/listado', [FarmaciaController::class, 'guardarExtraContenidoFarmaceutica']);
 
+
+// --- EXISTENCIAS DE FARMACIA ---
+Route::get('/admin/existencia/farmacia/vista', [FarmaciaController::class, 'indexExistenciaFarmacia'])->name('admin.existencias.farmacia.index');
+Route::get('/admin/existencia/farmacia/tabla/{idfuente}/{idlinea}', [FarmaciaController::class, 'tablaExistenciaFarmacia']);
+
+Route::get('/admin/existencia/individual/entrada/detalle/{idarticulo}', [FarmaciaController::class, 'vistaEntradaDetalleArticuloCantidad']);
+Route::get('/admin/existencia/individual/entrada/detalle/tabla/{idarticulo}', [FarmaciaController::class, 'tablaEntradaDetalleArticuloCantidad']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

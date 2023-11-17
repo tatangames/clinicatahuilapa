@@ -267,7 +267,7 @@
     </section>
 
     <div class="modal-footer justify-content-between" style="margin-top: 25px;">
-        <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Guardar</button>
+        <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Guardar Listado de Medicamentos</button>
     </div>
 
 
@@ -439,8 +439,8 @@
                 return;
             }
 
-            if(precioProducto <= 0){
-                toastr.error('Precio Producto no debe ser negativo o cero');
+            if(precioProducto < 0){
+                toastr.error('Precio Producto no debe ser negativo');
                 return;
             }
 

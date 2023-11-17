@@ -753,4 +753,235 @@ class FarmaciaController extends Controller
 
 
 
+    // ------ EXISTENCIAS DE FARMACIA ------
+
+
+    public function indexExistenciaFarmacia(){
+
+        $arrayFuenteFina = FuenteFinanciamiento::orderBy('nombre', 'ASC')->get();
+        $arrayLinea = Linea::orderBy('nombre', 'ASC')->get();
+
+
+        return view('backend.admin.farmacia.existencia.vistaexistenciasfarmacia', compact('arrayFuenteFina',
+        'arrayLinea'));
+    }
+
+
+    public function tablaExistenciaFarmacia($idfuente, $idlinea){
+
+        // TODAS LAS FUENTES Y TODAS LAS LINEAS
+        if($idfuente == '0' && $idlinea == '0'){
+
+            // TODOS LOS MEDICAMENTOS
+            $arrayListado = FarmaciaArticulo::orderBy('nombre', 'ASC')->get();
+
+            foreach ($arrayListado as $dato){
+
+                $infoLinea = Linea::where('id', $dato->linea_id)->first();
+                $dato->nombreLinea = $infoLinea->nombre;
+
+                $nomSubLinea = "";
+
+                if($infoSubLinea = SubLinea::where('id', $dato->sublinea_id)->first()){
+                    $nomSubLinea = $infoSubLinea->nombre;
+                }
+                $dato->nombreSubLinea = $nomSubLinea;
+
+                // SUMANDO LOS ARTICULOS DE ENTRADAS
+
+                $sumatoria = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)
+                            ->sum('cantidad');
+
+                $dato->totalArticulo = $sumatoria;
+            }
+
+            return view('backend.admin.farmacia.existencia.tablaexistenciasfarmacia', compact('arrayListado'));
+        }
+
+        // BUSCAR POR UNA FUENTE PERO TODAS LAS LINEAS
+        if($idfuente != '0' && $idlinea == '0') {
+
+            // BUSCAR POR FUENTE DE FINANCIAMIENTO, TODOS LOS ARTICULOS QUE TENGAN REGISTRADO ESTE TIPO DE FUENTE
+
+            // obtener listado de id medicamento que pertenecen a una fuente de financiamiento
+            $listado = DB::table('entrada_medicamento AS en')
+                ->join('entrada_medicamento_detalle AS deta', 'deta.entrada_medicamento_id', '=', 'en.id')
+                ->select('en.fuentefina_id', 'deta.medicamento_id')
+                ->where('en.fuentefina_id', $idfuente)
+                ->get();
+
+            $pilaIdArticulo = array();
+
+            foreach ($listado as $info) {
+                array_push($pilaIdArticulo, $info->medicamento_id);
+            }
+
+            // obtener listado filtrado de solo id articulos
+            $arrayListado = FarmaciaArticulo::whereIn('id', $pilaIdArticulo)
+                ->orderBy('nombre', 'ASC')->get();
+
+            foreach ($arrayListado as $dato){
+
+                $infoLinea = Linea::where('id', $dato->linea_id)->first();
+                $dato->nombreLinea = $infoLinea->nombre;
+
+                $nomSubLinea = "";
+
+                if($infoSubLinea = SubLinea::where('id', $dato->sublinea_id)->first()){
+                    $nomSubLinea = $infoSubLinea->nombre;
+                }
+                $dato->nombreSubLinea = $nomSubLinea;
+
+                // SUMANDO LOS ARTICULOS DE ENTRADAS
+
+                $sumatoria = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)
+                    ->sum('cantidad');
+
+
+                $dato->totalArticulo = $sumatoria;
+            }
+
+            return view('backend.admin.farmacia.existencia.tablaexistenciasfarmacia', compact('arrayListado'));
+        }
+
+        if($idfuente == '0' && $idlinea != '0') {
+
+            // BUSCAR POR UNA LINEA PERO TODAS LAS FUENTE
+            $arrayListado = FarmaciaArticulo::where('linea_id', $idlinea)
+                ->orderBy('nombre', 'ASC')
+                ->get();
+
+            foreach ($arrayListado as $dato){
+
+                $infoLinea = Linea::where('id', $dato->linea_id)->first();
+                $dato->nombreLinea = $infoLinea->nombre;
+
+                $nomSubLinea = "";
+
+                if($infoSubLinea = SubLinea::where('id', $dato->sublinea_id)->first()){
+                    $nomSubLinea = $infoSubLinea->nombre;
+                }
+                $dato->nombreSubLinea = $nomSubLinea;
+
+                // SUMANDO LOS ARTICULOS DE ENTRADAS
+
+                $sumatoria = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)
+                    ->sum('cantidad');
+
+
+                $dato->totalArticulo = $sumatoria;
+            }
+
+            return view('backend.admin.farmacia.existencia.tablaexistenciasfarmacia', compact('arrayListado'));
+        }
+
+
+        // BUSCAR POR UNA FUENTE Y POR UNA LINEA
+
+        $listado = DB::table('entrada_medicamento AS en')
+            ->join('entrada_medicamento_detalle AS deta', 'deta.entrada_medicamento_id', '=', 'en.id')
+            ->select('en.fuentefina_id', 'deta.medicamento_id')
+            ->where('en.fuentefina_id', $idfuente)
+            ->get();
+
+        $pilaIdArticulo = array();
+
+        foreach ($listado as $info) {
+            array_push($pilaIdArticulo, $info->medicamento_id);
+        }
+
+        // obtener listado filtrado de solo id articulos
+        $arrayListado = FarmaciaArticulo::whereIn('id', $pilaIdArticulo)
+            ->where('linea_id', $idlinea)
+            ->orderBy('nombre', 'ASC')
+            ->get();
+
+        foreach ($arrayListado as $dato){
+
+            $infoLinea = Linea::where('id', $dato->linea_id)->first();
+            $dato->nombreLinea = $infoLinea->nombre;
+
+            $nomSubLinea = "";
+
+            if($infoSubLinea = SubLinea::where('id', $dato->sublinea_id)->first()){
+                $nomSubLinea = $infoSubLinea->nombre;
+            }
+            $dato->nombreSubLinea = $nomSubLinea;
+
+            // SUMANDO LOS ARTICULOS DE ENTRADAS
+
+            $sumatoria = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)
+                ->sum('cantidad');
+
+
+            $dato->totalArticulo = $sumatoria;
+        }
+
+        return view('backend.admin.farmacia.existencia.tablaexistenciasfarmacia', compact('arrayListado'));
+    }
+
+
+
+
+    // VER LISTADO DE ENTRADAS DE UN MEDICAMENTO PARA VER SU CANTIDAD ACTUAL
+    public function vistaEntradaDetalleArticuloCantidad($idarticulo){
+
+        $infoArticulo = FarmaciaArticulo::where('id', $idarticulo)->first();
+        $articulo = $infoArticulo->nombre;
+
+        return view('backend.admin.farmacia.existencia.detalle.vistadetalleexistencias', compact('idarticulo',
+            'articulo'));
+    }
+
+    public function tablaEntradaDetalleArticuloCantidad($idarticulo){
+
+        $arrayListado = DB::table('entrada_medicamento_detalle AS en')
+            ->join('farmacia_articulo AS fa', 'en.medicamento_id', '=', 'fa.id')
+            ->select('fa.nombre AS nombreMedicamento', 'en.entrada_medicamento_id', 'en.cantidad', 'en.precio',
+                    'en.lote', 'en.fecha_vencimiento')
+            ->where('en.medicamento_id', $idarticulo)
+            ->orderBy('fa.nombre', 'ASC')
+            ->get();
+
+        foreach ($arrayListado as $dato){
+
+            $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
+            $dato->fechaVencFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
+
+            $infoEntrada = EntradaMedicamento::where('id', $dato->entrada_medicamento_id)->first();
+            $dato->fechaEntradaFormat = date("d-m-Y", strtotime($infoEntrada->fecha));
+            $dato->numfactura = $infoEntrada->numero_factura;
+
+            $infoProveedor = Proveedores::where('id', $infoEntrada->proveedor_id)->first();
+            $dato->nombreProveedor = $infoProveedor->nombre;
+
+            $infoFuente = FuenteFinanciamiento::where('id', $infoEntrada->fuentefina_id)->first();
+            $dato->nombreFuente = $infoFuente->nombre;
+        }
+
+
+        return view('backend.admin.farmacia.existencia.detalle.tabladetalleexistencias', compact('idarticulo', 'arrayListado'));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

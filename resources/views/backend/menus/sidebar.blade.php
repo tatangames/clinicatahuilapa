@@ -245,6 +245,14 @@
                             </li>
 
 
+                            <li class="nav-item">
+                                <a href="{{ route('admin.existencias.farmacia.index') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Existencias</p>
+                                </a>
+                            </li>
+
+
                         </ul>
                     </li>
 

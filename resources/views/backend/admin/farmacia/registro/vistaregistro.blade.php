@@ -487,6 +487,7 @@
 
                         document.getElementById("select-envase").options.length = 0;
 
+                        $('#select-envase').append('<option value="">Seleccionar Opción</option>');
                         $.each(response.data.lista, function( key, val ){
                             $('#select-envase').append('<option value="' +val.id +'">'+val.nombre+'</option>');
                         });
@@ -501,6 +502,7 @@
 
                         document.getElementById("select-formafarmaceutica").options.length = 0;
 
+                        $('#select-formafarmaceutica').append('<option value="">Seleccionar Opción</option>');
                         $.each(response.data.lista, function( key, val ){
                             $('#select-formafarmaceutica').append('<option value="' +val.id +'">'+val.nombre+'</option>');
                         });
@@ -514,6 +516,7 @@
 
                         document.getElementById("select-concentracion").options.length = 0;
 
+                        $('#select-concentracion').append('<option value="">Seleccionar Opción</option>');
                         $.each(response.data.lista, function( key, val ){
                             $('#select-concentracion').append('<option value="' +val.id +'">'+val.nombre+'</option>');
                         });
@@ -528,6 +531,7 @@
 
                         document.getElementById("select-contenido").options.length = 0;
 
+                        $('#select-contenido').append('<option value="">Seleccionar Opción</option>');
                         $.each(response.data.lista, function( key, val ){
                             $('#select-contenido').append('<option value="' +val.id +'">'+val.nombre+'</option>');
                         });
@@ -537,11 +541,12 @@
                     }
 
 
-                    if(response.data.success === 5){
+                    else if(response.data.success === 5){
                         toastr.success('Guardado correctamente');
 
                         document.getElementById("select-viaadministracion").options.length = 0;
 
+                        $('#select-viaadministracion').append('<option value="">Seleccionar Opción</option>');
                         $.each(response.data.lista, function( key, val ){
                             $('#select-viaadministracion').append('<option value="' +val.id +'">'+val.nombre+'</option>');
                         });
