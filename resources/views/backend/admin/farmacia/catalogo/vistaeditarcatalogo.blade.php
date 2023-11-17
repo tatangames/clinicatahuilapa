@@ -343,6 +343,42 @@
     </section>
 
 
+    <div class="modal fade" id="modalExtraInformacion">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="txtTituloExtra"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-extra-datos">
+                        <div class="card-body">
+
+                            <div>
+                                <input id="idtipo-extra-info" type="hidden">
+                            </div>
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Nombre</label>
+                                </div>
+                                <input maxlength="300" id="extranombre-via-nuevo" class="form-control" autocomplete="off">
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarExtraInformacion()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 
@@ -543,6 +579,143 @@
 
         function volverAtras(){
             window.location.href="{{ url('/admin/catalogo/farmacia/vista') }}";
+        }
+
+
+
+        function verModalExtraInformacion(idtipo){
+
+            document.getElementById("formulario-extra-datos").reset();
+
+            if(idtipo == 1){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Envase";
+            }else if(idtipo == 2){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Forma Farmaceutica";
+            }else if(idtipo == 3){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Concentración";
+            }else if(idtipo == 4){
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Contenido";
+            }else{
+                document.getElementById("txtTituloExtra").innerHTML = "Registrar Tipo: Via Administración";
+            }
+
+            $('#idtipo-extra-info').val(idtipo);
+
+            $('#modalExtraInformacion').modal('show');
+        }
+
+
+        function guardarExtraInformacion(){
+
+            var idtipo = document.getElementById("idtipo-extra-info").value;
+            var nombre = document.getElementById("extranombre-via-nuevo").value;
+
+            if(nombre === ''){
+                toastr.error('Nombre es requerido');
+                return;
+            }
+
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('idtipo', idtipo);
+            formData.append('nombre', nombre);
+
+            axios.post(url+'/guardar/contenidofarma/get/listado', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    // 1- ENVASE
+                    // 2- FORMA FARMACEUTICA
+                    // 3- CONCENTRACION
+                    // 4- CONTENIDO
+                    // 5- VIA ADMINISTRACION
+
+                    if(response.data.success === 1){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-envase").options.length = 0;
+
+                        $('#select-envase').append('<option value="">Seleccionar Opción</option>');
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-envase').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-envase").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    else if(response.data.success === 2){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-formafarmaceutica").options.length = 0;
+
+                        $('#select-formafarmaceutica').append('<option value="">Seleccionar Opción</option>');
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-formafarmaceutica').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-formafarmaceutica").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+                    else if(response.data.success === 3){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-concentracion").options.length = 0;
+
+                        $('#select-concentracion').append('<option value="">Seleccionar Opción</option>');
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-concentracion').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-concentracion").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    else if(response.data.success === 4){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-contenido").options.length = 0;
+
+                        $('#select-contenido').append('<option value="">Seleccionar Opción</option>');
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-contenido').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-contenido").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    else if(response.data.success === 5){
+                        toastr.success('Guardado correctamente');
+
+                        document.getElementById("select-viaadministracion").options.length = 0;
+
+                        $('#select-viaadministracion').append('<option value="">Seleccionar Opción</option>');
+                        $.each(response.data.lista, function( key, val ){
+                            $('#select-viaadministracion').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+                        $("#select-viaadministracion").trigger("change");
+
+                        $('#modalExtraInformacion').modal('hide');
+                    }
+
+
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+
+
         }
 
 
