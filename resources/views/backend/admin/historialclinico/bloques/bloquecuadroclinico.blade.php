@@ -2,11 +2,17 @@
     <div class="card-header">
         <h3 class="card-title" style="font-weight: bold">Historial de Cuadros Clinicos</h3>
 
-        <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
+
+        @if($haycuadro == 0)
+
+            <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
                 onclick="modalCuadroClinico()" class="button button-3d button-rounded button-pill button-small">
             <i class="fas fa-plus"></i>
             Nuevo Cuadro Clínico
         </button>
+
+        @endif
+
 
     </div>
 </div>

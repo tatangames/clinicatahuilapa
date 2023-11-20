@@ -393,7 +393,9 @@ Route::get('/admin/historial/entrada/listado/tabla/{identrada}', [HistorialRepor
 Route::get('/admin/historial/reporte/salidasreceta', [HistorialReportesController::class,'indexHistorialSalidasReceta'])->name('admin.historial.salidas.receta');
 Route::get('/admin/historial/reporte/salidasreceta/tabla/{idproceso}/{fechainicio}/{fechafin}', [HistorialReportesController::class,'tablaHistorialSalidasReceta']);
 
-
+// - SALIDAS MANUAL -
+Route::get('/admin/historial/reporte/salidasmanual', [HistorialReportesController::class,'indexHistorialSalidasManual'])->name('admin.historial.salidas.manual');
+Route::get('/admin/historial/reporte/salidasmanual/tabla/{fechainicio}/{fechafin}', [HistorialReportesController::class,'tablaHistorialSalidasManual']);
 
 
 

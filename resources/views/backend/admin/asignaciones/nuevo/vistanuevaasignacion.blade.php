@@ -15,15 +15,6 @@
         table-layout:fixed;
     }
 
-    #card-header-color {
-        background-color: cyan !important;
-    }
-
-    .cursor-pointer:hover {
-        cursor: pointer;
-        color: #401fd2;
-        font-weight: bold;
-    }
 
 </style>
 
@@ -147,7 +138,7 @@
                                             <tr>
                                                 <td>
                                                     <input id="repuesto" data-info='0' autocomplete="off" class='form-control' style='width:100%' onkeyup='buscarPaciente(this)' maxlength='400'  type='text'>
-                                                    <div class='droplista' style='position: absolute; color: black !important; z-index: 9; width: 75% !important;'></div>
+                                                    <div class='droplista' style='position: absolute; z-index: 9; width: 75% !important;'></div>
                                                 </td>
                                             </tr>
                                             </tbody>

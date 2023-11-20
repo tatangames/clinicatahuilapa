@@ -425,8 +425,13 @@ class HistorialClinicoController extends Controller
             $dato->nombreusuario = $infoUsuario->nombre;
         }
 
+        // mostrar boton
+        $existeReceta = 0;
+        if(Recetas::where('consulta_id', $idconsulta)->first()){
+            $existeReceta = 1;
+        }
 
-        return view('backend.admin.historialclinico.bloques.bloquerecetas', compact('arrayRecetas'));
+        return view('backend.admin.historialclinico.bloques.bloquerecetas', compact('arrayRecetas', 'existeReceta'));
     }
 
 
@@ -449,7 +454,12 @@ class HistorialClinicoController extends Controller
             $dato->nombreDiagnostico = $infoDiagnostico->nombre;
         }
 
-        return view('backend.admin.historialclinico.bloques.bloquecuadroclinico', compact('bloqueCuadroClinico', 'idconsulta'));
+        $haycuadro = 0;
+        if(CuadroClinico::where('consulta_id', $idconsulta)->first()){
+            $haycuadro = 1;
+        }
+
+        return view('backend.admin.historialclinico.bloques.bloquecuadroclinico', compact('bloqueCuadroClinico', 'idconsulta', 'haycuadro'));
     }
 
 

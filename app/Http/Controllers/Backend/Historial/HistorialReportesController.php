@@ -8,6 +8,8 @@ use App\Models\EntradaMedicamento;
 use App\Models\EntradaMedicamentoDetalle;
 use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
+use App\Models\MotivoFarmacia;
+use App\Models\OrdenSalida;
 use App\Models\Paciente;
 use App\Models\Proveedores;
 use App\Models\Recetas;
@@ -160,16 +162,39 @@ class HistorialReportesController extends Controller
 
             return view('backend.admin.historial.salidasreceta.tablahistorialsalidasrecetadenegada', compact('arrayRecetas'));
         }
-
-
-
-
-
     }
 
 
 
+    public function indexHistorialSalidasManual(){
 
+        return view('backend.admin.historial.manual.vistahistorialsalidasmanual');
+    }
+
+
+    public function tablaHistorialSalidasManual($desde, $hasta){
+
+        $start = Carbon::parse($desde)->startOfDay();
+        $end = Carbon::parse($hasta)->endOfDay();
+
+        $arrayOrdenSalida = OrdenSalida::whereBetween('fecha', [$start, $end])
+            ->orderBy('fecha', 'ASC')
+            ->get();
+
+        foreach ($arrayOrdenSalida as $dato){
+
+            $infoMotivo = MotivoFarmacia::where('id', $dato->motivo_id)->first();
+            $dato->nombremotivo = $infoMotivo->nombre;
+
+            $fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+            $horaFormat = date("h:i A", strtotime($dato->hora));
+            $dato->fechaFormat = $fechaFormat;
+            $dato->horaFormat = $horaFormat;
+        }
+
+
+        return view('backend.admin.historial.manual.tablahistorialsalidasmanual', compact('arrayOrdenSalida'));
+    }
 
 
 
