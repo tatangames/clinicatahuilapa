@@ -30,19 +30,18 @@
                         <div class=" col-md-3">
                             <label>Tipo de Proceso</label>
                             <select class="form-control" id="select-proceso" onchange="verificarEstado()">
-                                <option value="0">Seleccionar Todos</option>
                                 <option value="2">Procesados</option>
                                 <option value="3">Denegados</option>
                             </select>
                         </div>
 
                         <div class=" col-md-2">
-                            <label>Fecha Inicio</label>
+                            <label>Fecha Desde</label>
                             <input type="date" class="form-control" id="fecha-inicio" autocomplete="off" onchange="verificarEstado()">
                         </div>
 
                         <div class=" col-md-2">
-                            <label>Fecha Fin</label>
+                            <label>Fecha Hasta</label>
                             <input type="date" class="form-control" id="fecha-fin" autocomplete="off" onchange="verificarEstado()">
                         </div>
                     </div>
@@ -96,6 +95,16 @@
                 return;
             }
 
+
+            var fecha1 = new Date(fechainicio);
+            var fecha2 = new Date(fechafin);
+
+            if (fecha1 > fecha2) {
+
+                toastr.error('Fecha Desde es mayor a Fecha Hasta')
+                return;
+            }
+
             openLoading();
 
             // CARGAR TABLA
@@ -105,7 +114,7 @@
 
 
 
-        function infoVerLista(idreceta){
+        function informacionImprimir(idreceta){
 
             window.location.href="{{ url('/admin/') }}/" + identrada;
         }

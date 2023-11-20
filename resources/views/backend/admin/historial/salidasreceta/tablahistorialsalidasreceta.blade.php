@@ -7,11 +7,11 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th style="width: 8%">Fecha</th>
-                                <th style="width: 12%"># Consulta</th>
-                                <th style="width: 8%">Paciente</th>
-                                <th style="width: 8%">Descripción</th>
-                                <th style="width: 8%">Diagnóstico</th>
+                                <th style="width: 6%">Fecha Procesado</th>
+                                <th style="width: 4%"># Consulta</th>
+                                <th style="width: 6%">Paciente</th>
+                                <th style="width: 6%">Descripción</th>
+                                <th style="width: 6%">Diagnóstico</th>
                                 <th style="width: 4%">Opciones</th>
                             </tr>
                             </thead>
@@ -19,15 +19,15 @@
 
                             @foreach($arrayRecetas as $dato)
                                 <tr>
-                                    <td>{{ $dato->fechaFormat }}</td>
-                                    <td>{{ $dato->nombrefuente }}</td>
-                                    <td>{{ $dato->nombrefactura }}</td>
-                                    <td>{{ $dato->numero_factura }}</td>
-                                    <td>{{ $dato->nomproveedor }}</td>
+                                    <td>{{ $dato->fechaEstadoFormat }}</td>
+                                    <td>{{ $dato->consulta_id }}</td>
+                                    <td>{{ $dato->nombrepaci }}</td>
+                                    <td>{{ $dato->descripcion_general }}</td>
+                                    <td>{{ $dato->nombrediagn }}</td>
                                     <td>
                                         <center>
-                                            <button type="button" class="btn btn-info btn-xs" onclick="infoVerLista({{ $dato->id }})">
-                                                <i class="fas fa-list" title="Ver"></i>&nbsp; Ver
+                                            <button type="button" class="btn btn-info btn-xs" onclick="informacionImprimir({{ $dato->id }})">
+                                                <i class="fas fa-list" title="Imprimir"></i>&nbsp; Imprimir
                                             </button>
                                         </center>
 

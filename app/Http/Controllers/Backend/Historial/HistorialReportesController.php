@@ -10,6 +10,7 @@ use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
 use App\Models\Paciente;
 use App\Models\Proveedores;
+use App\Models\Recetas;
 use App\Models\RecetasDetalle;
 use App\Models\TipoFactura;
 use Carbon\Carbon;
@@ -111,26 +112,23 @@ class HistorialReportesController extends Controller
 
     public function indexHistorialSalidasReceta(){
 
-
-
-
         return view('backend.admin.historial.salidasreceta.vistahistorialsalidasreceta');
     }
 
 
     public function tablaHistorialSalidasReceta($idproceso, $desde, $hasta){
 
-        if($idproceso == '1'){
+        if($idproceso == '2'){
             // ESTADO: PROCESADA
 
 
-            $arrayRecetas = RecetasDetalle::where('estado', 2)
-                ->orderBy('fecha', 'DESC')
+            $arrayRecetas = Recetas::where('estado', 2)
+                ->orderBy('fecha_estado', 'DESC')
                 ->get();
 
             foreach ($arrayRecetas as $dato){
 
-                $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+                $dato->fechaEstadoFormat = date("d-m-Y", strtotime($dato->fecha_estado));
 
                 $infoPaciente = Paciente::where('id', $dato->paciente_id)->first();
                 $dato->nombrepaci = $infoPaciente->nombres . ' ' . $infoPaciente->apellidos;
@@ -140,21 +138,18 @@ class HistorialReportesController extends Controller
             }
 
 
-            return view('backend.admin.historial.salidasreceta.tablahistorialsalidasreceta');
+            return view('backend.admin.historial.salidasreceta.tablahistorialsalidasreceta', compact('arrayRecetas'));
         }
         else{
             // DEFECTO ESTADO: DENEGADA
 
-
-            return "denegado";
-
-            $arrayRecetas = RecetasDetalle::where('estado', 3)
-                ->orderBy('fecha', 'DESC')
+            $arrayRecetas = Recetas::where('estado', 3)
+                ->orderBy('fecha_estado', 'DESC')
                 ->get();
 
             foreach ($arrayRecetas as $dato){
 
-                $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+                $dato->fechaEstadoFormat = date("d-m-Y", strtotime($dato->fecha_estado));
 
                 $infoPaciente = Paciente::where('id', $dato->paciente_id)->first();
                 $dato->nombrepaci = $infoPaciente->nombres . ' ' . $infoPaciente->apellidos;
@@ -163,7 +158,7 @@ class HistorialReportesController extends Controller
                 $dato->nombrediagn = $infoDiagn->nombre;
             }
 
-            return view('backend.admin.historial.salidasreceta.tablahistorialsalidasrecetadenegada');
+            return view('backend.admin.historial.salidasreceta.tablahistorialsalidasrecetadenegada', compact('arrayRecetas'));
         }
 
 

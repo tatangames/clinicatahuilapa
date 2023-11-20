@@ -346,7 +346,6 @@ class FarmaciaController extends Controller
 
     public function registrarOrdenSalidaFarmacia(Request $request){
 
-
         $regla = array(
             'motivo' => 'required',
             'fecha' => 'required'

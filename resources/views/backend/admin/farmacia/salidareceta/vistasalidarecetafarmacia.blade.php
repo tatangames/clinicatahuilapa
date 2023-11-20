@@ -37,12 +37,12 @@
                             </div>
 
                             <div class=" col-md-2">
-                                <label>Fecha Receta De:</label>
+                                <label>Fecha Receta Desde:</label>
                                 <input type="date" class="form-control" id="fecha-inicio" autocomplete="off" onchange="verificarEstado()">
                             </div>
 
                             <div class=" col-md-2">
-                                <label>Fecha Receta Fin</label>
+                                <label>Fecha Receta Hasta</label>
                                 <input type="date" class="form-control" id="fecha-fin" autocomplete="off" onchange="verificarEstado()">
                             </div>
                     </div>
@@ -145,6 +145,14 @@
 
             if(fechafin === ''){
                 document.getElementById("tablaDatatable").innerHTML = "";
+                return;
+            }
+
+            var fecha1 = new Date(fechainicio);
+            var fecha2 = new Date(fechafin);
+
+            if (fecha1 > fecha2) {
+                toastr.error('Fecha Desde es mayor a Fecha Hasta')
                 return;
             }
 
