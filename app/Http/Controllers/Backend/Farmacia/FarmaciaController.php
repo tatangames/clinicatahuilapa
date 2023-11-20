@@ -1050,6 +1050,7 @@ class FarmaciaController extends Controller
             'idArticulo' => 'required',
             'idLinea' => 'required',
             'nombre' => 'required',
+            'infoextra' => 'required' // saber si agregara datos extras
         );
 
         $validar = Validator::make($request->all(), $regla);
@@ -1061,9 +1062,6 @@ class FarmaciaController extends Controller
 
         try {
 
-            Log::info($request->all());
-
-
             FarmaciaArticulo::where('id', $request->idArticulo)->update([
                 'linea_id' => $request->idLinea,
                 'sublinea_id' => $request->idSubLinea,
@@ -1071,6 +1069,7 @@ class FarmaciaController extends Controller
                 'codigo_articulo' => $request->codigoArticulo,
                 'existencia_minima' => $request->existencia,
             ]);
+
 
             if(ArticuloMedicamento::where('farmacia_articulo_id', $request->idArticulo)->first()){
 
@@ -1082,6 +1081,20 @@ class FarmaciaController extends Controller
                     'con_far_administra_id' => $request->idAdministracion,
                     'nombre_generico' => $request->nombreGenerico,
                 ]);
+            }
+            else if($request->infoextra == 1){
+
+                // CREAR AL NUEVO DATOS EXTRA
+
+                $datoNuevo = new ArticuloMedicamento();
+                $datoNuevo->farmacia_articulo_id = $request->idArticulo;
+                $datoNuevo->con_far_envase_id = $request->idEnvase;
+                $datoNuevo->con_far_forma_id = $request->idFormaFarma;
+                $datoNuevo->con_far_concentracion_id = $request->idConcentracion;
+                $datoNuevo->con_far_contenido_id = $request->idContenido;
+                $datoNuevo->con_far_administra_id = $request->idAdministracion;
+                $datoNuevo->nombre_generico = $request->nombreGenerico;
+                $datoNuevo->save();
             }
 
             DB::commit();

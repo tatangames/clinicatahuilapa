@@ -131,7 +131,6 @@
                                 <!-- BLOQUE PARA LINEA MEDICAMENTO -->
                                 @if($tieneExtras == 1)
 
-
                                     <section style="margin-top: 25px">
 
                                         <hr>
@@ -290,6 +289,162 @@
                                         </div>
 
                                     </section>
+
+                                @else
+
+
+
+
+                                    <!-- BLOQUE PARA LINEA MEDICAMENTO -->
+
+                                    <div id="bloque-medicamentos" style="display: none">
+
+                                        <section style="margin-top: 25px">
+
+                                            <hr>
+
+                                            <div class="row">
+
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-10" style="color: #686868">Nombre Generico: </label>
+                                                        <div class="col-md-10">
+                                                            <input type="text" maxlength="300" autocomplete="off" class="form-control" id="nombre-generico" >
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label style="color: #686868">Envase: </label>
+
+                                                        <div class="col-md-10 input-group">
+                                                            <select class="form-control" id="select-envase">
+                                                                <option value="">Seleccionar Opción</option>
+                                                                @foreach($arrayEnvase as $item)
+                                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(1)"><i class="fas fa-plus" style="color: white"></i></button>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                        </section>
+
+                                        <section style="margin-top: 15px">
+                                            <div class="row">
+
+
+                                                <div class="col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label style="color: #686868">Forma Farmaceutica: </label>
+
+
+                                                        <div class="col-md-10 input-group">
+                                                            <select class="form-control" id="select-formafarmaceutica">
+                                                                <option value="">Seleccionar Opción</option>
+                                                                @foreach($arrayFormaFarmaceutica as $item)
+                                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(2)"><i class="fas fa-plus" style="color: white"></i></button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label style="color: #686868">Concentración: </label>
+
+                                                        <div class="col-md-10 input-group">
+                                                            <select class="form-control" id="select-concentracion">
+                                                                <option value="">Seleccionar Opción</option>
+                                                                @foreach($arrayConcentracion as $item)
+                                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(3)"><i class="fas fa-plus" style="color: white"></i></button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                        </section>
+
+
+                                        <section style="margin-top: 15px">
+
+                                            <div class="row">
+
+
+                                                <div class="col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label style="color: #686868">Contenido: </label>
+
+
+                                                        <div class="col-md-10 input-group">
+                                                            <select class="form-control" id="select-contenido">
+                                                                <option value="">Seleccionar Opción</option>
+                                                                @foreach($arrayContenido as $item)
+                                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(4)"><i class="fas fa-plus" style="color: white"></i></button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-6">
+
+                                                    <div class="form-group">
+                                                        <label class="col-md-10" style="color: #686868">Via Administración: </label>
+
+                                                        <div class="col-md-10 input-group">
+                                                            <select class="form-control" id="select-viaadministracion">
+                                                                <option value="">Seleccionar Opción</option>
+                                                                @foreach($arrayAdministracion as $item)
+                                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="btn" style="background-color: #ffa616" onclick="verModalExtraInformacion(5)"><i class="fas fa-plus" style="color: white"></i></button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                        </section>
+
+
+
+
+                                    </div>
+                                    <!-- END BLOQUE PARA LINEA MEDICAMENTO -->
+
+
+
+
 
                                 @endif
 
@@ -470,6 +625,20 @@
     <script>
 
 
+        function verificarLinea(){
+            var id = document.getElementById('select-linea').value;
+            var existe = document.getElementById('bloque-medicamentos');
+
+            if(existe){
+                if(id == 1){
+                    document.getElementById('bloque-medicamentos').style.display = "block";
+                }else{
+                    document.getElementById('bloque-medicamentos').style.display = "none";
+                }
+            }
+        }
+
+
         function valida_numero(e){
             tecla = (document.all) ? e.keyCode : e.which;
 
@@ -534,15 +703,23 @@
             let hayExtras = {{ $tieneExtras }};
             let idArticulo = {{ $idarticulo }};
 
-            if(hayExtras == 1){
+            var boolDatos = 0;
 
-                // bloque medicamentos
-                var idEnvase = document.getElementById('select-envase').value;
-                var idFormaFarmace = document.getElementById('select-formafarmaceutica').value;
-                var idConcentracion = document.getElementById('select-concentracion').value;
-                var idContenido = document.getElementById('select-contenido').value;
-                var idAdministracion = document.getElementById('select-viaadministracion').value;
-                var nombreGenerico = document.getElementById('nombre-generico').value;
+            if(hayExtras === 1){
+                boolDatos = 1;
+            }
+            else if(idLinea === '1'){
+                boolDatos = 1;
+            }
+
+            if(boolDatos === 1){
+                // ESTA AGREGANDO CAMPOS EXTRAS PORQUE ELIGIO QUE ES LINEA (MEDICAMENTO)
+                let idEnvase = document.getElementById('select-envase').value;
+                let idFormaFarmace = document.getElementById('select-formafarmaceutica').value;
+                let idConcentracion = document.getElementById('select-concentracion').value;
+                let idContenido = document.getElementById('select-contenido').value;
+                let idAdministracion = document.getElementById('select-viaadministracion').value;
+                let nombreGenerico = document.getElementById('nombre-generico').value;
 
                 formData.append('idEnvase', idEnvase);
                 formData.append('idFormaFarma', idFormaFarmace);
@@ -551,12 +728,14 @@
                 formData.append('idAdministracion', idAdministracion);
                 formData.append('nombreGenerico', nombreGenerico);
             }
+
             formData.append('idArticulo', idArticulo);
             formData.append('idLinea', idLinea);
             formData.append('idSubLinea', idSubLinea);
             formData.append('codigoArticulo', codigoArticulo);
             formData.append('nombre', nombre);
             formData.append('existencia', existenciaMinima);
+            formData.append('infoextra', boolDatos);
 
 
             axios.post(url + '/catalogo/individual/actualizar', formData, {})

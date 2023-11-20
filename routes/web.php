@@ -21,6 +21,7 @@ use App\Http\Controllers\Backend\Configuracion\ProveedorController;
 use App\Http\Controllers\Backend\Farmacia\FarmaciaController;
 use App\Http\Controllers\Backend\Historial\RecetasController;
 use App\Http\Controllers\Backend\Expedientes\DocumentoRecetaController;
+use App\Http\Controllers\Backend\Historial\HistorialReportesController;
 
 
 
@@ -377,6 +378,15 @@ Route::post('/admin/catalogo/individual/actualizar', [FarmaciaController::class,
 
 
 
+
+// --- HISTORIAL ---
+
+
+Route::get('/admin/historial/reporte/entradas', [HistorialReportesController::class,'indexHistorialEntradas'])->name('admin.historial.entradas');
+Route::get('/admin/historial/reporte/entradas/tabla/{idfuente}/{fechainicio}/{fechafin}', [HistorialReportesController::class,'tablaHistorialEntradas']);
+
+Route::get('/admin/historial/entrada/listado/{identrada}', [HistorialReportesController::class,'indexHistorialEntradasListado']);
+Route::get('/admin/historial/entrada/listado/tabla/{identrada}', [HistorialReportesController::class,'tablaHistorialEntradasListado']);
 
 
 
