@@ -145,7 +145,7 @@ class RecetasController extends Controller
                 $receta->consulta_id = $request->idconsulta;
                 $receta->paciente_id = $infoConsulta->paciente_id;
                 $receta->via_id = $request->via;
-                $receta->diagnostico = $request->diagnostico;
+                $receta->diagnostico_id = $request->diagnostico;
                 $receta->descripcion_general = $request->indicacionGeneral;
                 $receta->fecha = $request->fecha;
                 $receta->proxima_cita = $request->proximaCita;

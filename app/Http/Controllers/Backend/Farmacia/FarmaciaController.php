@@ -425,43 +425,86 @@ class FarmaciaController extends Controller
 
     public function tablaSalidaFarmaciaPorReceta($estado, $desde, $hasta){
 
+        if($estado == '1'){
 
-        $start = Carbon::parse($desde)->startOfDay();
-        $end = Carbon::parse($hasta)->endOfDay();
+            $arrayRecetas = Recetas::where('estado', 1)
+                ->orderBy('fecha', 'ASC')
+                ->get();
 
+            foreach ($arrayRecetas as $info){
 
-        $arrayRecetas = Recetas::where('estado', $estado)
-            ->whereBetween('fecha', [$start, $end])
-            ->orderBy('fecha', 'ASC')
-            ->get();
+                $info->fechaFormat = date("d-m-Y", strtotime($info->fecha));
 
-        foreach ($arrayRecetas as $info){
+                $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
 
-            $info->fechaFormat = date("d-m-Y", strtotime($info->fecha));
+                $info->nombrepaciente = $info->nombres . " " . $infoPaciente->apellidos;
 
-            $fechaDenegada = "";
-            if($info->fecha_denegada != null){
-                $fechaDenegada = date("d-m-Y", strtotime($info->fecha_denegada));
+                $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
+                $info->doctor = $infoUsuario->nombre;
             }
 
-            $info->fechaDenegadaFormat = $fechaDenegada;
+            return view('backend.admin.farmacia.salidareceta.tablarecetapendiente', compact('arrayRecetas'));
 
-            $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
 
-            $info->nombrepaciente = $info->nombres . " " . $infoPaciente->apellidos;
+        }else if($estado == '2'){
 
-            $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
-            $info->doctor = $infoUsuario->nombre;
-        }
+            $start = Carbon::parse($desde)->startOfDay();
+            $end = Carbon::parse($hasta)->endOfDay();
 
-        if($estado == 3){
+            // PROCESADOS
+
+            $arrayRecetas = Recetas::where('estado', 2)
+                ->whereBetween('fecha', [$start, $end])
+                ->orderBy('fecha', 'ASC')
+                ->get();
+
+            foreach ($arrayRecetas as $info){
+
+                $info->fechaFormat = date("d-m-Y", strtotime($info->fecha));
+                $info->fechaEstadoFormat = date("d-m-Y", strtotime($info->fecha_estado));
+                $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
+
+                $info->nombrepaciente = $info->nombres . " " . $infoPaciente->apellidos;
+
+                $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
+                $info->doctor = $infoUsuario->nombre;
+            }
+
+            return view('backend.admin.farmacia.salidareceta.tablarecetasalidaprocesada', compact('arrayRecetas'));
+
+        }else{
+
+            $start = Carbon::parse($desde)->startOfDay();
+            $end = Carbon::parse($hasta)->endOfDay();
+
+            $arrayRecetas = Recetas::where('estado', 3)
+                ->whereBetween('fecha', [$start, $end])
+                ->orderBy('fecha', 'ASC')
+                ->get();
+
+            foreach ($arrayRecetas as $info){
+
+                $info->fechaFormat = date("d-m-Y", strtotime($info->fecha));
+
+                $info->fechaEstadoFormat = date("d-m-Y", strtotime($info->fecha_estado));
+
+                $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
+
+                $info->nombrepaciente = $info->nombres . " " . $infoPaciente->apellidos;
+
+                $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
+                $info->nombreuser = $infoUsuario->nombre;
+            }
+
+
             // TABLA PARA DENEGADOS
             return view('backend.admin.farmacia.salidareceta.tablarecetadenegada', compact('arrayRecetas'));
         }
-
-
-        return view('backend.admin.farmacia.salidareceta.tablarecetasalida', compact('arrayRecetas'));
     }
+
+
+
+
 
 
     public function vistaRecetaDetalleProcesar($idreceta){
@@ -656,6 +699,7 @@ class FarmaciaController extends Controller
             $salida->recetas_id = $request->idreceta;
             $salida->usuario_id = $usuario->id;
             $salida->fecha = $fechaCarbon;
+            $salida->notas = $request->txtNotas;
             $salida->save();
 
 
@@ -688,6 +732,11 @@ class FarmaciaController extends Controller
                 ]);
             }
 
+            // actualizar estado
+
+            Recetas::where('id', $request->idreceta)->update([
+                'estado' => 2 // PROCESADO
+            ]);
 
             DB::commit();
             return ['success' => 2];

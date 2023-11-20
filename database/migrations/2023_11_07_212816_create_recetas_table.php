@@ -34,7 +34,7 @@ class CreateRecetasTable extends Migration
 
             $table->integer('estado');
 
-            $table->date('fecha_denegada')->nullable();
+            $table->dateTime('fecha_estado')->nullable();
             $table->string('nota_denegada', 500)->nullable();
 
             $table->foreign('consulta_id')->references('id')->on('consulta_paciente');

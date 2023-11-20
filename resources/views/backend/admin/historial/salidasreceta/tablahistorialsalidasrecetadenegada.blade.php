@@ -7,49 +7,42 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th  style="width: 10%">Fecha Receta</th>
-                                <th  style="width: 16%">Paciente</th>
-                                <th  style="width: 16%">Recetado Por</th>
-                                <th  style="width: 16%">Descripción</th>
-
-                                <th  style="width: 20%">Opciones</th>
+                                <th style="width: 8%">Fecha</th>
+                                <th style="width: 12%"># Consulta</th>
+                                <th style="width: 8%">Paciente</th>
+                                <th style="width: 8%">Descripción</th>
+                                <th style="width: 8%">Diagnóstico</th>
+                                <th style="width: 4%">Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
 
                             @foreach($arrayRecetas as $dato)
                                 <tr>
-                                    <td>{{ $dato->fechaFormat }} </td>
-                                    <td>{{ $dato->nombrepaciente }} </td>
-                                    <td>{{ $dato->doctor }} </td>
-                                    <td>{{ $dato->descripcion_general }} </td>
+                                    <td>{{ $dato->fechaFormat }}</td>
+                                    <td>{{ $dato->consulta_id }}</td>
+                                    <td>{{ $dato->nombrepaci }}</td>
+                                    <td>{{ $dato->descripcion_general }}</td>
+                                    <td>{{ $dato->nombrediagn }}</td>
                                     <td>
+                                        <center>
+                                            <button type="button" class="btn btn-info btn-xs" onclick="infoVerLista({{ $dato->id }})">
+                                                <i class="fas fa-list" title="Ver"></i>&nbsp; Ver
+                                            </button>
+                                        </center>
 
-                                        <!-- MUESTRA EN PDF LA RECETA -->
-
-
-                                        @if($dato->estado == 1)
-                                            <button class="btn btn-success button-small" style="color: white; margin: 8px; font-weight: bold" onclick="procesarRecetaMedica({{$dato->id}})" title="Procesar">Procesar</button>
-
-                                            <button class="btn btn-danger button-small" style="color: white; margin: 8px; font-weight: bold" onclick="infoDenegarReceta({{$dato->id}})" title="Denegar">Denegar</button>
-                                        @endif
-                                        @if($dato->estado == 2)
-                                            <button class="btn btn-warning button-small" style="color: white; margin: 8px; font-weight: bold" onclick="Imprimir({{$dato->id}})" title="Imprimir">Imprimir</button>
-                                        @endif
-
-                                        @if($dato->estado == 2)
-                                            <button class="btn btn-warning button-small" style="color: white; margin: 8px; font-weight: bold" onclick="Vdd({{$dato->id}})" title="Ver">Ver</button>
-                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
 
-                            <script>
-                                closeLoading();
-                            </script>
-
                             </tbody>
                         </table>
+
+                        <script>
+                            closeLoading();
+                        </script>
+
+
                     </div>
                 </div>
             </div>

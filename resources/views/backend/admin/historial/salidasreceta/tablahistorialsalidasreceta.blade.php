@@ -7,39 +7,42 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th  style="width: 10%">Fecha Receta</th>
-                                <th  style="width: 10%">Fecha Denegada</th>
-                                <th  style="width: 16%">Recetado Por</th>
-                                <th  style="width: 16%">Paciente</th>
-                                <th  style="width: 16%">Nota</th>
-                                <th  style="width: 20%">Opciones</th>
+                                <th style="width: 8%">Fecha</th>
+                                <th style="width: 12%"># Consulta</th>
+                                <th style="width: 8%">Paciente</th>
+                                <th style="width: 8%">Descripción</th>
+                                <th style="width: 8%">Diagnóstico</th>
+                                <th style="width: 4%">Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
 
                             @foreach($arrayRecetas as $dato)
                                 <tr>
-                                    <td>{{ $dato->fechaFormat }} </td>
-                                    <td>{{ $dato->fechaEstadoFormat }} </td>
-
-                                    <td>{{ $dato->nombreuser }} </td>
-                                    <td>{{ $dato->nombrepaciente }} </td>
-
-                                    <td>{{ $dato->nota_denegada }} </td>
+                                    <td>{{ $dato->fechaFormat }}</td>
+                                    <td>{{ $dato->nombrefuente }}</td>
+                                    <td>{{ $dato->nombrefactura }}</td>
+                                    <td>{{ $dato->numero_factura }}</td>
+                                    <td>{{ $dato->nomproveedor }}</td>
                                     <td>
-
-                                        <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="PDF">IMPRIMIR</button>
+                                        <center>
+                                            <button type="button" class="btn btn-info btn-xs" onclick="infoVerLista({{ $dato->id }})">
+                                                <i class="fas fa-list" title="Ver"></i>&nbsp; Ver
+                                            </button>
+                                        </center>
 
                                     </td>
                                 </tr>
                             @endforeach
 
-                            <script>
-                                closeLoading();
-                            </script>
-
                             </tbody>
                         </table>
+
+                        <script>
+                            closeLoading();
+                        </script>
+
+
                     </div>
                 </div>
             </div>

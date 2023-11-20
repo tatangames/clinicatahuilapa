@@ -381,12 +381,21 @@ Route::post('/admin/catalogo/individual/actualizar', [FarmaciaController::class,
 
 // --- HISTORIAL ---
 
-
+// - ENTRADAS -
 Route::get('/admin/historial/reporte/entradas', [HistorialReportesController::class,'indexHistorialEntradas'])->name('admin.historial.entradas');
 Route::get('/admin/historial/reporte/entradas/tabla/{idfuente}/{fechainicio}/{fechafin}', [HistorialReportesController::class,'tablaHistorialEntradas']);
 
 Route::get('/admin/historial/entrada/listado/{identrada}', [HistorialReportesController::class,'indexHistorialEntradasListado']);
 Route::get('/admin/historial/entrada/listado/tabla/{identrada}', [HistorialReportesController::class,'tablaHistorialEntradasListado']);
+
+// - SALIDAS -
+
+Route::get('/admin/historial/reporte/salidasreceta', [HistorialReportesController::class,'indexHistorialSalidasReceta'])->name('admin.historial.salidas.receta');
+Route::get('/admin/historial/reporte/salidasreceta/tabla/{idproceso}/{fechainicio}/{fechafin}', [HistorialReportesController::class,'tablaHistorialSalidasReceta']);
+
+
+
+
 
 
 

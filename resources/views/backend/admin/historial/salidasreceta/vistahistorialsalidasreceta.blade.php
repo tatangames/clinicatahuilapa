@@ -22,18 +22,17 @@
         <div class="container-fluid">
             <div class="card card-success">
                 <div class="card-header">
-                    <h3 class="card-title">HISTORIAL DE ENTRADAS DE ARTICULOS</h3>
+                    <h3 class="card-title">HISTORIAL DE SALIDAS DE RECETAS</h3>
                 </div>
 
                 <div class="card-body">
                     <div class="row">
-                        <div class=" col-md-2">
-                            <label>Estados</label>
-                            <select class="form-control" id="select-fuente" onchange="verificarEstado()">
+                        <div class=" col-md-3">
+                            <label>Tipo de Proceso</label>
+                            <select class="form-control" id="select-proceso" onchange="verificarEstado()">
                                 <option value="0">Seleccionar Todos</option>
-                                @foreach($arrayFuente as $item)
-                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                @endforeach
+                                <option value="2">Procesados</option>
+                                <option value="3">Denegados</option>
                             </select>
                         </div>
 
@@ -83,7 +82,7 @@
 
         function verificarEstado(){
 
-            let estado = document.getElementById("select-fuente").value;
+            let estado = document.getElementById("select-proceso").value;
             let fechainicio = document.getElementById("fecha-inicio").value;
             let fechafin = document.getElementById("fecha-fin").value;
 
@@ -100,15 +99,15 @@
             openLoading();
 
             // CARGAR TABLA
-            var ruta = "{{ URL::to('/admin/historial/reporte/entradas/tabla') }}/" + estado + "/" + fechainicio + "/" + fechafin;
+            var ruta = "{{ URL::to('/admin/historial/reporte/salidasreceta/tabla') }}/" + estado + "/" + fechainicio + "/" + fechafin;
             $('#tablaDatatable').load(ruta);
         }
 
 
 
-        function infoVerLista(identrada){
+        function infoVerLista(idreceta){
 
-            window.location.href="{{ url('/admin/historial/entrada/listado') }}/" + identrada;
+            window.location.href="{{ url('/admin/') }}/" + identrada;
         }
 
 

@@ -37,7 +37,7 @@
         <div class="col-md-6">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">FICHA CLINICA</h3>
+                    <h3 class="card-title">FICHA CLINICA - PROCESAR RECETA</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
@@ -112,10 +112,6 @@
                     </div>
 
                     <div class="card-body">
-
-
-
-
 
 
                         @foreach($arrayDetalle as $material)
@@ -221,6 +217,22 @@
     </section>
 
 
+    <section>
+
+        <div class="col-md-8" style="margin-left: 25px">
+            <div class="form-group">
+                <label class="control-label col-md-3">Notas Adicionales: </label>
+                <div class="col-md-9">
+                    <textarea id="text-notas" cols="17" rows="4" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+
+
+
     <div class="modal-footer float-right" style="margin-top: 25px; margin-bottom: 35px">
         <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="preguntarGuardarSalida()">VERIFICAR SALIDA</button>
     </div>
@@ -308,6 +320,8 @@
         function verificarSalida(){
 
             // SETEAR TODOS LOS INPUT DE LA CLASE miInputColor A COLOR NEGRO
+
+            var txtNotas = document.getElementById('text-notas').value;
 
             var elementos = document.querySelectorAll('input.' + 'miInputColor');
             elementos.forEach(function(elemento) {
@@ -424,7 +438,7 @@
             var formData = new FormData();
             formData.append('idreceta', idReceta);
             formData.append('contenedorArray', JSON.stringify(datosArray));
-
+            formData.append('txtNotas', txtNotas);
 
             axios.post(url+'/receta/procesar/guardarsalida', formData, {
             })
@@ -473,7 +487,7 @@
                             confirmButtonText: 'Aceptar'
                         }).then((result) => {
                             if (result.isConfirmed) {
-
+                                volverAtras();
                             }
                         })
                     }

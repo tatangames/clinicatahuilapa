@@ -37,12 +37,12 @@
                             </div>
 
                             <div class=" col-md-2">
-                                <label>Fecha Inicio</label>
+                                <label>Fecha Receta De:</label>
                                 <input type="date" class="form-control" id="fecha-inicio" autocomplete="off" onchange="verificarEstado()">
                             </div>
 
                             <div class=" col-md-2">
-                                <label>Fecha Fin</label>
+                                <label>Fecha Receta Fin</label>
                                 <input type="date" class="form-control" id="fecha-fin" autocomplete="off" onchange="verificarEstado()">
                             </div>
                     </div>
@@ -117,6 +117,13 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
+            openLoading();
+
+            let nada = "-";
+            let estado = "1";
+            // CARGAR POR DEFECTO LAS PENDIENTES SIN FECHA
+            var ruta = "{{ URL::to('/admin/salida/medicamento/porreceta/tabla') }}/" + estado + "/" + nada + "/" + nada;
+            $('#tablaDatatable').load(ruta);
 
 
             document.getElementById("divcontenedor").style.display = "block";

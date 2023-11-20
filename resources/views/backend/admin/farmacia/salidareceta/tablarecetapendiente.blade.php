@@ -8,10 +8,10 @@
                             <thead>
                             <tr>
                                 <th  style="width: 10%">Fecha Receta</th>
-                                <th  style="width: 10%">Fecha Denegada</th>
-                                <th  style="width: 16%">Recetado Por</th>
+                                <th  style="width: 10%"># Consulta</th>
                                 <th  style="width: 16%">Paciente</th>
-                                <th  style="width: 16%">Nota</th>
+                                <th  style="width: 16%">Recetado Por</th>
+
                                 <th  style="width: 20%">Opciones</th>
                             </tr>
                             </thead>
@@ -20,15 +20,14 @@
                             @foreach($arrayRecetas as $dato)
                                 <tr>
                                     <td>{{ $dato->fechaFormat }} </td>
-                                    <td>{{ $dato->fechaEstadoFormat }} </td>
-
-                                    <td>{{ $dato->nombreuser }} </td>
+                                    <td>{{ $dato->consulta_id }} </td>
                                     <td>{{ $dato->nombrepaciente }} </td>
-
-                                    <td>{{ $dato->nota_denegada }} </td>
+                                    <td>{{ $dato->doctor }} </td>
                                     <td>
 
                                         <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="PDF">IMPRIMIR</button>
+                                        <button class="btn btn-success button-small" style="color: white; margin: 8px; font-weight: bold" onclick="procesarRecetaMedica({{$dato->id}})" title="Procesar">Procesar</button>
+                                        <button class="btn btn-danger button-small" style="color: white; margin: 8px; font-weight: bold" onclick="infoDenegarReceta({{$dato->id}})" title="Denegar">Denegar</button>
 
                                     </td>
                                 </tr>

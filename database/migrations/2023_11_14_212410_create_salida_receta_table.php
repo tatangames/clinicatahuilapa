@@ -18,6 +18,7 @@ class CreateSalidaRecetaTable extends Migration
             $table->bigInteger('recetas_id')->unsigned();
             $table->bigInteger('usuario_id')->unsigned();
             $table->dateTime('fecha');
+            $table->text('notas')->nullable();
 
 
 

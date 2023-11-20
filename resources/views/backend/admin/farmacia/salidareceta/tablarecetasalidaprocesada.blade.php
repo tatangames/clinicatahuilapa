@@ -8,10 +8,11 @@
                             <thead>
                             <tr>
                                 <th  style="width: 10%">Fecha Receta</th>
-                                <th  style="width: 10%">Fecha Denegada</th>
-                                <th  style="width: 16%">Recetado Por</th>
+                                <th  style="width: 10%">Fecha Procesada</th>
                                 <th  style="width: 16%">Paciente</th>
-                                <th  style="width: 16%">Nota</th>
+                                <th  style="width: 16%">Recetado Por</th>
+                                <th  style="width: 16%">Descripción</th>
+
                                 <th  style="width: 20%">Opciones</th>
                             </tr>
                             </thead>
@@ -21,12 +22,12 @@
                                 <tr>
                                     <td>{{ $dato->fechaFormat }} </td>
                                     <td>{{ $dato->fechaEstadoFormat }} </td>
-
-                                    <td>{{ $dato->nombreuser }} </td>
                                     <td>{{ $dato->nombrepaciente }} </td>
-
-                                    <td>{{ $dato->nota_denegada }} </td>
+                                    <td>{{ $dato->doctor }} </td>
+                                    <td>{{ $dato->descripcion_general }} </td>
                                     <td>
+
+                                        <!-- MUESTRA EN PDF LA RECETA -->
 
                                         <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="PDF">IMPRIMIR</button>
 
@@ -52,7 +53,7 @@
     $(function () {
         $("#tabla").DataTable({
             columnDefs: [
-                { type: 'date-euro', targets: 0 } // Suponiendo que la columna de fecha es la primera (índice 0)
+                { type: 'date-euro', targets: [0,1] } // Suponiendo que la columna de fecha es la primera (índice 0)
             ],
             "paging": true,
             "lengthChange": true,

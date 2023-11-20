@@ -283,7 +283,12 @@
                                 </a>
                             </li>
 
-
+                            <li class="nav-item">
+                                <a href="{{ route('admin.historial.salidas.receta') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Salidas Receta</p>
+                                </a>
+                            </li>
 
 
                         </ul>
