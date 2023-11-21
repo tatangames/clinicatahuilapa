@@ -35,5 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ViaSeeder::class);
         $this->call(EnvaseSeeder::class);
         $this->call(MotivoSalidaSeeder::class);*/
+
+        $this->call(AntecedentesMedicosSeeder::class);
     }
 }

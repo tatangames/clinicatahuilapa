@@ -17,10 +17,12 @@ class CreateCuadroClinicoTable extends Migration
             $table->id();
             $table->bigInteger('consulta_id')->unsigned();
             $table->bigInteger('diagnostico_id')->unsigned();
+            $table->bigInteger('usuario_id')->unsigned();
             $table->text('descripcion');
 
             $table->foreign('consulta_id')->references('id')->on('consulta_paciente');
             $table->foreign('diagnostico_id')->references('id')->on('diagnosticos');
+            $table->foreign('usuario_id')->references('id')->on('usuario');
         });
     }
 

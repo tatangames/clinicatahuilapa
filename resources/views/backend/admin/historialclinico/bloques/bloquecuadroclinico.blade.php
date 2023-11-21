@@ -28,6 +28,7 @@
                             <tr>
                                 <th>Fecha de Consulta</th>
                                 <th>Tipo Diagnóstico</th>
+                                <th>Creado Por</th>
 
                                 <th>Opciones</th>
                             </tr>
@@ -38,13 +39,14 @@
                                 <tr>
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->nombreDiagnostico }}</td>
+                                    <td>{{ $dato->nombreUsuario }}</td>
 
                                     <td>
                                         <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="informacionCuadroClinico({{ $dato->id }})">
-                                            <i class="fas fa-print" title="Editar"></i>&nbsp; Editar
+                                            <i class="fas fa-edit" title="Editar"></i>&nbsp; Editar
                                         </button>
 
-                                        <button type="button" class="btn btn-warning btn-xs" style="color: white" onclick="imprimirCuadroClinico({{ $dato->id }})">
+                                        <button type="button" class="btn btn-info btn-xs" style="color: white" onclick="imprimirCuadroClinico({{ $dato->id }})">
                                             <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
                                         </button>
                                     </td>

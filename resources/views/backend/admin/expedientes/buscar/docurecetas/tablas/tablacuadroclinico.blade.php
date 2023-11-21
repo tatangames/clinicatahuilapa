@@ -27,11 +27,8 @@
                                     <td>{{ $dato->nombreDiagnostico }}</td>
 
                                     <td>
-                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="informacionCuadroClinico({{ $dato->id }})">
-                                            <i class="fas fa-print" title="Editar"></i>&nbsp; Editar
-                                        </button>
 
-                                        <button type="button" class="btn btn-warning btn-xs" style="color: white" onclick="imprimirCuadroClinico({{ $dato->id }})">
+                                        <button type="button" class="btn btn-info btn-xs" style="color: white" onclick="imprimirCuadroClinico({{ $dato->id }})">
                                             <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
                                         </button>
                                     </td>

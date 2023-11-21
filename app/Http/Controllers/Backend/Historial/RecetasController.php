@@ -226,7 +226,7 @@ class RecetasController extends Controller
 
         return view('backend.admin.historialclinico.recetas.vistaeditarreceta', compact('idreceta',
             'nombreCompleto', 'infoReceta', 'arrayDiagnostico', 'arrayFuente', 'arrayVia',
-                'fechaActual', 'arrayDetalle', 'titulo'));
+                'fechaActual', 'arrayDetalle', 'titulo', 'infoConsulta'));
     }
 
 

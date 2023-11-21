@@ -437,10 +437,10 @@ class HistorialClinicoController extends Controller
 
     public function bloqueHistorialCuadroClinico($idconsulta){
 
-        $bloqueCuadroClinico= DB::table('cuadro_clinico AS cl')
+        $bloqueCuadroClinico = DB::table('cuadro_clinico AS cl')
             ->join('consulta_paciente AS con', 'con.id', '=', 'cl.consulta_id')
             ->select('con.fecha_hora', 'cl.diagnostico_id', 'cl.descripcion',
-                'cl.consulta_id', 'cl.diagnostico_id', 'cl.id')
+                'cl.consulta_id', 'cl.diagnostico_id', 'cl.id', 'cl.usuario_id')
             ->where('cl.consulta_id', $idconsulta)
             ->orderBy('con.fecha_hora', 'ASC')
             ->get();
@@ -448,10 +448,11 @@ class HistorialClinicoController extends Controller
         foreach ($bloqueCuadroClinico as $dato){
 
             $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha_hora));
-
             $infoDiagnostico = Diagnosticos::where('id', $dato->diagnostico_id)->first();
-
             $dato->nombreDiagnostico = $infoDiagnostico->nombre;
+
+            $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
+            $dato->nombreUsuario = $infoUsuario->nombre;
         }
 
         $haycuadro = 0;
@@ -480,10 +481,13 @@ class HistorialClinicoController extends Controller
 
         try {
 
+            $usuario = auth()->user();
+
             $dato = new CuadroClinico();
             $dato->consulta_id = $request->idconsulta;
             $dato->diagnostico_id = $request->diagnostico;
             $dato->descripcion = $request->descripcion;
+            $dato->usuario_id = $usuario->id;
             $dato->save();
 
             DB::commit();

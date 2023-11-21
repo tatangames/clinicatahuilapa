@@ -45,7 +45,7 @@
 
                                     <td>
 
-                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="imprimirRecetaMedica({{ $dato->id }})">
+                                        <button type="button" class="btn btn-info btn-xs" style="color: white" onclick="imprimirRecetaMedica({{ $dato->id }})">
                                             <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
                                         </button>
                                     </td>

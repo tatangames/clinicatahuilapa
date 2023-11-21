@@ -35,7 +35,7 @@
 
     <section class="content-header">
         <div class="container-fluid">
-            <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="recargarVista()" class="button button-3d button-rounded button-pill button-small">
+            <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="salirHistorial()" class="button button-3d button-rounded button-pill button-small">
                 <i class="fas fa-arrow-left"></i>
                 Atras
             </button>
@@ -294,7 +294,9 @@
                                 <textarea name="arrayIndicacion[]" class="form-control" type="text">{{ $item->descripcion }}</textarea>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-block btn-danger" onclick="borrarFila(this)">Borrar</button>
+                                @if($infoConsulta->estado == 1)
+                                    <button type="button" class="btn btn-block btn-danger" onclick="borrarFila(this)">Borrar</button>
+                                @endif
                             </td>
                         </tr>
 
@@ -308,11 +310,13 @@
     </section>
 
 
+    @if($infoReceta->estado == 1)
 
     <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px; " id="bloqueGuardarTabla">
         <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Receta Médica</button>
     </div>
 
+    @endif
 
 
 </div>
@@ -734,7 +738,7 @@
 
                         Swal.fire({
                             title: "No Modificable",
-                            text: "La Receta cambio de estado a : " + estado,
+                            text: "La Receta cambio de estado a: " + estado,
                             icon: 'error',
                             showCancelButton: false,
                             allowOutsideClick: false,
@@ -788,6 +792,11 @@
             window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
         }
 
+
+        function salirHistorial(){
+            let idconsulta = {{ $infoConsulta->id }};
+            window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
+        }
 
 
     </script>
