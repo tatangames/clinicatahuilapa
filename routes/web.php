@@ -22,6 +22,7 @@ use App\Http\Controllers\Backend\Farmacia\FarmaciaController;
 use App\Http\Controllers\Backend\Historial\RecetasController;
 use App\Http\Controllers\Backend\Expedientes\DocumentoRecetaController;
 use App\Http\Controllers\Backend\Historial\HistorialReportesController;
+use App\Http\Controllers\Backend\Reportes\ReportesController;
 
 
 
@@ -398,6 +399,8 @@ Route::get('/admin/historial/reporte/salidasmanual', [HistorialReportesControlle
 Route::get('/admin/historial/reporte/salidasmanual/tabla/{fechainicio}/{fechafin}', [HistorialReportesController::class,'tablaHistorialSalidasManual']);
 
 
+Route::get('/admin/vista/reporte/prueba', [ReportesController::class,'vistaReporteEntradas'])->name('admin.reporte.entradas');
+Route::get('/admin/reporte/entradas/{idfuente}/{desde}/{hasta}', [ReportesController::class,'reporteEntradaArticulos']);
 
 
 

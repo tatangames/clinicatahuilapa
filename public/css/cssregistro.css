@@ -17,11 +17,15 @@ br[style] {
     font-weight: bold;"
 }
 
+#contenedorp{
+    font-weight: bold;
+}
+
 #logo{
-    float: right;
+    float: left;
     height : 93px;
-    width : 76px;
-    margin-right: 20px;
+    width : 66px;
+    margin-left: 20px;
 }
 
 #tablaFor {

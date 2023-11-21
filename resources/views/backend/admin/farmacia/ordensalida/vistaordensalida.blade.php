@@ -26,7 +26,7 @@
 
     <section class="content" style="margin-top: 20px">
         <div class="container-fluid">
-            <div class="card card-primary">
+            <div class="card card-success">
                 <div class="card-header">
                     <h3 class="card-title">CREAR ORDEN DE SALIDA MANUAL</h3>
                 </div>
