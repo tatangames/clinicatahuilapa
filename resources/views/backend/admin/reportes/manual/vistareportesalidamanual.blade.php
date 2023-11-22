@@ -23,7 +23,7 @@
         <div class="container-fluid">
             <div class="card card-success">
                 <div class="card-header">
-                    <h3 class="card-title">REPORTE DE ENTRADAS</h3>
+                    <h3 class="card-title">REPORTE DE SALIDA MANUAL</h3>
                 </div>
                 <div class="card-body">
 
@@ -31,16 +31,6 @@
                         <div class="container-fluid">
 
                             <div class="row">
-
-                                <div class="form-group col-md-3" >
-                                    <label style="color: #686868">Fuente Financiamiento: </label>
-                                    <select class="form-control" id="select-fuente">
-                                        <option value="0">Todos</option>
-                                        @foreach($arrayFuente as $item)
-                                            <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
 
                                 <div class="form-group col-md-2" >
                                     <label style="color: #686868">Desde: </label>
@@ -58,19 +48,13 @@
 
                             </div>
 
-
-
-
                         </div>
                     </section>
-
-
 
                 </div>
             </div>
         </div>
     </section>
-
 
 
 </div>
@@ -98,7 +82,6 @@
 
         function verificar(){
 
-            let idfuente = document.getElementById("select-fuente").value;
             let fechaDesde = document.getElementById("fecha-desde").value;
             let fechaHasta = document.getElementById("fecha-hasta").value;
 
@@ -113,7 +96,7 @@
             }
 
 
-            window.open("{{ URL::to('admin/reporte/entradas') }}/" + idfuente+ "/" + fechaDesde + "/" + fechaHasta);
+            window.open("{{ URL::to('admin/reporte/salida/manual') }}/" + fechaDesde + "/" + fechaHasta);
         }
 
 

@@ -14,7 +14,14 @@ br[style] {
 #titulo{
     text-align: center;
     font-size: 17px;
-    font-weight: bold;"
+    font-weight: bold;
+}
+
+#textoFinal{
+    text-align: right;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 15px;
 }
 
 #contenedorp{
@@ -27,6 +34,13 @@ br[style] {
     width : 66px;
     margin-left: 20px;
 }
+
+
+#contenedorGeneral{
+    font-weight: bold;
+    text-align: right;
+}
+
 
 #tablaFor {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;

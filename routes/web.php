@@ -379,7 +379,6 @@ Route::post('/admin/catalogo/individual/actualizar', [FarmaciaController::class,
 
 
 
-
 // --- HISTORIAL ---
 
 // - ENTRADAS -
@@ -399,9 +398,24 @@ Route::get('/admin/historial/reporte/salidasmanual', [HistorialReportesControlle
 Route::get('/admin/historial/reporte/salidasmanual/tabla/{fechainicio}/{fechafin}', [HistorialReportesController::class,'tablaHistorialSalidasManual']);
 
 
-Route::get('/admin/vista/reporte/prueba', [ReportesController::class,'vistaReporteEntradas'])->name('admin.reporte.entradas');
+
+// --- REPORTES DEL SISTEMA ---
+
+// reporte de entradas
+Route::get('/admin/vista/reporte/entradas', [ReportesController::class,'vistaReporteEntradas'])->name('admin.reporte.entradas');
 Route::get('/admin/reporte/entradas/{idfuente}/{desde}/{hasta}', [ReportesController::class,'reporteEntradaArticulos']);
 
+// reporte de salidas manual
+Route::get('/admin/vista/reporte/salidas/manual', [ReportesController::class,'vistaReporteSalidaManual'])->name('admin.reporte.salida.manual');
+Route::get('/admin/reporte/salida/manual/{desde}/{hasta}', [ReportesController::class,'reporteSalidaManual']);
+
+// reporte de salidas por receta
+
+Route::get('/admin/vista/reporte/salidas/recetas', [ReportesController::class,'vistaReporteSalidaRecetas'])->name('admin.reporte.salida.recetas');
+// formato separado
+Route::get('/admin/reporte/salida/recetas/separado/{idfuente}/{desde}/{hasta}', [ReportesController::class,'reporteSalidaRecetasEstadosSeparados']);
+// formato juntos
+Route::get('/admin/reporte/salida/recetas/juntos/{idfuente}/{desde}/{hasta}', [ReportesController::class,'reporteSalidaRecetasEstadosJuntos']);
 
 
 

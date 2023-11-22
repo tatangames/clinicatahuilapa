@@ -19,6 +19,7 @@ use App\Models\Proveedores;
 use App\Models\Recetas;
 use App\Models\RecetasDetalle;
 use App\Models\SalidaReceta;
+use App\Models\SalidaRecetaDetalle;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
 use App\Models\Usuario;
@@ -655,11 +656,14 @@ class FarmaciaController extends Controller
                 // esta pendiente asi que puede denegar
 
                 $fechaCarbon = Carbon::parse(Carbon::now());
+                $usuario = auth()->user();
+
 
                 Recetas::where('id', $request->id)->update([
                     'estado' => 3,
                     'nota_denegada' => $request->descripcion,
-                    'fecha_denegada' => $fechaCarbon
+                    'fecha_denegada' => $fechaCarbon,
+                    'usuario_estado_id' => $usuario->id
                 ]);
 
                 return ['success' => 3];
@@ -729,6 +733,13 @@ class FarmaciaController extends Controller
                 EntradaMedicamentoDetalle::where('id', $filaArray['idEntradaDetalle'])->update([
                     'cantidad' => $resta
                 ]);
+
+
+                $newDetalle = new SalidaRecetaDetalle();
+                $newDetalle->salidareceta_id = $salida->id;
+                $newDetalle->entrada_detalle_id = $filaArray['idEntradaDetalle'];
+                $newDetalle->cantidad = $filaArray['salida'];
+                $newDetalle->save();
             }
 
             // actualizar estado

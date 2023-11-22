@@ -23,6 +23,8 @@ class CreateRecetasTable extends Migration
             $table->bigInteger('usuario_id')->unsigned();
 
             $table->text('descripcion_general')->nullable();
+
+            // cuando el doctor creo la receta
             $table->date('fecha');
             $table->date('proxima_cita')->nullable();
 
@@ -34,14 +36,21 @@ class CreateRecetasTable extends Migration
 
             $table->integer('estado');
 
+            // cuando se modifico el estado, unicamente se ocupara cuando se
+            // denego la receta, ya que si se despacha, esto se ocupara la
+            // fecha de tabla salida_receta
             $table->dateTime('fecha_estado')->nullable();
             $table->string('nota_denegada', 500)->nullable();
+            // usuario quien denego receta
+            $table->bigInteger('usuario_estado_id')->unsigned()->nullable();
 
             $table->foreign('consulta_id')->references('id')->on('consulta_paciente');
             $table->foreign('paciente_id')->references('id')->on('paciente');
             $table->foreign('via_id')->references('id')->on('via_receta');
             $table->foreign('diagnostico_id')->references('id')->on('diagnosticos');
             $table->foreign('usuario_id')->references('id')->on('usuario');
+            $table->foreign('usuario_estado_id')->references('id')->on('usuario');
+
         });
     }
 

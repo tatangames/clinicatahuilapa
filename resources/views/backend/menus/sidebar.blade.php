@@ -265,7 +265,10 @@
                     </li>
 
 
-                    <li class="nav-item">
+                  <!--   NO SE UTILIZARA HISTORIAL, PORQUE ES LO MISMO PARA REPORTES
+
+
+                  <li class="nav-item">
 
                         <a href="#" class="nav-link nav-">
                             <i class="far fa-user"></i>
@@ -299,7 +302,7 @@
 
                         </ul>
                     </li>
-
+                    -->
 
 
 
@@ -321,6 +324,21 @@
                                 </a>
                             </li>
 
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.reporte.salida.manual') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Reporte Salida Manual</p>
+                                </a>
+                            </li>
+
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.reporte.salida.recetas') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Reporte Salida Receta</p>
+                                </a>
+                            </li>
 
 
                         </ul>

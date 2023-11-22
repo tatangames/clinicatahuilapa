@@ -151,6 +151,7 @@ class RecetasController extends Controller
                 $receta->proxima_cita = $request->proximaCita;
                 $receta->estado = 1;
                 $receta->usuario_id = $usuario->id;
+                $receta->usuario_estado_id = null; // saber que usuario denego receta
                 $receta->save();
 
 
