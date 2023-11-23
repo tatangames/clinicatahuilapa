@@ -13,10 +13,10 @@
                         <table id="tableCuadroClinico" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th>Fecha de Consulta</th>
-                                <th>Tipo Diagnóstico</th>
-
-                                <th>Opciones</th>
+                                <th style="width: 8%">Fecha de Consulta</th>
+                                <th style="width: 13%">Tipo Diagnóstico</th>
+                                <th style="width: 11%">Creado Por</th>
+                                <th style="width: 40%">Descripción</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -25,14 +25,8 @@
                                 <tr>
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->nombreDiagnostico }}</td>
-
-                                    <td>
-
-                                        <button type="button" class="btn btn-info btn-xs" style="color: white" onclick="imprimirCuadroClinico({{ $dato->id }})">
-                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
-                                        </button>
-                                    </td>
-
+                                    <td>{{ $dato->doctor }}</td>
+                                    <td>{!! $dato->descripcion !!}</td>
                                 </tr>
                             @endforeach
 

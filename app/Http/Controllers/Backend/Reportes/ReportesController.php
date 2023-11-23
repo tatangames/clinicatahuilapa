@@ -16,6 +16,7 @@ use App\Models\OrdenSalidaDetalle;
 use App\Models\Paciente;
 use App\Models\Proveedores;
 use App\Models\Recetas;
+use App\Models\RecetasDetalle;
 use App\Models\SubLinea;
 use App\Models\TipoFactura;
 use App\Models\Usuario;
@@ -1340,8 +1341,164 @@ class ReportesController extends Controller
         $mpdf->WriteHTML($tabla,2);
 
         $mpdf->Output();
+    }
+
+
+
+    public function reporteRecetaPaciente($idreceta){
+
+
+        $infoReceta = Recetas::where('id', $idreceta)->first();
+        $infoPaciente = Paciente::where('id', $infoReceta->paciente_id)->first();
+        $nombrePaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+
+        $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+
+        $fechaReceta = date("d-m-Y", strtotime($infoReceta->fecha));
+
+        $fechaProxCita = "";
+        if($infoReceta->proxima_cita != null){
+            $fechaProxCita = date("d-m-Y", strtotime($infoReceta->proxima_cita));
+
+        }
+
+
+        $arrayRecetaDeta = DB::table('recetas_detalle AS deta')
+            ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
+            ->select('fa.nombre', 'deta.recetas_id', 'deta.cantidad', 'deta.descripcion',
+                            'deta.via_id')
+            ->where('deta.recetas_id', $idreceta)
+            ->orderBy('fa.nombre', 'ASC')
+            ->get();
+
+        foreach ($arrayRecetaDeta as $info){
+
+            $infoVia = ViaReceta::where('id', $info->via_id)->first();
+            $info->nombreVia = $infoVia->nombre;
+
+        }
+
+
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+        // mostrar errores
+        $mpdf->showImageErrors = false;
+        $mpdf->SetTitle('Receta');
+        $logoalcaldia = 'images/logo2.png';
+
+        $tabla = "<div class='contenedorp'>
+            <img id='logo' src='$logoalcaldia'>
+            <p id='titulo'>Unidad de Salud Cristobal Peraza <br>
+            Tahuilapa
+            </div>";
+
+
+        $tabla .= "
+
+             <table width='100%'>
+                <tr>
+                    <td style='text-align: left; width: 33%'>
+                        <!-- Contenido izquierdo -->
+                        <p style='font-size: 13px'><strong>Paciente: </strong>$nombrePaciente</p>
+                    </td>
+                    <td style='text-align: center; width: 34%'>
+                        <!-- Contenido central -->
+                         <p style='font-size: 13px'><strong>Edad: </strong>$edad</p>
+                    </td>
+                    <td style='text-align: right; width: 33%'>
+                        <!-- Contenido derecho -->
+                         <p style='font-size: 13px'><strong>Fecha: </strong>$fechaReceta</p>
+                    </td>
+                </tr> ";
+
+        if($infoReceta->proxima_cita != null){
+            $tabla .="<tr>
+                    <td style='text-align: left; width: 33%'>
+                        <!-- Contenido izquierdo -->
+                        <p style='font-size: 13px'><strong></strong></p>
+                    </td>
+                    <td style='text-align: center; width: 34%'>
+                        <!-- Contenido central -->
+                         <p style='font-size: 13px'><strong></strong></p>
+                    </td>
+                    <td style='text-align: right; width: 40%'>
+                        <!-- Contenido derecho -->
+                         <p style='font-size: 13px'><strong>Proxima Consulta: </strong>$fechaProxCita</p>
+                    </td>
+                </tr> ";
+        }
+
+        $tabla .= "</table>
+
+    <hr style='color: #0c84ff'>
+                ";
+
+        $vueltas = 0;
+
+        foreach ($arrayRecetaDeta as $dato){
+                $vueltas++;
+                if($vueltas == 0){
+                    $tabla .= "
+                    <table width='100%' style='margin-top: 0px'>
+                    ";
+                }else{
+                    $tabla .= "
+                    <table width='100%' style='margin-top: 20px'>
+                    ";
+                }
+
+                $tabla .= " <tr>
+                    <td style='text-align: left; width: 33%'>
+                        <!-- Contenido izquierdo -->
+
+                         <p style='font-size: 13px'><strong><ul><li>$dato->nombre</li></ul></strong></p>
+
+                    </td>
+                    <td style='text-align: center; width: 34%'>
+                        <!-- Contenido central -->
+                         <p style='font-size: 13px'><strong>Cantidad: </strong>$dato->cantidad</p>
+                    </td>
+                    <td style='text-align: right; width: 33%'>
+                        <!-- Contenido derecho -->
+                         <p style='font-size: 13px'><strong>Vía: </strong>$dato->nombreVia</p>
+                    </td>
+                </tr>
+            </table>
+
+            <p style='font-size: 14px'><strong>Indicaciones del Medicamento:</strong> <br>
+                    $dato->descripcion
+            </p>
+
+            ";
+
+            $vueltas++;
+        }
+
+
+
+        $htmlFooter = '<div style="text-align: center;">Pie de página solo en la página 1</div>';
+        $mpdf->SetHTMLFooter($htmlFooter, 'EVEN|ODD');
+
+        $stylesheet = file_get_contents('css/cssreceta.css');
+        $mpdf->WriteHTML($stylesheet,1);
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
+        $mpdf->WriteHTML($tabla,2);
+
+        $mpdf->Output();
+
+
+
+
 
     }
+
+
+
+
+
+
 
 
 }

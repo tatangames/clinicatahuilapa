@@ -24,11 +24,17 @@
                                     <td>{{ $dato->nombrepaciente }} </td>
                                     <td>{{ $dato->doctor }} </td>
                                     <td>
+                                        <button type="button" class="btn btn-info btn-xs" style="color: white" onclick="imprimirRecetaMedica({{ $dato->id }})">
+                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
+                                        </button>
 
-                                        <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="PDF">IMPRIMIR</button>
-                                        <button class="btn btn-success button-small" style="color: white; margin: 8px; font-weight: bold" onclick="procesarRecetaMedica({{$dato->id}})" title="Procesar">Procesar</button>
-                                        <button class="btn btn-danger button-small" style="color: white; margin: 8px; font-weight: bold" onclick="infoDenegarReceta({{$dato->id}})" title="Denegar">Denegar</button>
+                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="procesarRecetaMedica({{ $dato->id }})">
+                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Procesar
+                                        </button>
 
+                                        <button type="button" class="btn btn-danger btn-xs" style="color: white" onclick="infoDenegarReceta({{ $dato->id }})">
+                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Denegar
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -90,6 +96,11 @@
             "responsive": true, "lengthChange": true, "autoWidth": false,
         });
     });
+
+
+    function imprimirRecetaMedica(idreceta){
+        window.open("{{ URL::to('admin/reporte/receta/paciente') }}/" + idreceta);
+    }
 
 
 </script>

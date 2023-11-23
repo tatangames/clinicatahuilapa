@@ -101,25 +101,14 @@
                                     </div>
 
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="control-label">Vía</label>
-
-                                            <select id="select-via" class="form-control">
-                                                <option value="">Seleccionar Opción</option>
-                                                @foreach($arrayVia as $item)
-
-                                                    @if($infoReceta->via_id == $item->id)
-                                                        <option value="{{$item->id}}" selected>{{ $item->nombre }}</option>
-                                                    @else
-                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                                    @endif
-
-                                                @endforeach
-                                            </select>
-
+                                            <label class="control-label">Proxima Cita:</label>
+                                            <input type="date" class="form-control" id="proxima-cita" value="{{ $infoReceta->proxima_cita }}">
                                         </div>
                                     </div>
+
+
 
                                 </div>
 
@@ -141,12 +130,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">Proxima Cita:</label>
-                                            <input type="date" class="form-control" id="proxima-cita" value="{{ $infoReceta->proxima_cita }}">
-                                        </div>
-                                    </div>
+
 
                                 </div>
 
@@ -218,6 +202,30 @@
                                         </div>
                                     </div>
 
+
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Vía</label>
+
+                                            <select id="select-via" class="form-control">
+                                                <option value="">Seleccionar Opción</option>
+                                                @foreach($arrayVia as $item)
+
+                                                    @if($infoReceta->via_id == $item->id)
+                                                        <option value="{{$item->id}}" selected>{{ $item->nombre }}</option>
+                                                    @else
+                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                    @endif
+
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+
+
                                 </div>
 
 
@@ -269,6 +277,7 @@
                         <th style="width: 10%">Medicamento</th>
                         <th style="width: 6%">Nombre Generico</th>
                         <th style="width: 6%">Cantidad</th>
+                        <th style="width: 6%">Vía</th>
                         <th style="width: 6%">Indicaciones</th>
                         <th style="width: 5%">Opciones</th>
                     </tr>
@@ -290,11 +299,16 @@
                             <td>
                                 <input name="arrayCantidad[]" disabled value="{{ $item->cantidad }}" class="form-control" type="number">
                             </td>
+
+                            <td>
+                                <input name="arrayVia[]" disabled data-idvia="{{ $item->via_id }}" value="{{ $item->nombreVia }}" class="form-control" type="text">
+                            </td>
+
                             <td>
                                 <textarea name="arrayIndicacion[]" class="form-control" type="text">{{ $item->descripcion }}</textarea>
                             </td>
                             <td>
-                                @if($infoConsulta->estado == 1)
+                                @if($infoReceta->estado == 1)
                                     <button type="button" class="btn btn-block btn-danger" onclick="borrarFila(this)">Borrar</button>
                                 @endif
                             </td>
@@ -444,6 +458,10 @@
             let indicacionesTexto = document.getElementById("indicacion-medicamento").value;
             let cantidadSalida = document.getElementById("cantidad").value;
             let nombreGenerico = document.getElementById("nombre-generico").value;
+            let idvia = document.getElementById("select-via").value;
+            var sel = document.getElementById("select-via");
+            var nombreSelectVia = sel.options[sel.selectedIndex].text;
+
 
             if(idmedicamento === ''){
                 toastr.error('Medicamento es requerido');
@@ -474,6 +492,11 @@
 
             if(cantidadSalida > 9000000){
                 toastr.error('Cantidad a Retirar máximo debe ser 9 millones');
+                return;
+            }
+
+            if(idvia === ''){
+                toastr.error('Vía es requerida')
                 return;
             }
 
@@ -532,6 +555,12 @@
                 "<input name='arrayCantidad[]' disabled value='" + cantidadSalida + "' class='form-control' type='number'>" +
                 "</td>" +
 
+
+                "<td>" +
+                "<input name='arrayVia[]'  class='form-control' data-idvia='" + idvia + "' disabled value='" + nombreSelectVia +"' type='text'>" +
+                "</td>" +
+
+
                 "<td>" +
                 "<textarea name='arrayIndicacion[]'  class='form-control' type='text'>" + indicacionesTexto +"</textarea>" +
                 "</td>" +
@@ -557,6 +586,9 @@
             document.getElementById("indicacion-medicamento").value = "";
             document.getElementById("cantidad").value = "";
             document.getElementById("bloqueGuardarTabla").style.display = "block";
+
+            document.getElementById('select-via').selectedIndex = 0;
+            $("#select-via").trigger("change");
         }
 
         function borrarFila(elemento){
@@ -606,7 +638,6 @@
 
             var fecha = document.getElementById('fecha').value;
             var diagnostico = document.getElementById('select-dianostico').value;
-            var via = document.getElementById('select-via').value;
             var indicacionGeneral = document.getElementById('text-indicacion-general').value;
             var proximaCita = document.getElementById('proxima-cita').value;
 
@@ -621,12 +652,6 @@
                 return;
             }
 
-            if(via === ''){
-                toastr.error('Vía es requerido');
-                return;
-            }
-
-
             var nRegistro = $('#matriz > tbody >tr').length;
 
             if (nRegistro <= 0){
@@ -636,6 +661,9 @@
 
 
             var arrayIdMedicamentos = $("input[name='arrayNombre[]']").map(function(){return $(this).attr("data-idmedicamento");}).get();
+            var arrayIdVia = $("input[name='arrayVia[]']").map(function(){return $(this).attr("data-idvia");}).get();
+
+
             var arrayCantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
             var arrayDeTextareas = $("#matriz textarea[name='arrayIndicacion[]']").map(function(){
                 return $(this).val();
@@ -708,9 +736,10 @@
                 let infoIdMedicamento = arrayIdMedicamentos[i];
                 let infoCantidad = arrayCantidad[i];
                 let infoIndicacion = arrayDeTextareas[i];
+                let infoIdVia = arrayIdVia[i];
 
                 // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
-                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoIndicacion});
+                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoIndicacion, infoIdVia});
             }
 
             formData.append('contenedorArray', JSON.stringify(contenedorArray));
@@ -718,7 +747,6 @@
             formData.append('idreceta', idreceta)
             formData.append('fecha', fecha);
             formData.append('diagnostico', diagnostico);
-            formData.append('via', via);
             formData.append('indicacionGeneral', indicacionGeneral);
             formData.append('proximaCita', proximaCita);
 

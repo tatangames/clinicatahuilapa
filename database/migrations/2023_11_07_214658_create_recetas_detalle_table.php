@@ -17,11 +17,12 @@ class CreateRecetasDetalleTable extends Migration
             $table->id();
             $table->bigInteger('recetas_id')->unsigned();
             $table->bigInteger('medicamento_id')->unsigned();
+            $table->bigInteger('via_id')->unsigned();
 
             $table->integer('cantidad'); // es lo que se retira
             $table->text('descripcion')->nullable();
 
-
+            $table->foreign('via_id')->references('id')->on('via_receta');
             $table->foreign('recetas_id')->references('id')->on('recetas');
             $table->foreign('medicamento_id')->references('id')->on('farmacia_articulo');
         });

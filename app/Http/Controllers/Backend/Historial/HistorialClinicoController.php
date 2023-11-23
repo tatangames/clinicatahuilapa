@@ -417,10 +417,6 @@ class HistorialClinicoController extends Controller
             $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
             $dato->fechaProFormat = date("d-m-Y", strtotime($dato->proxima_cita));
 
-            $infoVia = ViaReceta::where('id', $dato->via_id)->first();
-
-            $dato->nombreVia = $infoVia->nombre;
-
             $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
             $dato->nombreusuario = $infoUsuario->nombre;
         }
@@ -565,7 +561,19 @@ class HistorialClinicoController extends Controller
     }
 
 
+    public function vistaVisualizarAntropologiaExpedientes($idantrop){
 
+        $infoAntrop = Antropometria::where('id', $idantrop)->first();
+        $infoConsulta = Consulta_Paciente::where('id', $infoAntrop->consulta_id)->first();
+        $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+
+        $idconsulta = $infoConsulta->id;
+
+        return view('backend.admin.expedientes.buscar.docurecetas.vistaverantropologia', compact('idantrop',
+            'nombreCompleto', 'idconsulta', 'infoAntrop'));
+    }
 
 
 }

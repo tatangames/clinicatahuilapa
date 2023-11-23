@@ -25,7 +25,6 @@
                                 <th>FECHA</th>
                                 <th>CREADO POR</th>
                                 <th>DIAGNOSTICO</th>
-                                <th>VIA</th>
                                 <th>ESTADO ORDEN</th>
 
                                 <th>Opciones</th>
@@ -38,7 +37,6 @@
                                     <td>{{ $dato->fechaFormat }}</td>
                                     <td>{{ $dato->nombreusuario }}</td>
                                     <td>{{ $dato->descripcion_general }}</td>
-                                    <td>{{ $dato->nombreVia }}</td>
                                     <td>
 
                                         @if($dato->estado == 1)
@@ -126,7 +124,9 @@
     });
 
 
-
+    function imprimirRecetaMedica(idreceta){
+        window.open("{{ URL::to('admin/reporte/receta/paciente') }}/" + idreceta);
+    }
 
 
 </script>

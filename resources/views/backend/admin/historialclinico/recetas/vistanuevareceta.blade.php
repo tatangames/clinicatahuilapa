@@ -110,19 +110,13 @@
                                         </div>
 
 
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
-                                                <label class="control-label">Vía</label>
-
-                                                <select id="select-via" class="form-control">
-                                                    <option value="">Seleccionar Opción</option>
-                                                    @foreach($arrayVia as $item)
-                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-
+                                                <label class="control-label">Proxima Cita:</label>
+                                                <input type="date" class="form-control" id="proxima-cita">
                                             </div>
                                         </div>
+
 
                                     </div>
 
@@ -147,12 +141,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="control-label">Proxima Cita:</label>
-                                            <input type="date" class="form-control" id="proxima-cita">
-                                        </div>
-                                    </div>
+
 
                                 </div>
 
@@ -223,6 +212,22 @@
                                             <input type="number" min="0" max="100" class="form-control" id="cantidad">
                                         </div>
                                     </div>
+
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Vía</label>
+
+                                            <select id="select-via" class="form-control">
+                                                <option value="">Seleccionar Opción</option>
+                                                @foreach($arrayVia as $item)
+                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                    </div>
+
 
                                 </div>
 
@@ -341,7 +346,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="formulario-extradiagnostico">
+                    <form id="formulario-nuevavia">
                         <div class="card-body">
 
                             <div class="form-group" style="margin-top: 20px">
@@ -443,11 +448,9 @@
 
 
         function nuevaViaExtra(){
-            document.getElementById("formulario-extravia").reset();
+            document.getElementById("formulario-nuevavia").reset();
             $('#modalExtraVia').modal('show');
         }
-
-
 
 
         function guardarExtraDiagnostico(){
@@ -603,6 +606,7 @@
             let indicacionesTexto = document.getElementById("indicacion-medicamento").value;
             let cantidadSalida = document.getElementById("cantidad").value;
             let nombreGenerico = document.getElementById("nombre-generico").value;
+            let idvia = document.getElementById("select-via").value;
 
             if(idmedicamento === ''){
                 toastr.error('Medicamento es requerido');
@@ -633,6 +637,12 @@
 
             if(cantidadSalida > 9000000){
                 toastr.error('Cantidad a Retirar máximo debe ser 9 millones');
+                return;
+            }
+
+
+            if(idvia === ''){
+                toastr.error('Vía es requerida')
                 return;
             }
 
@@ -689,6 +699,7 @@
 
                 "<td>" +
                 "<input name='arrayCantidad[]' disabled value='" + cantidadSalida + "' class='form-control' type='number'>" +
+                "<input name='arrayVia[]' data-idvia='" + idvia + "' disabled type='hidden'>" +
                 "</td>" +
 
                 "<td>" +
@@ -716,6 +727,9 @@
             document.getElementById("indicacion-medicamento").value = "";
             document.getElementById("cantidad").value = "";
             document.getElementById("bloqueGuardarTabla").style.display = "block";
+
+            document.getElementById('select-via').selectedIndex = 0;
+            $("#select-via").trigger("change");
         }
 
         function borrarFila(elemento){
@@ -795,6 +809,8 @@
 
 
             var arrayIdMedicamentos = $("input[name='arrayNombre[]']").map(function(){return $(this).attr("data-idmedicamento");}).get();
+            var arrayIdVia = $("input[name='arrayVia[]']").map(function(){return $(this).attr("data-idvia");}).get();
+
             var arrayCantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
             var arrayDeTextareas = $("#matriz textarea[name='arrayIndicacion[]']").map(function(){
                 return $(this).val();
@@ -867,16 +883,16 @@
                 let infoIdMedicamento = arrayIdMedicamentos[i];
                 let infoCantidad = arrayCantidad[i];
                 let infoIndicacion = arrayDeTextareas[i];
+                let infoIdVia = arrayIdVia[i];
 
                 // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
-                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoIndicacion});
+                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoIndicacion, infoIdVia});
             }
 
             formData.append('contenedorArray', JSON.stringify(contenedorArray));
             formData.append('idconsulta', idconsulta);
             formData.append('fecha', fecha);
             formData.append('diagnostico', diagnostico);
-            formData.append('via', via);
             formData.append('indicacionGeneral', indicacionGeneral);
             formData.append('proximaCita', proximaCita);
 

@@ -117,7 +117,6 @@ class RecetasController extends Controller
             'idconsulta' => 'required',
             'fecha' => 'required',
             'diagnostico' => 'required',
-            'via' => 'required',
         );
 
         // indicacionGeneral
@@ -144,7 +143,6 @@ class RecetasController extends Controller
                 $receta = new Recetas();
                 $receta->consulta_id = $request->idconsulta;
                 $receta->paciente_id = $infoConsulta->paciente_id;
-                $receta->via_id = $request->via;
                 $receta->diagnostico_id = $request->diagnostico;
                 $receta->descripcion_general = $request->indicacionGeneral;
                 $receta->fecha = $request->fecha;
@@ -163,6 +161,7 @@ class RecetasController extends Controller
                     $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
                     $detalle->cantidad = $filaArray['infoCantidad'];
                     $detalle->descripcion = $filaArray['infoIndicacion'];
+                    $detalle->via_id = $filaArray['infoIdVia'];
                     $detalle->save();
                 }
 
@@ -198,7 +197,8 @@ class RecetasController extends Controller
 
         $arrayDetalle = DB::table('recetas_detalle AS red')
             ->join('farmacia_articulo AS fama', 'fama.id', '=', 'red.medicamento_id')
-            ->select('fama.nombre', 'red.recetas_id', 'red.id AS idfarmacia', 'red.cantidad', 'red.descripcion', 'red.medicamento_id')
+            ->select('fama.nombre', 'red.recetas_id', 'red.id AS idfarmacia',
+                'red.cantidad', 'red.descripcion', 'red.medicamento_id', 'red.via_id')
             ->where('red.recetas_id', $idreceta)
             ->orderBy('fama.nombre', 'ASC')
             ->get();
@@ -216,7 +216,8 @@ class RecetasController extends Controller
             }
             $info->nombreGenerico = $nombreGenerico;
 
-
+            $infoVia = ViaReceta::where('id', $info->via_id)->first();
+            $info->nombreVia = $infoVia->nombre;
         }
 
         if($infoReceta->estado != 1){
@@ -238,7 +239,6 @@ class RecetasController extends Controller
             'idreceta' => 'required',
             'fecha' => 'required',
             'diagnostico' => 'required',
-            'via' => 'required',
         );
 
         // indicacionGeneral
@@ -271,7 +271,6 @@ class RecetasController extends Controller
 
 
                 Recetas::where('id', $request->idreceta)->update([
-                    'via_id' => $request->via,
                     'diagnostico_id' => $request->diagnostico,
                     'descripcion_general' => $request->indicacionGeneral,
                     'fecha' => $request->fecha,
@@ -286,6 +285,7 @@ class RecetasController extends Controller
                     $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
                     $detalle->cantidad = $filaArray['infoCantidad'];
                     $detalle->descripcion = $filaArray['infoIndicacion'];
+                    $detalle->via_id = $filaArray['infoIdVia'];
                     $detalle->save();
                 }
 

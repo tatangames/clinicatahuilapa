@@ -35,9 +35,7 @@ class DocumentoRecetaController extends Controller
 
         $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos . " (" . $edad . " Años)";
 
-        $totalConsulta = Consulta_Paciente::where('paciente_id', $infoPaciente)->count();
-
-
+        $totalConsulta = Consulta_Paciente::where('paciente_id', $infoPaciente->id)->count();
 
         return view('backend.admin.expedientes.buscar.docurecetas.vistadocumentorecetas', compact('idpaciente',
         'edad', 'miFecha', 'nombreCompleto', 'totalConsulta', 'infoPaciente'));
@@ -138,10 +136,6 @@ class DocumentoRecetaController extends Controller
             $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
             $dato->fechaProFormat = date("d-m-Y", strtotime($dato->proxima_cita));
 
-            $infoVia = ViaReceta::where('id', $dato->via_id)->first();
-
-            $dato->nombreVia = $infoVia->nombre;
-
             $infoUsuario = Usuario::where('id', $dato->usuario_id)->first();
             $dato->nombreusuario = $infoUsuario->nombre;
         }
@@ -156,7 +150,8 @@ class DocumentoRecetaController extends Controller
         $bloqueCuadroClinico= DB::table('cuadro_clinico AS cl')
             ->join('consulta_paciente AS con', 'con.id', '=', 'cl.consulta_id')
             ->select('con.fecha_hora', 'cl.diagnostico_id', 'cl.descripcion',
-                'cl.diagnostico_id', 'cl.id', 'con.paciente_id', 'con.id AS idconsulta')
+                'cl.diagnostico_id', 'cl.id', 'con.paciente_id', 'con.id AS idconsulta',
+                    'cl.usuario_id')
             ->where('con.paciente_id', $idpaciente)
             ->orderBy('con.fecha_hora', 'ASC')
             ->get();
@@ -168,6 +163,9 @@ class DocumentoRecetaController extends Controller
             $infoDiagnostico = Diagnosticos::where('id', $dato->diagnostico_id)->first();
 
             $dato->nombreDiagnostico = $infoDiagnostico->nombre;
+
+            $infoDoctor = Usuario::where('id', $dato->usuario_id)->first();
+            $dato->doctor = $infoDoctor->nombre;
         }
 
         return view('backend.admin.expedientes.buscar.docurecetas.tablas.tablacuadroclinico', compact('bloqueCuadroClinico'));

@@ -288,6 +288,8 @@ Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoControl
 
 // vista para editar o ver la antropologia
 Route::get('/admin/vista/visualizar/antropologia/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologia']);
+// editar antropologa siempre, pero se busca desde los expedientes
+Route::get('/admin/vista/visualizar/antropologia/exped/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologiaExpedientes']);
 
 // actualizar antropometria
 Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoController::class, 'actualizarAntropometria']);
@@ -428,6 +430,8 @@ Route::get('/admin/reporte/existencias/juntos', [ReportesController::class,'repo
 Route::get('/admin/reporte/existencias/separado', [ReportesController::class,'reporteExistenciasFormatoSeparados']);
 
 
+// reporte de receta por idreceta
+Route::get('/admin/reporte/receta/paciente/{idreceta}', [ReportesController::class,'reporteRecetaPaciente']);
 
 
 
