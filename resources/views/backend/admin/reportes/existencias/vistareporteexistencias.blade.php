@@ -23,7 +23,7 @@
         <div class="container-fluid">
             <div class="card card-success">
                 <div class="card-header">
-                    <h3 class="card-title">REPORTE DE SALIDAS DE RECETAS</h3>
+                    <h3 class="card-title">REPORTE DE ENTRADAS</h3>
                 </div>
                 <div class="card-body">
 
@@ -32,41 +32,19 @@
 
                             <div class="row">
 
-                                <div class="form-group col-md-2" >
-                                    <label style="color: #686868">Estados: </label>
-                                    <select class="form-control" id="select-estado">
-                                        <option value="2">Procesados</option>
-                                        <option value="3">Denegados</option>
-
-                                    </select>
-                                </div>
-
-                                <div class="form-group col-md-2" >
-                                    <label style="color: #686868">Desde: </label>
-                                    <input type="date" autocomplete="off" class="form-control" id="fecha-desde">
-                                </div>
-
-                                <div class="form-group col-md-2" >
-                                    <label style="color: #686868">Hasta: </label>
-                                    <input type="date" autocomplete="off" class="form-control" id="fecha-hasta">
-                                </div>
-
-                                <div class="form-group col-md-2" >
+                                <div class="form-group col-md-3" >
                                     <label style="color: #686868">Formato: </label>
                                     <select class="form-control" id="select-formato">
                                         <option value="1">Separado</option>
                                         <option value="2">Juntos</option>
-
                                     </select>
                                 </div>
-
 
                                 <div class="form-group col-md-1" style="margin-top: 30px">
                                     <button type="button" class="btn btn-success form-control" onclick="verificar()">Generar</button>
                                 </div>
 
                             </div>
-
 
                         </div>
                     </section>
@@ -95,6 +73,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+
             document.getElementById("divcontenedor").style.display = "block";
         });
     </script>
@@ -104,28 +83,13 @@
 
         function verificar(){
 
-            let idestado = document.getElementById("select-estado").value;
-            let fechaDesde = document.getElementById("fecha-desde").value;
-            let fechaHasta = document.getElementById("fecha-hasta").value;
-
             let idformato = document.getElementById("select-formato").value;
 
-            if(fechaDesde === ''){
-                toastr.error('Fecha Desde es requerido');
-                return;
-            }
-
-            if(fechaHasta === ''){
-                toastr.error('Fecha Hasta es requerido');
-                return;
-            }
-
             if(idformato == '1'){ // separado
-                window.open("{{ URL::to('admin/reporte/salida/recetas/separado') }}/" + idestado+ "/" + fechaDesde + "/" + fechaHasta);
+                window.open("{{ URL::to('admin/reporte/existencias/separado') }}");
             }else{
-                window.open("{{ URL::to('admin/reporte/salida/recetas/juntos') }}/" + idestado+ "/" + fechaDesde + "/" + fechaHasta);
+                window.open("{{ URL::to('admin/reporte/existencias/juntos') }}");
             }
-
         }
 
 

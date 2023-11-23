@@ -9,18 +9,21 @@ use App\Models\EntradaMedicamento;
 use App\Models\EntradaMedicamentoDetalle;
 use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
+use App\Models\Linea;
 use App\Models\MotivoFarmacia;
 use App\Models\OrdenSalida;
 use App\Models\OrdenSalidaDetalle;
 use App\Models\Paciente;
 use App\Models\Proveedores;
 use App\Models\Recetas;
+use App\Models\SubLinea;
 use App\Models\TipoFactura;
 use App\Models\Usuario;
 use App\Models\ViaReceta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ReportesController extends Controller
 {
@@ -450,7 +453,7 @@ class ReportesController extends Controller
 
     public function reporteSalidaRecetasEstadosSeparados($idestado, $desde, $hasta){
 
-        // 2- procesador
+        // 2- procesados
         // 3- denegados
 
         $start = Carbon::parse($desde)->startOfDay();
@@ -779,7 +782,7 @@ class ReportesController extends Controller
 
     public function reporteSalidaRecetasEstadosJuntos($idestado, $desde, $hasta){
 
-        // 2- procesador
+        // 2- procesados
         // 3- denegados
 
         $start = Carbon::parse($desde)->startOfDay();
@@ -986,11 +989,359 @@ class ReportesController extends Controller
 
 
 
+    public function vistaReporteCatalogo(){
+
+
+        $arrayLinea = Linea::orderBy('nombre', 'ASC')->get();
+
+        return view('backend.admin.reportes.catalogo.vistareportecatalogo', compact('arrayLinea'));
+    }
+
+
+    public function reporteCatalogoPorLinea($idlinea){
+
+
+        if($idlinea == '0'){
+            $arrayCatalogo = FarmaciaArticulo::orderBy('nombre', 'ASC')
+                ->get();
+        }else{
+            $arrayCatalogo = FarmaciaArticulo::where('linea_id', $idlinea)
+                ->orderBy('nombre', 'ASC')
+                ->get();
+        }
+
+
+        foreach ($arrayCatalogo as $infoFila){
+
+            $infoLinea = Linea::where('id', $infoFila->linea_id)->first();
+            $infoFila->nombreLinea = $infoLinea->nombre;
+
+            $nombreSub = "";
+            if($infoSub = SubLinea::where('id', $infoFila->sublinea_id)->first()){
+                $nombreSub = $infoSub->nombre;
+            }
+            $infoFila->nombreSubLinea = $nombreSub;
+        }
+
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+
+        // mostrar errores
+        $mpdf->showImageErrors = false;
+        $mpdf->SetTitle('Catálogo');
+
+        $logoalcaldia = 'images/logo2.png';
+
+        $tabla = "<div class='contenedorp'>
+            <img id='logo' src='$logoalcaldia'>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
+            Tahuilapa Metapán<br>
+            Catálogo<br>
+            </div>";
+
+
+            $tabla .= "<table width='100%' id='tablaFor'>
+                    <tbody>";
+
+            $tabla .= "<tr>
+                <td style='font-weight: bold; width: 11%; font-size: 14px'>Línea</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Sub Línea</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Código</td>
+                <td style='font-weight: bold; width: 15%; font-size: 14px'>Artículo</td>
+            <tr>";
+
+            foreach ($arrayCatalogo as $detaFila) {
+
+                $tabla .= "<tr>
+                    <td>$detaFila->nombreLinea</td>
+                    <td>$detaFila->nombreSubLinea</td>
+                    <td>$detaFila->codigo_articulo</td>
+                    <td>$detaFila->nombre</td>
+                <tr>";
+
+            } // endforeach
+
+            $tabla .= "</tbody></table>";
+
+
+        $stylesheet = file_get_contents('css/cssregistro.css');
+        $mpdf->WriteHTML($stylesheet,1);
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
+        $mpdf->WriteHTML($tabla,2);
+
+        $mpdf->Output();
+    }
 
 
 
 
 
+    public function vistaReporteExistencias(){
+
+        return view('backend.admin.reportes.existencias.vistareporteexistencias');
+    }
+
+
+    public function reporteExistenciasFormatoSeparados(){
+
+        // VERIFICAR QUE ENTRADAS AUN TIENEN MEDICAMENTO DENTRO DE SU DETALLE AUN
+
+
+        $arrayIdDeta = EntradaMedicamentoDetalle::where('cantidad', '>', 0)
+            ->get();
+
+
+        $pilaIdEntrada = array();
+
+        foreach ($arrayIdDeta as $info){
+            array_push($pilaIdEntrada, $info->entrada_medicamento_id);
+        }
+
+        $resultsBloque = array();
+        $index = 0;
+
+        $arrayEntradas = EntradaMedicamento::whereIn('id', $pilaIdEntrada)->get();
+
+        $totalGeneral = 0;
+
+        foreach ($arrayEntradas as $infoFila){
+
+            array_push($resultsBloque, $infoFila);
+
+            $infoTipoFact = TipoFactura::where('id', $infoFila->tipofactura_id)->first();
+            $infoFuente = FuenteFinanciamiento::where('id', $infoFila->fuentefina_id)->first();
+            $infoProveedor = Proveedores::where('id', $infoFila->proveedor_id)->first();
+
+            $infoFila->fechaFormat = date("d-m-Y", strtotime($infoFila->fecha));
+            $infoFila->nombreTipoFactura = $infoTipoFact->nombre;
+            $infoFila->nombreFuente = $infoFuente->nombre;
+            $infoFila->nombreProveedor = $infoProveedor->nombre;
+
+            $totalColumna = 0;
+
+            $arrayDetalle = EntradaMedicamentoDetalle::where('entrada_medicamento_id', $infoFila->id)
+                ->orderBy('fecha_vencimiento', 'ASC')
+                ->get();
+
+            foreach ($arrayDetalle as $dato){
+
+                $infoArticulo = FarmaciaArticulo::where('id', $dato->medicamento_id)->first();
+                $dato->nombreArticulo = $infoArticulo->nombre;
+
+                $dato->fechaVecFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
+
+                $multiFila = $dato->precio * $dato->cantidad;
+                $totalColumna = $totalColumna + $multiFila;
+
+                $dato->precioXFila = '$' . number_format((float)$multiFila, 2, '.', ',');
+                $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
+            }
+
+            $totalGeneral = $totalGeneral + $totalColumna;
+
+            $totalColumna = '$' . number_format((float)$totalColumna, 2, '.', ',');
+            $infoFila->totalColumna = $totalColumna;
+
+            $resultsBloque[$index]->detallefila = $arrayDetalle;
+            $index++;
+        }
+
+        $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
+
+
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+        // mostrar errores
+        $mpdf->showImageErrors = false;
+        $mpdf->SetTitle('Existencias');
+        $logoalcaldia = 'images/logo2.png';
+
+        $tabla = "<div class='contenedorp'>
+            <img id='logo' src='$logoalcaldia'>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
+            Tahuilapa Metapán<br>
+            Existencias<br>
+            </div>";
+
+        foreach ($arrayEntradas as $detaFila) {
+
+            $tabla .= "<table width='100%' id='tablaFor'>
+                    <tbody>";
+
+            $tabla .= "<tr>
+                <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Entrada</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Tipo Factura</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'># Factura</td>
+                <td style='font-weight: bold; width: 15%; font-size: 14px'>Fuente</td>
+                <td style='font-weight: bold; width: 15%; font-size: 14px'>Proveedor</td>
+            <tr>";
+
+            $tabla .= "<tr>
+                <td>$detaFila->fechaFormat</td>
+                <td>$detaFila->nombreTipoFactura</td>
+                <td>$detaFila->numero_factura</td>
+                <td>$detaFila->nombreFuente</td>
+                <td>$detaFila->nombreProveedor</td>
+            <tr>";
+
+
+            $tabla .= "</tbody></table>";
+
+
+            $tabla .= "<table width='100%' id='tablaFor'>
+                    <tbody>";
+
+            $tabla .= "<tr>
+                <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Venc.</td>
+                <td style='font-weight: bold; width: 11%; font-size: 14px'>Artículo</td>
+                <td style='font-weight: bold; width: 11%; font-size: 14px'>Lote</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Cantidad</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Precio</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Monto</td>
+            <tr>";
+
+            foreach ($detaFila->detallefila as $dato) {
+
+                if($dato->cantidad > 0){
+                    $tabla .= "<tr>
+                    <td>$dato->fechaVecFormat</td>
+                    <td>$dato->nombreArticulo</td>
+                    <td>$dato->lote</td>
+                    <td>$dato->cantidad</td>
+                    <td>$dato->precioFormat</td>
+                    <td>$dato->precioXFila</td>
+                <tr>";
+                }
+            }
+
+            $tabla .= "<tr>
+                <td colspan='5'>Total</td>
+                <td>$detaFila->totalColumna</td>
+            <tr>";
+
+            $tabla .= "</tbody></table>";
+
+        } // endforeach
+
+
+        $tabla .= "<div style='margin-top: 30px'>
+            <hr>
+            <p id='textoFinal'>Total General:  $totalGeneral<br>
+            </div>";
+
+
+
+        $stylesheet = file_get_contents('css/cssregistro.css');
+        $mpdf->WriteHTML($stylesheet,1);
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
+        $mpdf->WriteHTML($tabla,2);
+
+        $mpdf->Output();
+    }
+
+
+
+
+
+
+
+    public function reporteExistenciasFormatoJuntos(){
+
+        $arrayIdDeta = EntradaMedicamentoDetalle::where('cantidad', '>', 0)->get();
+
+        $pilaIdEntrada = array();
+
+        foreach ($arrayIdDeta as $info){
+            array_push($pilaIdEntrada, $info->entrada_medicamento_id);
+        }
+
+        $arrayEntradasDetalle =  DB::table('entrada_medicamento_detalle AS deta')
+            ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
+            ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad', 'deta.precio',
+                'deta.lote', 'deta.fecha_vencimiento')
+            ->whereIn('deta.entrada_medicamento_id', $pilaIdEntrada)
+            ->where('deta.cantidad', '>', 0)
+            ->orderBy('fa.nombre', 'ASC')
+            ->get();
+
+        $totalGeneral = 0;
+
+        foreach ($arrayEntradasDetalle as $infoFila){
+
+            $infoFila->fechaVencFormat = date("d-m-Y", strtotime($infoFila->fecha_vencimiento));
+
+
+            $multiFila = $infoFila->cantidad * $infoFila->precio;
+            $totalGeneral = $totalGeneral + $multiFila;
+
+            $infoFila->multiFila = '$' . number_format((float)$multiFila, 2, '.', ',');
+            $infoFila->precioFormat = '$' . number_format((float)$infoFila->precio, 2, '.', ',');
+        }
+
+        $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
+
+
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+        // mostrar errores
+        $mpdf->showImageErrors = false;
+        $mpdf->SetTitle('Existencias');
+        $logoalcaldia = 'images/logo2.png';
+
+        $tabla = "<div class='contenedorp'>
+            <img id='logo' src='$logoalcaldia'>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
+            Tahuilapa Metapán<br>
+            Existencias<br>
+            </div>";
+
+
+
+            $tabla .= "<table width='100%' id='tablaFor'>
+                    <tbody>";
+
+            $tabla .= "<tr>
+                <td style='font-weight: bold; width: 11%; font-size: 14px'>Artículo</td>
+                <td style='font-weight: bold; width: 9%; font-size: 14px'>Fecha Vencimiento</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Lote</td>
+                <td style='font-weight: bold; width: 12%; font-size: 14px'>Cantidad</td>
+                <td style='font-weight: bold; width: 15%; font-size: 14px'>Precio</td>
+                <td style='font-weight: bold; width: 15%; font-size: 14px'>Monto</td>
+            <tr>";
+
+        foreach ($arrayEntradasDetalle as $detaFila) {
+            $tabla .= "<tr>
+                <td>$detaFila->nombre</td>
+                <td>$detaFila->fechaVencFormat</td>
+                <td>$detaFila->lote</td>
+                <td>$detaFila->cantidad</td>
+                <td>$detaFila->precioFormat</td>
+                <td>$detaFila->multiFila</td>
+            <tr>";
+        }
+
+        $tabla .= "</tbody></table>";
+
+
+        $tabla .= "<div style='margin-top: 30px'>
+            <hr>
+            <p id='textoFinal'>Total General:  $totalGeneral<br>
+            </div>";
+
+        $stylesheet = file_get_contents('css/cssregistro.css');
+        $mpdf->WriteHTML($stylesheet,1);
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
+        $mpdf->WriteHTML($tabla,2);
+
+        $mpdf->Output();
+
+    }
 
 
 }

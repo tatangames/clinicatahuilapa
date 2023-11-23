@@ -341,6 +341,22 @@
                             </li>
 
 
+                            <li class="nav-item">
+                                <a href="{{ route('admin.reporte.catalogo') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Reporte Catálogo</p>
+                                </a>
+                            </li>
+
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.reporte.existencias') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Reporte Existencias</p>
+                                </a>
+                            </li>
+
+
                         </ul>
                     </li>
 

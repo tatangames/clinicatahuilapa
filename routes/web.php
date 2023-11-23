@@ -418,10 +418,14 @@ Route::get('/admin/reporte/salida/recetas/separado/{idfuente}/{desde}/{hasta}', 
 Route::get('/admin/reporte/salida/recetas/juntos/{idfuente}/{desde}/{hasta}', [ReportesController::class,'reporteSalidaRecetasEstadosJuntos']);
 
 
+// reporte de catalogo, todos los articulos
+Route::get('/admin/vista/reporte/catalogo', [ReportesController::class,'vistaReporteCatalogo'])->name('admin.reporte.catalogo');
+Route::get('/admin/reporte/catalogo/{idlinea}', [ReportesController::class,'reporteCatalogoPorLinea']);
 
-
-
-
+// reporte de existencias
+Route::get('/admin/vista/reporte/existencias', [ReportesController::class,'vistaReporteExistencias'])->name('admin.reporte.existencias');
+Route::get('/admin/reporte/existencias/juntos', [ReportesController::class,'reporteExistenciasFormatoJuntos']);
+Route::get('/admin/reporte/existencias/separado', [ReportesController::class,'reporteExistenciasFormatoSeparados']);
 
 
 
