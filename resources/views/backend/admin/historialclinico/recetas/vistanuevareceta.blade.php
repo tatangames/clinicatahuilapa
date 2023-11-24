@@ -278,7 +278,7 @@
                     <tr>
                         <th style="width: 3%">#</th>
                         <th style="width: 10%">Medicamento</th>
-                        <th style="width: 6%">Nombre Generico</th>
+                        <th style="width: 6%">Lote</th>
                         <th style="width: 6%">Cantidad</th>
                         <th style="width: 6%">Indicaciones</th>
                         <th style="width: 5%">Opciones</th>
@@ -568,12 +568,12 @@
                             // SE AGREGA EL ID DE ENTRADA DETALLE
 
                             if(response.data.hayfilas){
-                                $('#select-medicamento').append('<option value="" data-generico="" data-cantitotal="" data-nombre="" selected>Seleccionar Medicamento</option>');
+                                $('#select-medicamento').append('<option value="" data-lote="" data-cantitotal="" data-nombre="" selected>Seleccionar Medicamento</option>');
                                 $.each(response.data.dataArray, function( key, val ){
-                                    $('#select-medicamento').append('<option value="' +val.id +'" data-generico="' +val.nombreGenerico +'" data-cantitotal="' +val.cantidadTotal +'" data-nombre="' +val.nombre +'">'+val.nombretotal+'</option>');
+                                    $('#select-medicamento').append('<option value="' +val.id +'" data-lote="' +val.lote +'" data-cantitotal="' +val.cantidadTotal +'" data-nombre="' +val.nombre +'">'+val.nombretotal+'</option>');
                                 });
                             }else{
-                                $('#select-medicamento').append('<option value="" data-generico="" data-cantitotal="" data-nombre="">Sin Medicamentos</option>');
+                                $('#select-medicamento').append('<option value="" data-lote="" data-cantitotal="" data-nombre="">Sin Medicamentos</option>');
                             }
 
                         }else{
@@ -603,7 +603,7 @@
             let idmedicamento = document.getElementById("select-medicamento").value;
             let indicacionesTexto = document.getElementById("indicacion-medicamento").value;
             let cantidadSalida = document.getElementById("cantidad").value;
-            let nombreGenerico = document.getElementById("nombre-generico").value;
+
             let idvia = document.getElementById("select-via").value;
 
             if(idmedicamento === ''){
@@ -650,6 +650,7 @@
             var opcionSeleccionada = miSelect.options[miSelect.selectedIndex];
             var dataInfoCantidad = opcionSeleccionada.getAttribute("data-cantitotal");
             var dataInfoNombre = opcionSeleccionada.getAttribute("data-nombre");
+            var dataInfoLote = opcionSeleccionada.getAttribute("data-lote");
 
             let totalHay = parseInt(dataInfoCantidad);
             let totalSalida = parseInt(cantidadSalida);
@@ -692,7 +693,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<input disabled value='" + nombreGenerico + "' class='form-control' type='text'>" +
+                "<input disabled value='" + dataInfoLote + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +

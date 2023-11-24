@@ -84,10 +84,11 @@ class FarmaciaController extends Controller
 
         try {
 
-            if(FarmaciaArticulo::where('codigo_articulo', $request->codigoArticulo)->first()){
-                return ['success' => 1];
+            if($request->codigoArticulo != null){
+                if(FarmaciaArticulo::where('codigo_articulo', $request->codigoArticulo)->first()){
+                    return ['success' => 1];
+                }
             }
-
 
             $articulo = new FarmaciaArticulo();
             $articulo->linea_id = $request->idLinea;
