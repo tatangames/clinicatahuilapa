@@ -564,11 +564,9 @@ class FarmaciaController extends Controller
     }
 
 
+    // FORMA ANTERIOR DE USUARIO FARMACIA ELIGE DE QUE MEDICAMENTO SACAR
 
-
-
-
-    public function vistaRecetaDetalleProcesar($idreceta){
+    /*public function vistaRecetaDetalleProcesar($idreceta){
 
         $infoReceta = Recetas::where('id', $idreceta)->first();
 
@@ -650,8 +648,52 @@ class FarmaciaController extends Controller
 
 
         return view('backend.admin.farmacia.salidareceta.procesar.vistaprocesarreceta', compact('idreceta',
+            'infoPaciente', 'nombreCompleto', 'nombreDoctor', 'fechaReceta', 'edad', 'arrayNombreMedicamento',
+            'arrayDetalle'));
+    }*/
+
+
+    public function vistaRecetaDetalleProcesar($idreceta){
+
+        $infoReceta = Recetas::where('id', $idreceta)->first();
+
+        $infoConsulta = Consulta_Paciente::where('id', $infoReceta->consulta_id)->first();
+
+        $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+
+        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+
+        $infoUsuario = Usuario::where('id', $infoReceta->usuario_id)->first();
+
+        $nombreDoctor = $infoUsuario->nombre;
+
+        $fechaReceta = date("d-m-Y", strtotime($infoReceta->fecha));
+
+        $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+
+        $arrayNombreMedicamento = DB::table('recetas_detalle AS rd')
+            ->join('entrada_medicamento_detalle AS enta', 'rd.entrada_detalle_id', '=', 'enta.id')
+            ->join('farmacia_articulo AS fama', 'enta.medicamento_id', '=', 'fama.id')
+            ->select('fama.nombre', 'rd.id', 'rd.recetas_id', 'enta.fecha_vencimiento', 'rd.cantidad', 'enta.lote', 'enta.cantidad AS cantidadActual',
+                    'rd.cantidad AS cantidadRetirar')
+            ->where('rd.recetas_id', $idreceta)
+            ->orderBy('fama.nombre', 'ASC')
+            ->get();
+
+        $contador = 0;
+        foreach ($arrayNombreMedicamento as $info){
+            $contador++;
+            $info->contador = $contador;
+
+            $info->nombreFormat = $info->nombre;
+
+            $info->fechaVencimiento = date("d-m-Y", strtotime($info->fecha_vencimiento));
+        }
+
+
+        return view('backend.admin.farmacia.salidareceta.procesar.vistaprocesarreceta', compact('idreceta',
         'infoPaciente', 'nombreCompleto', 'nombreDoctor', 'fechaReceta', 'edad', 'arrayNombreMedicamento',
-        'arrayDetalle'));
+        ));
     }
 
 
@@ -739,7 +781,8 @@ class FarmaciaController extends Controller
 
 
 
-    public function guardarSalidaProcesadaDeReceta(Request $request){
+    // VERSION ANTIGUA CUANDO FARMACIA SELECCIONABA DE CUAL MEDICAMENTO RETIRAR
+    /*public function guardarSalidaProcesadaDeReceta(Request $request){
 
         $regla = array(
             'idreceta' => 'required',
@@ -817,8 +860,95 @@ class FarmaciaController extends Controller
             Log::info('err ' . $e);
             return ['success' => 99];
         }
-    }
+    }*/
 
+
+
+    public function guardarSalidaProcesadaDeReceta(Request $request){
+
+        $regla = array(
+            'idreceta' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        DB::beginTransaction();
+
+        try {
+
+            $infoReceta = Recetas::where('id', $request->idreceta)->first();
+
+            if($infoReceta->estado != '1'){
+                return ['success' => 1];
+            }
+
+            $usuario = auth()->user();
+            $fechaCarbon = Carbon::parse(Carbon::now());
+
+            $salida = new SalidaReceta();
+            $salida->recetas_id = $request->idreceta;
+            $salida->usuario_id = $usuario->id;
+            $salida->fecha = $fechaCarbon;
+            $salida->notas = $request->txtNotas;
+            $salida->save();
+
+            // LISTADO DE RECETAS DETALLE
+
+            $arrayDetalle = RecetasDetalle::where('recetas_id', $request->idreceta)->get();
+
+            // RESTAR ENTRADA DETALLE
+            foreach ($arrayDetalle as $filaArray) {
+
+                $infoEntradaDeta = EntradaMedicamentoDetalle::where('id', $filaArray->entrada_detalle_id)->first();
+
+                // RESTAR
+
+                $resta = $infoEntradaDeta->cantidad - $filaArray->cantidad;
+
+                if($resta < 0){
+                    // se esta restando de mas a esta entrada
+
+                    $infoMedicamento = FarmaciaArticulo::where('id', $infoEntradaDeta->medicamento_id)->first();
+
+                    $fechaVencimiento = date("d-m-Y", strtotime($infoEntradaDeta->fecha_vencimiento));
+
+                    return ['success' => 2, 'nombre' => $infoMedicamento->nombre,
+                        'cantidadhay' => $infoEntradaDeta->cantidad,
+                        'lote' => $infoEntradaDeta->lote,
+                        'fechavencimiento' => $fechaVencimiento,
+                        'cantidadsalida' => $filaArray->cantidad];
+                }
+
+                EntradaMedicamentoDetalle::where('id', $filaArray['idEntradaDetalle'])->update([
+                    'cantidad' => $resta
+                ]);
+
+
+                $newDetalle = new SalidaRecetaDetalle();
+                $newDetalle->salidareceta_id = $salida->id;
+                $newDetalle->entrada_detalle_id = $filaArray->entrada_detalle_id;
+                $newDetalle->cantidad = $filaArray->cantidad;
+                $newDetalle->save();
+            }
+
+            // actualizar estado
+
+            Recetas::where('id', $request->idreceta)->update([
+                'estado' => 2 // PROCESADO
+            ]);
+
+            DB::commit();
+            return ['success' => 3];
+
+        }catch(\Throwable $e){
+            DB::rollback();
+            Log::info('err ' . $e);
+            return ['success' => 99];
+        }
+    }
 
 
 

@@ -73,28 +73,7 @@
         </div>
 
 
-        <div class="col-md-6">
-            <div class="card card-success">
-                <div class="card-header">
-                    <h3 class="card-title">LISTA DE MEDICAMENTOS A DESPACHAR</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
 
-                </div>
-
-                <div class="card-body">
-                    @foreach($arrayNombreMedicamento as $info)
-                        <li>{{ $info->nombreFormat }}</li>
-                    @endforeach
-
-                </div>
-
-            </div>
-
-        </div>
     </div>
 </section>
 
@@ -105,107 +84,63 @@
 
         <div class="row" style="margin-left: 5px; margin-right: 5px">
             <div class="col-md-12">
-                <div class="card card-info">
+                <div class="card card-success">
                     <div class="card-header">
-                        <h3 class="card-title">SELECCIONAR SALIDA</h3>
+                        <h3 class="card-title">LISTADO DE MEDICAMENTOS A DESPACHAR</h3>
 
                     </div>
 
                     <div class="card-body">
 
 
-                        @foreach($arrayDetalle as $material)
+                        <table class="table" id="matriz" data-toggle="table" style="margin-right: 15px; margin-left: 15px;">
+                            <thead>
+                            <tr>
+                                <th style="width: 3%">#</th>
+                                <th style="width: 10%">Medicamento</th>
+                                <th style="width: 6%">Lote</th>
+                                <th style="width: 6%">Cantidad Retirar</th>
+                                <th style="width: 6%">Cantidad Bodega</th>
+                                <th style="width: 6%">Fecha Vencimiento</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                            <!-- CONTENEDOR PADRE -->
-                            <div class="material-bloque" data-nombre="{{ $material->nombre }}" data-iddetalle="{{ $material->id }}" data-cantidad="{{ $material->cantidad }}">
 
-                                <p style="font-weight: bold">Medicamento: <span style="font-weight: normal!important;">{{ $material->nombre }}</span></p>
-                                <p style="font-weight: bold">Nombre Generico: <span style="font-weight: normal!important;">{{ $material->nombreGenerico }}</span></p>
-                                <p style="font-weight: bold">Cantidad Solitada: <span style="font-weight: normal!important;">{{ $material->cantidad }}</span></p>
-
-
-                                @if($material->conteo == 0)
-
-                                    <span class="badge bg-danger"> NO HAY MEDICAMENTO SOLICITADO </span>
-                                    <br><hr style="height: 2px; background-color: #000; border: none"><br>
-
+                            @foreach($arrayNombreMedicamento as $item)
+                                @if($item->cantidadRetirar > $item->cantidadActual)
+                                    <tr style="background-color: #ab2b2b">
                                 @else
-
-                                    @foreach($material->listadetalle as $bloqueAdicional)
-
-                                        <div class="bloque-adicional">
-                                            <div class="col-md-12">
-                                                <div class="card card-primary">
-                                                    <div class="card-header">
-                                                        <div class="form-group">
-
-                                                            <div class="row" >
-
-                                                                <div class="col-sm-3 border-right">
-                                                                    <div class="description-block">
-                                                                        <h5 class="description-header">{{ $bloqueAdicional->fechaVencimiento }}</h5>
-                                                                        <span class="description-text1">Fecha de Vencimiento</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-sm-3 border-right">
-                                                                    <div class="description-block">
-                                                                        <h5 class="description-header">{{ $bloqueAdicional->cantidad }}</h5>
-                                                                        <span class="description-text1">Cantidad Disponible</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-sm-3 border-right">
-                                                                    <div class="description-block">
-                                                                        <h5 class="description-header">{{ $bloqueAdicional->lote }}</h5>
-                                                                        <span class="description-text1">LOTE</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-sm-3 border-right">
-                                                                    <div class="description-block">
-                                                                        <h5 class="description-header">{{ $bloqueAdicional->fechaEntrada }}</h5>
-                                                                        <span class="description-text1">Fecha de Entrada</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="card-body row col-md-4">
-                                                        <span style="font-weight: bold">Ingresar Cantidad </span>
-
-                                                        <input onchange="calcularInput(this);" style="font-weight: bold; border: 1px solid black" onkeypress="return valida_numero(event);" type="number" class="form-control miInputColor" name="{{$material->id}}cantidad"
-                                                               data-idreceta="{{ $material->id }}"  data-cantimaxima="{{ $bloqueAdicional->cantidadMaxima }}"
-                                                               data-cantimaximaPadre="{{ $material->cantidad }}"
-                                                               data-identradadetalle="{{ $bloqueAdicional->identradadetalle }}"
-                                                               min="0" max="{{ $bloqueAdicional->cantidadMaxima }}" >
-
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    @endforeach
-
-
-
-                                        <div class="row float-right">
-                                            <label id="{{ $material->id }}label" data-iddetalle="{{ $material->id }}" disabled>Total: 0</label>
-                                        </div>
-
-                                    <br><hr style="height: 2px; background-color: #000; border: none"><br>
+                                    <tr>
                                 @endif
 
-                            </div> <!-- END CONTENDOR PADRE -->
+                                    <td>
+                                        <p id="fila" class="form-control" style="max-width: 65px">{{ $item->contador }}</p>
+                                    </td>
+                                    <td>
+                                        <input disabled value="{{ $item->nombreFormat }}" class="form-control" type="text">
+                                    </td>
+                                    <td>
+                                        <input disabled value="{{ $item->lote }}" class="form-control" type="text">
+                                    </td>
+                                    <td>
+                                        <input disabled value="{{ $item->cantidadRetirar }}" class="form-control" type="text">
+                                    </td>
 
-                        @endforeach
+                                    <td>
+                                        <input disabled value="{{ $item->cantidadActual }}" class="form-control" type="text">
+                                    </td>
 
+                                    <td>
+                                        <input disabled value="{{ $item->fechaVencimiento }}" class="form-control" type="text">
+                                    </td>
+
+                                </tr>
+
+                            @endforeach
+
+                            </tbody>
+                        </table>
 
 
 
@@ -230,7 +165,6 @@
 
 
     </section>
-
 
 
     <div class="modal-footer float-right" style="margin-top: 25px; margin-bottom: 35px">
@@ -319,133 +253,40 @@
 
         function verificarSalida(){
 
-            // SETEAR TODOS LOS INPUT DE LA CLASE miInputColor A COLOR NEGRO
-
-            var txtNotas = document.getElementById('text-notas').value;
-
-            var elementos = document.querySelectorAll('input.' + 'miInputColor');
-            elementos.forEach(function(elemento) {
-                elemento.style.border = '1px solid black';
-            });
-
-           // RECORRER CADA BLOQUE PADRE Y SUS INPUT DINAMICOS
-
-            var minimoUnaSalida = true;
-            var bloqueoProcesar = false;
-
-            $('.material-bloque').each(function () {
-                var $bloque = $(this);
-                var nombreMedicamento = $bloque.data('nombre');
-                var cantidadRequeridaMaxima = $bloque.data('cantidad');
-                var iddetalle = $bloque.data('iddetalle');
-                var unido = iddetalle + "cantidad";
-
-                var sumarCantidad = 0;
-
-                var elementos = document.querySelectorAll('input[name="' + unido + '"]');
-
-                elementos.forEach(function (elemento) {
-                    if(elemento.value !== ''){
-                        if(parseInt(elemento.value) > 0){
-                            minimoUnaSalida = false;
-                        }
-                        sumarCantidad = sumarCantidad + parseInt(elemento.value);
-                    }
-                });
-
-                if(sumarCantidad > parseInt(cantidadRequeridaMaxima)){
-
-                    // COLOCAR EN ROJO ESOS INPUT DEL MEDICAMENTO ESPECIFICADO
-
-                    elementos.forEach(function (elemento) {
-                        elemento.style.border = '1px solid red';
-                    });
-
-                    bloqueoProcesar = true;
-
-                    let texto = "<strong>" + "El Medicamento: " + "</strong>" + nombreMedicamento + "<br>"
-                        + "<strong>" + "Solicita la Receta: " + "</strong>" + cantidadRequeridaMaxima + " Unidades" +"<br>"
-                        + "<strong>" + "Y se quiere Retirar, la cantidad de: " + "</strong>" + sumarCantidad + " Unidades " + "<br>"
-                        + "<strong>" + "Porfavor bajar las unidades a las Solicitadas " + "</strong>" + "<br>"
-
-                    document.getElementById("label-cantidad-excedida").innerHTML = texto;
-                    return false;
-                }
-            });
-
-            if(bloqueoProcesar){
-
-                $('#modalCantiSuperada').modal('show');
-
-                return;
-            }
-
-            if(minimoUnaSalida){
-                Swal.fire({
-                    title: 'Cantidad es Requerida',
-                    text: 'No se ha elegido ninguna cantidad para algun Medicamento',
-                    icon: 'error',
-                    showCancelButton: false,
-                    confirmButtonColor: '#28a745',
-                    cancelButtonColor: '#d33',
-                    allowOutsideClick: false,
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                    }
-                })
-
-                return;
-            }
-
-
-            // AGREGARLOS A UN ARRAY PARA ENVIAR EL SERVIDOR
-
             openLoading();
 
-            let idReceta = {{ $idreceta }};
-
-            const datosArray = [];
-
-            $('.material-bloque').each(function () {
-                var $bloque = $(this);
-                var iddetalle = $bloque.data('iddetalle');
-                var unido = iddetalle + "cantidad";
-
-                var elementos = document.querySelectorAll('input[name="' + unido + '"]');
-
-                elementos.forEach(function (elemento) {
-                    if(elemento.value !== ''){
-
-                        var idEntradaDetalle = elemento.getAttribute('data-identradadetalle');
-
-                        if(elemento.value !== ''){
-
-                            let salida = parseInt(elemento.value);
-
-                            if(salida !== 0){
-                                // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
-                                datosArray.push({ idEntradaDetalle, salida });
-                            }
-                        }
-                    }
-                });
-            });
-
+            let idreceta = {{ $idreceta }};
 
             var formData = new FormData();
-            formData.append('idreceta', idReceta);
-            formData.append('contenedorArray', JSON.stringify(datosArray));
-            formData.append('txtNotas', txtNotas);
+            formData.append('idreceta', idreceta);
 
             axios.post(url+'/receta/procesar/guardarsalida', formData, {
             })
                 .then((response) => {
                     closeLoading();
 
+                    // ESTADO CAMBIO ASI QUE REGRESAR ATRAS
+
                     if(response.data.success === 1){
+
+                        Swal.fire({
+                            title: 'Estado de Receta Cambio',
+                            text: "Revisar de Nuevo",
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                volverAtras();
+                            }
+                        })
+                    }
+
+                    // NO HAY FUCIENTE MEDICAMENTO PARA X MEDICINA
+                    else if(response.data.success === 2) {
 
                         let infoNombre = response.data.nombre;
                         let infoCantidadHay = response.data.cantidadhay;
@@ -474,7 +315,7 @@
                         })
 
                     }
-                    else if(response.data.success === 2){
+                    else if(response.data.success === 3){
 
                         Swal.fire({
                             title: 'Receta Procesada',
@@ -500,61 +341,6 @@
                     closeLoading();
                 });
         }
-
-
-        function valida_numero(e){
-            tecla = (document.all) ? e.keyCode : e.which;
-
-            //Tecla de retroceso para borrar, siempre la permite
-            if (tecla==8){
-                return true;
-            }
-
-            // Patron de entrada, en este caso solo acepta numeros
-            patron =/[0-9.]/;
-            tecla_final = String.fromCharCode(tecla);
-            return patron.test(tecla_final);
-        }
-
-
-
-        function calcularInput(input){
-
-            var idReceta = input.getAttribute('data-idreceta');
-            var cantidadMaximaPadre = input.getAttribute('data-cantimaximaPadre');
-            var cantidadMaximaInput = input.getAttribute('data-cantimaxima');
-
-            var unido = idReceta + "cantidad";
-
-            // SI EL INPUT INGRESADO ES MAYOR AL MAXIMO DEL BLOQUE, CAMBIARLO AL MAXIMO DEL BLOQUE
-            if(parseInt(input.value) > cantidadMaximaInput){
-                input.value = cantidadMaximaInput;
-            }
-
-            // SUMAR CANTIDAD PARA SETEAR EL LABEL
-            var sumarCantidad = 0;
-
-            var elementos = document.querySelectorAll('input[name="' + unido + '"]');
-
-            elementos.forEach(function (elemento) {
-
-                if(elemento.value !== ''){
-                    sumarCantidad = sumarCantidad + parseInt(elemento.value);
-                }
-            });
-
-            let unidoLabel = idReceta + "label";
-            document.getElementById(unidoLabel).innerHTML = "Total: " + sumarCantidad;
-
-            if(sumarCantidad > cantidadMaximaPadre){
-                // rojo
-                document.getElementById(unidoLabel).style.color = "red";
-            }else{
-                // negro
-                document.getElementById(unidoLabel).style.color = "black";
-            }
-        }
-
 
         function volverAtras(){
             window.location.href="{{ url('/admin/salida/medicamento/porreceta/index') }}";

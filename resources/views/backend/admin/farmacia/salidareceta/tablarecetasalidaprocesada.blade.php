@@ -29,7 +29,9 @@
 
                                         <!-- MUESTRA EN PDF LA RECETA -->
 
-                                        <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="PDF">IMPRIMIR</button>
+                                        <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="PDF">Imprimir</button>
+
+                                        <button class="btn btn-info button-small" style="color: white; margin: 8px; font-weight: bold" onclick="informacionImprimir({{$dato->id}})" title="Ticket">Ticket</button>
 
                                     </td>
                                 </tr>
