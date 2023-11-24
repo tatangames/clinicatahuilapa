@@ -257,8 +257,12 @@
 
             let idreceta = {{ $idreceta }};
 
+            var notas = document.getElementById('text-notas').value;
+
+
             var formData = new FormData();
             formData.append('idreceta', idreceta);
+            formData.append('notas', notas);
 
             axios.post(url+'/receta/procesar/guardarsalida', formData, {
             })

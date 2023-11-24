@@ -1350,12 +1350,12 @@ class ReportesController extends Controller
         $fechaProxCita = "";
         if($infoReceta->proxima_cita != null){
             $fechaProxCita = date("d-m-Y", strtotime($infoReceta->proxima_cita));
-
         }
 
 
         $arrayRecetaDeta = DB::table('recetas_detalle AS deta')
-            ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
+            ->join('entrada_medicamento_detalle AS enta', 'deta.entrada_detalle_id', '=', 'enta.id')
+            ->join('farmacia_articulo AS fa', 'fa.id', '=', 'enta.medicamento_id')
             ->select('fa.nombre', 'deta.recetas_id', 'deta.cantidad', 'deta.descripcion',
                             'deta.via_id')
             ->where('deta.recetas_id', $idreceta)

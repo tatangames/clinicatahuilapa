@@ -300,7 +300,6 @@ Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoContro
 
 
 
-
 // --- BLOQUE CUADRO CLINICO ---
 
 // bloque cuadro clinico

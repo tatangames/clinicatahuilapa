@@ -765,7 +765,7 @@ class FarmaciaController extends Controller
                 Recetas::where('id', $request->id)->update([
                     'estado' => 3,
                     'nota_denegada' => $request->descripcion,
-                    'fecha_denegada' => $fechaCarbon,
+                    'fecha_estado' => $fechaCarbon,
                     'usuario_estado_id' => $usuario->id
                 ]);
 
@@ -892,7 +892,7 @@ class FarmaciaController extends Controller
             $salida->recetas_id = $request->idreceta;
             $salida->usuario_id = $usuario->id;
             $salida->fecha = $fechaCarbon;
-            $salida->notas = $request->txtNotas;
+            $salida->notas = $request->notas;
             $salida->save();
 
             // LISTADO DE RECETAS DETALLE
