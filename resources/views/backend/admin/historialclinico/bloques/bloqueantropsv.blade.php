@@ -1,6 +1,6 @@
 <div class="card card-default">
     <div class="card-header">
-        <h3 class="card-title" style="font-weight: bold">Historial de Antropología</h3>
+        <h3 class="card-title" style="font-weight: bold">Historial de Antropometría</h3>
 
         <!-- SOLO 1 POR CONSULTA -->
 
@@ -8,7 +8,7 @@
         <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
                 onclick="vistaNuevaAntropologia()" class="button button-3d button-rounded button-pill button-small">
             <i class="fas fa-plus"></i>
-            Nueva Antropología
+            Nueva Antropometría
         </button>
         @endif
     </div>
@@ -114,7 +114,7 @@
 
 
      function vistaVisualizarAntropologia(idantrop){
-         window.location.href="{{ url('/admin/vista/visualizar/antropologia') }}/" + idantrop;
+         window.location.href="{{ url('/admin/vista/visualizar/antropometria') }}/" + idantrop;
      }
 
 

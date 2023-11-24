@@ -541,9 +541,6 @@
 
 
 
-
-
-
         function cargarTablaProducto(){
 
             var idFuente = document.getElementById('select-fuente').value;
@@ -567,6 +564,9 @@
 
                             document.getElementById("select-medicamento").options.length = 0;
 
+
+                            // SE AGREGA EL ID DE ENTRADA DETALLE
+
                             if(response.data.hayfilas){
                                 $('#select-medicamento').append('<option value="" data-generico="" data-cantitotal="" data-nombre="" selected>Seleccionar Medicamento</option>');
                                 $.each(response.data.dataArray, function( key, val ){
@@ -585,7 +585,6 @@
                         closeLoading();
                         toastr.error('Información no encontrada');
                     });
-
             }
         }
 
@@ -600,7 +599,6 @@
 
 
         function agregarFila(){
-
 
             let idmedicamento = document.getElementById("select-medicamento").value;
             let indicacionesTexto = document.getElementById("indicacion-medicamento").value;
@@ -779,7 +777,6 @@
 
             var fecha = document.getElementById('fecha').value;
             var diagnostico = document.getElementById('select-diagnostico').value;
-            var via = document.getElementById('select-via').value;
             var indicacionGeneral = document.getElementById('text-indicacion-general').value;
             var proximaCita = document.getElementById('proxima-cita').value;
 
@@ -793,12 +790,6 @@
                 toastr.error('Diagnóstico es requerido');
                 return;
             }
-
-            if(via === ''){
-                toastr.error('Vía es requerido');
-                return;
-            }
-
 
             var nRegistro = $('#matriz > tbody >tr').length;
 

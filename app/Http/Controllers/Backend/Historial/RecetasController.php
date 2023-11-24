@@ -42,10 +42,6 @@ class RecetasController extends Controller
         $fechaActual = Carbon::now()->toDateString();
 
 
-
-
-
-
         return view('backend.admin.historialclinico.recetas.vistanuevareceta', compact('idconsulta',
                 'nombreCompleto', 'arrayFuente', 'arrayDiagnostico', 'arrayVia', 'fechaActual'));
     }
@@ -64,37 +60,34 @@ class RecetasController extends Controller
 
 
         // OBTENER LISTADO DE MEDICAMENTOS
-        $listado = DB::table('entrada_medicamento AS em')
+        $arrayMedicamentos = DB::table('entrada_medicamento AS em')
             ->join('entrada_medicamento_detalle AS deta', 'em.id', '=', 'deta.entrada_medicamento_id')
-            ->select('deta.cantidad', 'deta.id', 'em.fuentefina_id', 'deta.medicamento_id')
+            ->select('deta.cantidad', 'deta.id', 'em.fuentefina_id', 'deta.medicamento_id', 'deta.lote',
+                        'deta.fecha_vencimiento')
             ->where('deta.cantidad', '>', 0)
             ->where('em.fuentefina_id', $request->idfuente)
             ->get();
 
-        $pilaIdMedicamento = array();
-
-        foreach ($listado as $info){
-            array_push($pilaIdMedicamento, $info->medicamento_id);
-        }
-
-
-        // NECESITO FILTRAR PARA UNIR LAS CANTIDADES PARA 1 SOLO MEDICAMENTO
-
-        $arrayMedicamentos = FarmaciaArticulo::whereIn('id', $pilaIdMedicamento)
-            ->orderBy('nombre', 'ASC')
-            ->get();
 
         $hayFilas = false;
         foreach ($arrayMedicamentos as $detalle){
             $hayFilas = true;
 
-            $cantidadTotal = EntradaMedicamentoDetalle::where('medicamento_id', $detalle->id)->sum('cantidad');
+            $infoFarmacia = FarmaciaArticulo::where('id', $detalle->medicamento_id)->first();
 
-            $detalle->nombretotal = $detalle->nombre . ' (Existencia: ' . $cantidadTotal . ')';
+            $detalle->nombre = $infoFarmacia->nombre;
+
+            $fechaVencimiento = date("d-m-Y", strtotime($detalle->fecha_vencimiento));
+
+            $textoLote = "(Lote: " . $detalle->lote . " )";
+            $textoFechaVen = "(Vencimiento: " . $fechaVencimiento . " )";
+            $textoExistencia = "(Existencia: " . $detalle->cantidad . " )";
+
+            $detalle->nombretotal = $infoFarmacia->nombre . " " . $textoExistencia . " " . $textoLote . " " . $textoFechaVen;
 
             $nombreGenerico = "";
 
-            if($infoArticulo = ArticuloMedicamento::where('farmacia_articulo_id', $detalle->id)->first()){
+            if($infoArticulo = ArticuloMedicamento::where('farmacia_articulo_id', $detalle->medicamento_id)->first()){
 
                 if($infoArticulo->nombre_generico != null){
                     $nombreGenerico = $infoArticulo->nombre_generico;
@@ -102,8 +95,7 @@ class RecetasController extends Controller
             }
 
             $detalle->nombreGenerico = $nombreGenerico;
-            $detalle->cantidadTotal = $cantidadTotal;
-
+            $detalle->cantidadTotal = $detalle->cantidad;
         }
 
         return ['success' => 1, 'dataArray' => $arrayMedicamentos, 'hayfilas' => $hayFilas];
@@ -152,13 +144,14 @@ class RecetasController extends Controller
                 $receta->usuario_estado_id = null; // saber que usuario denego receta
                 $receta->save();
 
-
                 // REGISTRAR CADA FILA MEDICAMENTO
+                // SE DEBE REGISTRAR EL ID ENTRADA DETALLE Y LA CANTIDAD A RETIRARLE
+
                 foreach ($datosContenedor as $filaArray) {
 
                     $detalle = new RecetasDetalle();
                     $detalle->recetas_id = $receta->id;
-                    $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
+                    $detalle->entrada_detalle_id = $filaArray['infoIdMedicamento']; // VIENE ID ENTRADA MEDICAMENTO DETALLE
                     $detalle->cantidad = $filaArray['infoCantidad'];
                     $detalle->descripcion = $filaArray['infoIndicacion'];
                     $detalle->via_id = $filaArray['infoIdVia'];
@@ -196,9 +189,11 @@ class RecetasController extends Controller
         $fechaActual = Carbon::now()->toDateString();
 
         $arrayDetalle = DB::table('recetas_detalle AS red')
-            ->join('farmacia_articulo AS fama', 'fama.id', '=', 'red.medicamento_id')
-            ->select('fama.nombre', 'red.recetas_id', 'red.id AS idfarmacia',
-                'red.cantidad', 'red.descripcion', 'red.medicamento_id', 'red.via_id')
+            ->join('entrada_medicamento_detalle AS entrade', 'entrade.id', '=', 'red.entrada_detalle_id')
+            ->join('farmacia_articulo AS fama', 'fama.id', '=', 'entrade.medicamento_id')
+            ->select('fama.nombre', 'red.recetas_id', 'entrade.cantidad AS cantidadActual',
+                        'red.via_id', 'red.cantidad', 'red.descripcion', 'fama.id AS idfarmacia', 'entrade.id AS idEntradaDeta',
+                        'entrade.lote')
             ->where('red.recetas_id', $idreceta)
             ->orderBy('fama.nombre', 'ASC')
             ->get();
@@ -282,7 +277,7 @@ class RecetasController extends Controller
 
                     $detalle = new RecetasDetalle();
                     $detalle->recetas_id = $request->idreceta;
-                    $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
+                    $detalle->entrada_detalle_id = $filaArray['infoIdMedicamento']; // ID ENTRADA DETALLE
                     $detalle->cantidad = $filaArray['infoCantidad'];
                     $detalle->descripcion = $filaArray['infoIndicacion'];
                     $detalle->via_id = $filaArray['infoIdVia'];

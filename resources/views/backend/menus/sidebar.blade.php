@@ -188,14 +188,6 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('admin.tipo.paciente.nuevo') }}" target="frameprincipal" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Tipo de Paciente</p>
-                            </a>
-                        </li>
-
-
                     </ul>
                 </li>
 
@@ -257,6 +249,14 @@
                                 <a href="{{ route('admin.catalogo.farmacia.index') }}" target="frameprincipal" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Catálogo</p>
+                                </a>
+                            </li>
+
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.entradas.listado.ver.index') }}" target="frameprincipal" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listado de Entradas</p>
                                 </a>
                             </li>
 

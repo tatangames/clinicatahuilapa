@@ -275,8 +275,9 @@
                     <tr>
                         <th style="width: 3%">#</th>
                         <th style="width: 10%">Medicamento</th>
-                        <th style="width: 6%">Nombre Generico</th>
-                        <th style="width: 6%">Cantidad</th>
+                        <th style="width: 6%">Lote</th>
+                        <th style="width: 6%">Cantidad Retirar</th>
+                        <th style="width: 6%">Cantidad Bodega</th>
                         <th style="width: 6%">Vía</th>
                         <th style="width: 6%">Indicaciones</th>
                         <th style="width: 5%">Opciones</th>
@@ -291,13 +292,17 @@
                                 <p id="fila" class="form-control" style="max-width: 65px">{{ $item->contador }}</p>
                             </td>
                             <td>
-                                <input name="arrayNombre[]" disabled data-idmedicamento="{{ $item->medicamento_id }}" value="{{ $item->nombre }}" class="form-control" type="text">
+                                <input name="arrayNombre[]" disabled data-idmedicamento="{{ $item->idEntradaDeta }}" value="{{ $item->nombre }}" class="form-control" type="text">
                             </td>
                             <td>
-                                <input disabled value="{{ $item->nombreGenerico }}" class="form-control" type="text">
+                                <input disabled value="{{ $item->lote }}" class="form-control" type="text">
                             </td>
                             <td>
                                 <input name="arrayCantidad[]" disabled value="{{ $item->cantidad }}" class="form-control" type="number">
+                            </td>
+
+                            <td>
+                                <input disabled value="{{ $item->cantidadActual }}" class="form-control" type="text">
                             </td>
 
                             <td>
@@ -420,12 +425,12 @@
                             document.getElementById("select-medicamento").options.length = 0;
 
                             if(response.data.hayfilas){
-                                $('#select-medicamento').append('<option value="" data-generico="" data-cantitotal="" data-nombre="" selected>Seleccionar Medicamento</option>');
+                                $('#select-medicamento').append('<option value="" data-lote="" data-cantitotal="" data-nombre="" selected>Seleccionar Medicamento</option>');
                                 $.each(response.data.dataArray, function( key, val ){
-                                    $('#select-medicamento').append('<option value="' +val.id +'" data-generico="' +val.nombreGenerico +'" data-cantitotal="' +val.cantidadTotal +'" data-nombre="' +val.nombre +'">'+val.nombretotal+'</option>');
+                                    $('#select-medicamento').append('<option value="' +val.id +'" data-lote="' +val.lote +'" data-cantitotal="' +val.cantidadTotal +'" data-nombre="' +val.nombre +'">'+val.nombretotal+'</option>');
                                 });
                             }else{
-                                $('#select-medicamento').append('<option value="" data-generico="" data-cantitotal="" data-nombre="">Sin Medicamentos</option>');
+                                $('#select-medicamento').append('<option value="" data-lote="" data-cantitotal="" data-nombre="">Sin Medicamentos</option>');
                             }
 
                         }else{
@@ -453,11 +458,9 @@
 
         function agregarFila(){
 
-
             let idmedicamento = document.getElementById("select-medicamento").value;
             let indicacionesTexto = document.getElementById("indicacion-medicamento").value;
             let cantidadSalida = document.getElementById("cantidad").value;
-            let nombreGenerico = document.getElementById("nombre-generico").value;
             let idvia = document.getElementById("select-via").value;
             var sel = document.getElementById("select-via");
             var nombreSelectVia = sel.options[sel.selectedIndex].text;
@@ -504,8 +507,9 @@
             // VERIFICAR MAXIMO A RETIRAR
             var miSelect = document.getElementById("select-medicamento");
             var opcionSeleccionada = miSelect.options[miSelect.selectedIndex];
-            var dataInfoCantidad = opcionSeleccionada.getAttribute("data-cantitotal");
+            var dataInfoCantidad = opcionSeleccionada.getAttribute("data-cantitotal"); // lo que hay en bodega
             var dataInfoNombre = opcionSeleccionada.getAttribute("data-nombre");
+            var dataInfoLote = opcionSeleccionada.getAttribute("data-lote");
 
             let totalHay = parseInt(dataInfoCantidad);
             let totalSalida = parseInt(cantidadSalida);
@@ -548,11 +552,15 @@
                 "</td>" +
 
                 "<td>" +
-                "<input disabled value='" + nombreGenerico + "' class='form-control' type='text'>" +
+                "<input disabled value='" + dataInfoLote + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
                 "<input name='arrayCantidad[]' disabled value='" + cantidadSalida + "' class='form-control' type='number'>" +
+                "</td>" +
+
+                "<td>" +
+                "<input disabled value='" + dataInfoCantidad + "' class='form-control' type='text'>" +
                 "</td>" +
 
 

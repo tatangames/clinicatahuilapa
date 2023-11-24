@@ -400,7 +400,7 @@ class HistorialClinicoController extends Controller
 
         $nombreCompleto = "pepe";
 
-        return view('backend.admin.historialclinico.antropsv.vistaantropologiasv', compact('idconsulta', 'nombreCompleto'));
+        return view('backend.admin.historialclinico.antropsv.vistaantropometriasv', compact('idconsulta', 'nombreCompleto'));
     }
 
 
@@ -556,7 +556,7 @@ class HistorialClinicoController extends Controller
 
         $idconsulta = $infoConsulta->id;
 
-        return view('backend.admin.historialclinico.antropsv.vistaeditarantropologiasv', compact('idantrop',
+        return view('backend.admin.historialclinico.antropsv.vistaeditarantropometriasv', compact('idantrop',
         'nombreCompleto', 'idconsulta', 'infoAntrop'));
     }
 
@@ -571,7 +571,7 @@ class HistorialClinicoController extends Controller
 
         $idconsulta = $infoConsulta->id;
 
-        return view('backend.admin.expedientes.buscar.docurecetas.vistaverantropologia', compact('idantrop',
+        return view('backend.admin.expedientes.buscar.docurecetas.vistaverantropometria', compact('idantrop',
             'nombreCompleto', 'idconsulta', 'infoAntrop'));
     }
 

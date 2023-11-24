@@ -219,6 +219,10 @@ Route::post('/admin/farmacia/registrar/nuevo/articulo', [FarmaciaController::cla
 Route::get('/admin/farmacia/ingreso/articulo/index', [FarmaciaController::class,'indexIngresoArticulo'])->name('admin.farmacia.ingreso.articulo');
 Route::post('/admin/buscar/nombre/medicamento',  [FarmaciaController::class,'buscarMedicamento']);
 Route::post('/admin/registrar/nuevo/medicamento',  [FarmaciaController::class,'registrarNuevoMedicamento']);
+// actualizar y agregar extra articulos a una entrada
+Route::post('/admin/registrar/actualizar/medicamento',  [FarmaciaController::class,'actualizarNuevoMedicamento']);
+
+
 
 
 // --- MOTIVO PARA FARMACIA ---
@@ -281,15 +285,15 @@ Route::post('/admin/historial/antecedente/actualizacion', [HistorialClinicoContr
 Route::get('/admin/historial/bloque/antropsv/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialAntropSv']);
 
 // vista para registar nueva antrop + sv
-Route::get('/admin/vista/nueva/antropologia/{idconsulta}', [HistorialClinicoController::class, 'vistaNuevaAntropologia']);
+Route::get('/admin/vista/nueva/antropometria/{idconsulta}', [HistorialClinicoController::class, 'vistaNuevaAntropologia']);
 
 // registrar formulario de antropometria
 Route::post('/admin/historial/registrar/antropometria', [HistorialClinicoController::class, 'registrarAntropometria']);
 
-// vista para editar o ver la antropologia
-Route::get('/admin/vista/visualizar/antropologia/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologia']);
-// editar antropologa siempre, pero se busca desde los expedientes
-Route::get('/admin/vista/visualizar/antropologia/exped/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologiaExpedientes']);
+// vista para editar o ver la antropometria
+Route::get('/admin/vista/visualizar/antropometria/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologia']);
+// editar antropometria siempre, pero se busca desde los expedientes
+Route::get('/admin/vista/visualizar/antropometria/exped/{idantro}', [HistorialClinicoController::class, 'vistaVisualizarAntropologiaExpedientes']);
 
 // actualizar antropometria
 Route::post('/admin/historial/actualizar/antropometria', [HistorialClinicoController::class, 'actualizarAntropometria']);
@@ -433,6 +437,14 @@ Route::get('/admin/reporte/existencias/separado', [ReportesController::class,'re
 // reporte de receta por idreceta
 Route::get('/admin/reporte/receta/paciente/{idreceta}', [ReportesController::class,'reporteRecetaPaciente']);
 
+
+
+
+
+// --- LISTADO DE ENTRADAS PARA SEGUIR AGREGANDO EXTRA AL MISMO LOTE ---
+Route::get('/admin/vista/todos/listado/entradas', [FarmaciaController::class,'vistaListadoEntradasRegistradas'])->name('admin.entradas.listado.ver.index');
+Route::get('/admin/vista/todos/listado/entradas/tablas', [FarmaciaController::class,'tablaListadoEntradasRegistradas']);
+Route::get('/admin/vista/editar/info/entrada/{identrada}', [FarmaciaController::class,'vistaEditarEntrada']);
 
 
 

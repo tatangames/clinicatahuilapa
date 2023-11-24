@@ -269,6 +269,67 @@ class FarmaciaController extends Controller
     }
 
 
+    public function actualizarNuevoMedicamento(Request $request){
+
+        $regla = array(
+            'numFactura' => 'required',
+            'tipoFactura' => 'required',
+            'fuenteFina' => 'required',
+            'proveedor' => 'required',
+            'identrada' => 'required',
+            'fecha' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        DB::beginTransaction();
+
+        try {
+
+            // Obtiene los datos enviados desde el formulario como una cadena JSON y luego decódificala
+            $datosContenedor = json_decode($request->contenedorArray, true); // El segundo argumento convierte el resultado en un arreglo
+
+
+
+            EntradaMedicamento::where('id', $request->identrada)->update([
+                'tipofactura_id' => $request->tipoFactura,
+                'fuentefina_id' => $request->fuenteFina,
+                'proveedor_id' => $request->proveedor,
+                'fecha' => $request->fecha,
+                'numero_factura' => $request->numFactura
+            ]);
+
+
+            foreach ($datosContenedor as $filaArray) {
+
+                $infoMedicamento = FarmaciaArticulo::where('id', $filaArray['infoIdMedicamento'])->first();
+
+                $detalle = new EntradaMedicamentoDetalle();
+                $detalle->entrada_medicamento_id = $request->identrada;
+                $detalle->medicamento_id = $filaArray['infoIdMedicamento'];
+                $detalle->nombre_copia = $infoMedicamento->nombre;
+                $detalle->cantidad = $filaArray['infoCantidad'];
+                $detalle->cantidad_fija = $filaArray['infoCantidad'];
+                $detalle->precio = $filaArray['infoPrecio'];
+                $detalle->lote = $filaArray['infoLote'];
+                $detalle->fecha_vencimiento = $filaArray['infoFecha'];
+                $detalle->save();
+            }
+
+
+            DB::commit();
+            return ['success' => 1];
+
+        }catch(\Throwable $e){
+            Log::info('error ' . $e);
+            DB::rollback();
+            return ['success' => 99];
+        }
+    }
+
 
 
     //************ ORDEN DE SALIDAS PARA FARMACIA   *****
@@ -1167,6 +1228,71 @@ class FarmaciaController extends Controller
     }
 
 
+
+    // ESTO ES PARA AGREGARLE MAS MEDICAMENTOS A LA LISTA, OSEA LA MISMA FACTURA
+    public function vistaListadoEntradasRegistradas(){
+
+        return view('backend.admin.farmacia.editarentrada.vistalistadoregistrados');
+    }
+
+
+    public function tablaListadoEntradasRegistradas(){
+
+        $arrayRegistros = EntradaMedicamento::orderBy('fecha', 'DESC')->get();
+
+        foreach ($arrayRegistros as $dato){
+
+             $infoTipoFac = TipoFactura::where('id', $dato->tipofactura_id)->first();
+             $dato->nombreTipoFac = $infoTipoFac->nombre;
+
+             $infoFuenteFina = FuenteFinanciamiento::where('id', $dato->fuentefina_id)->first();
+             $dato->nombreFina = $infoFuenteFina->nombre;
+
+             $infoProveedor = Proveedores::where('id', $dato->proveedor_id)->first();
+             $dato->nombreProve = $infoProveedor->nombre;
+
+            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+        }
+
+
+        return view('backend.admin.farmacia.editarentrada.tablalistadoregistrados', compact('arrayRegistros'));
+    }
+
+
+    public function vistaEditarEntrada($identrada){
+
+        $infoEntrada = EntradaMedicamento::where('id', $identrada)->first();
+
+        $arrayFuente = FuenteFinanciamiento::orderBy('nombre', 'ASC')->get();
+        $arrayTipoFac = TipoFactura::orderBy('nombre', 'ASC')->get();
+        $arrayProvee = Proveedores::orderBy('nombre', 'ASC')->get();
+
+        $fechaFormat = Carbon::parse($infoEntrada->fecha)->format('Y-m-d');
+
+
+        $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
+            ->join('farmacia_articulo AS fama', 'fama.id', '=', 'deta.medicamento_id')
+            ->select('fama.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio', 'deta.lote', 'deta.fecha_vencimiento')
+            ->where('deta.entrada_medicamento_id', $identrada)
+            ->orderBy('fama.nombre', 'ASC')
+            ->get();
+
+        $contador = 0;
+        foreach ($arrayDetalle as $dato){
+            $contador++;
+            $dato->contador = $contador;
+
+            $dato->fechaVencimiento = date("d-m-Y", strtotime($dato->fecha_vencimiento));
+            $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
+
+
+
+        }
+
+        return view('backend.admin.farmacia.editarentrada.vistaeditarentrada', compact('identrada',
+                'infoEntrada', 'arrayFuente', 'arrayTipoFac', 'arrayProvee', 'fechaFormat',
+                            'arrayDetalle'));
+    }
 
 
 

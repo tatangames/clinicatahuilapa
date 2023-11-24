@@ -16,7 +16,7 @@ class CreateRecetasDetalleTable extends Migration
         Schema::create('recetas_detalle', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('recetas_id')->unsigned();
-            $table->bigInteger('medicamento_id')->unsigned();
+            $table->bigInteger('entrada_detalle_id')->unsigned();
             $table->bigInteger('via_id')->unsigned();
 
             $table->integer('cantidad'); // es lo que se retira
@@ -24,7 +24,7 @@ class CreateRecetasDetalleTable extends Migration
 
             $table->foreign('via_id')->references('id')->on('via_receta');
             $table->foreign('recetas_id')->references('id')->on('recetas');
-            $table->foreign('medicamento_id')->references('id')->on('farmacia_articulo');
+            $table->foreign('entrada_detalle_id')->references('id')->on('entrada_medicamento_detalle');
         });
     }
 

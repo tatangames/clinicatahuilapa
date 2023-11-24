@@ -1,9 +1,3 @@
-<div class="card card-default">
-    <div class="card-header">
-        <h3 class="card-title" style="font-weight: bold">Historial de Antropometría</h3>
-    </div>
-</div>
-
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -13,38 +7,28 @@
                         <table id="tabla" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th>FECHA</th>
-                                <th>HORA</th>
-                                <th>CREADA POR</th>
-                                <th>F.C</th>
-                                <th>T/A</th>
-                                <th>PESO LB</th>
-                                <th>PESO KG</th>
-                                <th>TALLA</th>
-
+                                <th>Fecha Entrada</th>
+                                <th>Tipo Factura</th>
+                                <th># Factura</th>
+                                <th>Fuente Fina.</th>
+                                <th>Proveedor</th>
                                 <th>Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            @foreach($bloqueAntropSv as $dato)
+                            @foreach($arrayRegistros as $dato)
                                 <tr>
                                     <td>{{ $dato->fechaFormat }}</td>
-                                    <td>{{ $dato->horaFormat }}</td>
-                                    <td>{{ $dato->nomusuario }}</td>
-                                    <td>{{ $dato->frecuencia_cardiaca }}</td>
-                                    <td>{{ $dato->presion_arterial }}</td>
-                                    <td>{{ $dato->peso_libra }}</td>
-                                    <td>{{ $dato->peso_kilo }}</td>
-                                    <td>{{ $dato->estatura }}</td>
-
+                                    <td>{{ $dato->nombreTipoFac }}</td>
+                                    <td>{{ $dato->numero_factura }}</td>
+                                    <td>{{ $dato->nombreFina }}</td>
+                                    <td>{{ $dato->nombreProve }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary btn-xs" onclick="vistaVisualizarAntropologia({{ $dato->id }})">
-                                            <i class="fas fa-eye" title="Ver"></i>&nbsp; Ver
+                                        <button type="button" class="btn btn-info btn-xs" onclick="informacion({{ $dato->id }})">
+                                            <i class="fas fa-edit" title="Editar"></i>&nbsp; Editar
                                         </button>
                                     </td>
-
-
                                 </tr>
                             @endforeach
 
@@ -101,11 +85,6 @@
             "responsive": true, "lengthChange": true, "autoWidth": false,
         });
     });
-
-
-    function vistaVisualizarAntropologia(idantrop){
-        window.location.href="{{ url('/admin/vista/visualizar/antropometria/exped') }}/" + idantrop;
-    }
 
 
 </script>

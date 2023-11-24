@@ -35,7 +35,7 @@
 
     <section class="content-header">
         <div class="container-fluid">
-            <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="vistaExpedientes()" class="button button-3d button-rounded button-pill button-small">
+            <button type="button" style="font-weight: bold; background-color: #ffc107; color: white !important;" onclick="vistaHistorialClinico()" class="button button-3d button-rounded button-pill button-small">
                 <i class="fas fa-arrow-left"></i>
                 Atras
             </button>
@@ -47,7 +47,7 @@
         <div class="container-fluid">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">VISUALIZAR ANTROPOLOGIA</h3>
+                    <h3 class="card-title">VISUALIZAR ANTROPOMETRIA</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -384,7 +384,7 @@
                         confirmButtonText: 'Aceptar'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            vistaExpedientes();
+                            vistaHistorialClinico();
                         }
                     })
                 }
@@ -400,8 +400,9 @@
 
 
 
-    function vistaExpedientes(){
-        window.location.href="{{ url('/admin/expediente/vista/buscar') }}";
+    function vistaHistorialClinico(){
+        let idconsulta = {{ $idconsulta }};
+        window.location.href="{{ url('/admin/historial/clinico/vista') }}/" + idconsulta;
     }
 
 

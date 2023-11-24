@@ -477,7 +477,7 @@ class ReportesController extends Controller
         if($idestado == '2'){ // RECETA PROCESADA
             $arraySalidaRecetas = DB::table('salida_receta AS sa')
                 ->join('recetas AS re', 're.id', '=', 'sa.recetas_id')
-                ->select('re.estado', 're.consulta_id', 're.via_id',
+                ->select('re.estado', 're.consulta_id',
                     're.diagnostico_id', 're.usuario_id', 're.descripcion_general',
                     'sa.usuario_id AS usuarioDescargo', 'sa.fecha', 'sa.notas',
                     're.fecha_estado AS fechaEstadoDenegada', 'sa.id AS idSalidaReceta')
@@ -513,10 +513,6 @@ class ReportesController extends Controller
                 $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
 
                 $infoFila->nombrePaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
-
-
-                $infoViaReceta = ViaReceta::where('id', $infoFila->via_id)->first();
-                $infoFila->nombreViaReceta = $infoViaReceta->nombre;
 
 
                 $infoDiagnostico = Diagnosticos::where('id', $infoFila->diagnostico_id)->first();
@@ -581,9 +577,6 @@ class ReportesController extends Controller
                 $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
 
                 $infoFila->nombrePaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
-
-                $infoViaReceta = ViaReceta::where('id', $infoFila->via_id)->first();
-                $infoFila->nombreViaReceta = $infoViaReceta->nombre;
 
                 $infoDiagnostico = Diagnosticos::where('id', $infoFila->diagnostico_id)->first();
                 $infoFila->nombreDiagnostico = $infoDiagnostico->nombre;
@@ -651,7 +644,6 @@ class ReportesController extends Controller
                 $tabla .= "<tr>
                 <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Salida</td>
                 <td style='font-weight: bold; width: 12%; font-size: 14px'>Paciente</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Vía</td>
                 <td style='font-weight: bold; width: 15%; font-size: 14px'>Diagnóstico</td>
                 <td style='font-weight: bold; width: 15%; font-size: 14px'>Doctor</td>
             <tr>";
@@ -660,7 +652,6 @@ class ReportesController extends Controller
                 $tabla .= "<tr>
                 <td>$detaFila->fechaSalidaRecetaFormat</td>
                 <td>$detaFila->nombrePaciente</td>
-                <td>$detaFila->nombreViaReceta</td>
                 <td>$detaFila->nombreDiagnostico</td>
                 <td>$detaFila->doctorReceto</td>
             <tr>";

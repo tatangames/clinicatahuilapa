@@ -829,7 +829,7 @@
 
         function vistaNuevaAntropologia(){
             let idconsulta = {{ $idconsulta }};
-            window.location.href="{{ url('/admin/vista/nueva/antropologia') }}/" + idconsulta;
+            window.location.href="{{ url('/admin/vista/nueva/antropometria') }}/" + idconsulta;
         }
 
 
