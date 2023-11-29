@@ -137,7 +137,7 @@
 
         //bodegaelectrica
 
-        axios.post('/login', formData, {
+        axios.post('/clinicatahuilapa/login', formData, {
         })
             .then((response) => {
                 closeLoading();
