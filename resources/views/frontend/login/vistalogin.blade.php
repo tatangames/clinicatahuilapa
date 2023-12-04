@@ -137,7 +137,7 @@
 
         //clinicatahuilapa
 
-        axios.post('/clinicatahuilapa/login', formData, {
+        axios.post('/clinica/login', formData, {
         })
             .then((response) => {
                 closeLoading();

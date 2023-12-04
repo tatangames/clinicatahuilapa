@@ -17,6 +17,6 @@
 
     <!--  /clinicatahuilapa/admin -->
 
-    <script type="text/javascript"> var url = "/clinicatahuilapa/admin"; </script>
+    <script type="text/javascript"> var url = "/clinica/admin"; </script>
 </head>
 <body class="hold-transition sidebar-mini">
