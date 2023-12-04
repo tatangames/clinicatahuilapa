@@ -374,7 +374,9 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="actualizarCuadroClinico()">Actualizar</button>
+                    @can('boton.actualizar.historial.clinico')
+                        <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="actualizarCuadroClinico()">Actualizar</button>
+                    @endcan
                 </div>
             </div>
         </div>

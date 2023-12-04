@@ -3,11 +3,13 @@
         <h3 class="card-title" style="font-weight: bold">Historial de Recetas</h3>
 
         @if($existeReceta == 0)
-        <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
-                onclick="vistaNuevaReceta()" class="button button-3d button-rounded button-pill button-small">
-            <i class="fas fa-plus"></i>
-            Nueva Receta
-        </button>
+            @can('boton.nueva.receta')
+                <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
+                        onclick="vistaNuevaReceta()" class="button button-3d button-rounded button-pill button-small">
+                    <i class="fas fa-plus"></i>
+                    Nueva Receta
+                </button>
+            @endcan
 
         @endif
     </div>

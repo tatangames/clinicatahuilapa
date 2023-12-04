@@ -143,8 +143,8 @@ class ReportesController extends Controller
 
 
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
         $mpdf->SetTitle('Entrada Artículos');
 
         // mostrar errores
@@ -335,8 +335,8 @@ class ReportesController extends Controller
         $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
 
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
         $mpdf->SetTitle('Salida Manual');
 
         // mostrar errores
@@ -606,8 +606,8 @@ class ReportesController extends Controller
         }
 
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
         if($idestado == '2'){
             $mpdf->SetTitle('Recetas Procesadas');
@@ -873,8 +873,8 @@ class ReportesController extends Controller
         }
 
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
         if($idestado == '2'){
             $mpdf->SetTitle('Recetas Procesadas');
@@ -1015,8 +1015,8 @@ class ReportesController extends Controller
             $infoFila->nombreSubLinea = $nombreSub;
         }
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
 
         // mostrar errores
@@ -1143,8 +1143,8 @@ class ReportesController extends Controller
         $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
 
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
         // mostrar errores
         $mpdf->showImageErrors = false;
@@ -1277,8 +1277,8 @@ class ReportesController extends Controller
         $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
 
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
         // mostrar errores
         $mpdf->showImageErrors = false;
@@ -1370,8 +1370,8 @@ class ReportesController extends Controller
         }
 
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
         // mostrar errores
         $mpdf->showImageErrors = false;

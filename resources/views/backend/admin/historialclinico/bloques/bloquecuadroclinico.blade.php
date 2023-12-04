@@ -5,11 +5,13 @@
 
         @if($haycuadro == 0)
 
-            <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
-                onclick="modalCuadroClinico()" class="button button-3d button-rounded button-pill button-small">
-            <i class="fas fa-plus"></i>
-            Nuevo Cuadro Clínico
-        </button>
+            @can('boton.nuevo.historial.clinico')
+                <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
+                    onclick="modalCuadroClinico()" class="button button-3d button-rounded button-pill button-small">
+                <i class="fas fa-plus"></i>
+                Nuevo Cuadro Clínico
+                 </button>
+            @endcan
 
         @endif
 

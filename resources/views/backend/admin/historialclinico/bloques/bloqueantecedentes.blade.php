@@ -326,11 +326,13 @@
 
 
 
-
+@can('boton.guardar.antecedentes')
 <div class="card-footer">
     <button type="button" onclick="guardarAntecedentes()" style="font-weight: bold; background-color: #28a745; color: white !important;"
             class="button button-rounded button-pill button-small float-right">Guardar Antecedentes</button>
 </div>
+
+@endcan
 
 
 

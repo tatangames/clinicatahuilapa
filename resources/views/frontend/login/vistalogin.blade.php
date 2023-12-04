@@ -135,7 +135,7 @@
         formData.append('usuario', usuario);
         formData.append('password', password);
 
-        //bodegaelectrica
+        //clinicatahuilapa
 
         axios.post('/clinicatahuilapa/login', formData, {
         })

@@ -5,11 +5,14 @@
         <!-- SOLO 1 POR CONSULTA -->
 
         @if($btnAntrosV == 0)
-        <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
-                onclick="vistaNuevaAntropologia()" class="button button-3d button-rounded button-pill button-small">
-            <i class="fas fa-plus"></i>
-            Nueva Antropometría
-        </button>
+            @can('boton.guardar.antropometria')
+                <button type="button" style="float: right ;font-weight: bold; background-color: #28a745; color: white !important;"
+                        onclick="vistaNuevaAntropologia()" class="button button-3d button-rounded button-pill button-small">
+                    <i class="fas fa-plus"></i>
+                    Nueva Antropometría
+                </button>
+            @endcan
+
         @endif
     </div>
 </div>

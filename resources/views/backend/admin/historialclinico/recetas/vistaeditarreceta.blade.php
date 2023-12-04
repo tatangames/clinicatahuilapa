@@ -331,9 +331,11 @@
 
     @if($infoReceta->estado == 1)
 
-    <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px; " id="bloqueGuardarTabla">
-        <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Receta Médica</button>
-    </div>
+        @can('boton.actualizar.receta')
+            <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px; " id="bloqueGuardarTabla">
+                <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Receta Médica</button>
+            </div>
+        @endcan
 
     @endif
 
