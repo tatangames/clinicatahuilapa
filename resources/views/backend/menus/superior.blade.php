@@ -15,7 +15,7 @@
     <link href="{{ asset('css/toastr.min.css') }}" type="text/css" rel="stylesheet" />
     @yield('content-admin-css')
 
-    <!--  /clinicatahuilapa/admin -->
+    <!--  /clinica/admin -->
 
     <script type="text/javascript"> var url = "/clinica/admin"; </script>
 </head>

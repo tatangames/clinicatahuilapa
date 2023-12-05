@@ -437,13 +437,15 @@ Route::get('/admin/reporte/existencias/separado', [ReportesController::class,'re
 Route::get('/admin/reporte/receta/paciente/{idreceta}', [ReportesController::class,'reporteRecetaPaciente']);
 
 
-
-
-
 // --- LISTADO DE ENTRADAS PARA SEGUIR AGREGANDO EXTRA AL MISMO LOTE ---
 Route::get('/admin/vista/todos/listado/entradas', [FarmaciaController::class,'vistaListadoEntradasRegistradas'])->name('admin.entradas.listado.ver.index');
 Route::get('/admin/vista/todos/listado/entradas/tablas', [FarmaciaController::class,'tablaListadoEntradasRegistradas']);
 Route::get('/admin/vista/editar/info/entrada/{identrada}', [FarmaciaController::class,'vistaEditarEntrada']);
+
+
+// --- REPORTE FINAL ---
+Route::get('/admin/vista/reporte/final', [ReportesController::class,'vistaReporteFinal'])->name('admin.reporte.final');
+Route::get('/admin/pdf/reporte/final/{desde}/{hasta}', [ReportesController::class,'generarReporteFinal']);
 
 
 

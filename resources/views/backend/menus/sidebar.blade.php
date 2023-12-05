@@ -321,6 +321,14 @@
                                 </li>
 
 
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.reporte.final') }}" target="frameprincipal" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Reporte Final</p>
+                                    </a>
+                                </li>
+
+
                             </ul>
                         </li>
                     @endcan

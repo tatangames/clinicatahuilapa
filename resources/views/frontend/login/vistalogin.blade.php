@@ -135,7 +135,7 @@
         formData.append('usuario', usuario);
         formData.append('password', password);
 
-        //clinicatahuilapa
+        //clinica
 
         axios.post('/clinica/login', formData, {
         })
