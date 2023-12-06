@@ -806,7 +806,7 @@ class ReportesController extends Controller
             $arraySalidaRecetas = DB::table('recetas AS re')
                 ->join('recetas_detalle AS deta', 're.id', '=', 'deta.recetas_id')
                 ->select('deta.cantidad', 'deta.descripcion', 're.paciente_id',
-                            're.fecha_estado', 're.estado', 're.usuario_estado_id', 're.via_id',
+                            're.fecha_estado', 're.estado', 're.usuario_estado_id',
                             're.diagnostico_id')
                 ->where('re.estado', 3) // DENEGADOS
                 ->whereBetween('re.fecha_estado', [$start, $end])
@@ -867,8 +867,6 @@ class ReportesController extends Controller
 
                 $infoDiagn = Diagnosticos::where('id', $infoFila->diagnostico_id)->first();
                 $infoFila->nombreDiagnostico = $infoDiagn->nombre;
-
-
             }
         }
 
@@ -881,7 +879,6 @@ class ReportesController extends Controller
         }else{
             $mpdf->SetTitle('Recetas Denegadas');
         }
-
 
         // mostrar errores
         $mpdf->showImageErrors = false;
