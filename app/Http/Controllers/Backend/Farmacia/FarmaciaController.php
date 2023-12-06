@@ -526,7 +526,7 @@ class FarmaciaController extends Controller
                 $info->fechaEstadoFormat = date("d-m-Y", strtotime($info->fecha_estado));
                 $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
 
-                $info->nombrepaciente = $info->nombres . " " . $infoPaciente->apellidos;
+                $info->nombrepaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
 
                 $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
                 $info->doctor = $infoUsuario->nombre;
