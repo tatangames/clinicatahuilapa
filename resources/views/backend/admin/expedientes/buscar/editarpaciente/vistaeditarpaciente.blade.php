@@ -42,9 +42,19 @@
                                     <div class="container-fluid">
                                         <div class="row">
 
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="card-body">
 
+                                                    <div class="form-group row" >
+                                                        <label class="col-sm-2 col-form-label" style="color: #686868">Número de Expediente: </label>
+                                                        <span class="text-danger">*</span>
+                                                        <div class="col-md-9">
+                                                            <div class="form-group">
+                                                                <input type="text" style="margin-left: 8px" maxlength="100" autocomplete="off"
+                                                                       class="form-control" id="numero-expediente-nuevo" value="{{ $infoPa->numero_expediente }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
                                                     <div class="form-group row" style="margin-top: 35px">
                                                         <label class="col-sm-2 col-form-label" style="color: #686868">Nombre: </label>
@@ -69,16 +79,6 @@
                                                     </div>
 
 
-                                                </div>
-
-
-                                            </div>
-
-
-                                            <div class="col-md-6">
-
-                                                <div class="card-body">
-
                                                     <div class="form-group row" style="margin-top: 18px">
                                                         <label class="col-sm-2 col-form-label" style="color: #686868">Tipo
                                                             Paciente: </label>
@@ -100,8 +100,13 @@
                                                         </div>
                                                     </div>
 
+
                                                 </div>
+
+
                                             </div>
+
+
 
 
                                         </div>
@@ -528,6 +533,13 @@
             var correo = document.getElementById('correo').value;
             var referido = document.getElementById('referido').value;
             var selectProfesion = document.getElementById('select-profesion').value; //*
+            var numExpediente = document.getElementById('numero-expediente-nuevo').value;
+
+
+            if (numExpediente === '') {
+                toastr.error('Número Expediente es requerido');
+                return;
+            }
 
 
             if (nombre === '') {
@@ -585,12 +597,32 @@
             formData.append('correo', correo);
             formData.append('referido', referido);
             formData.append('profesion', selectProfesion);
+            formData.append('numExpediente', numExpediente);
+
 
             axios.post(url + '/expediente/actualizar', formData, {})
                 .then((response) => {
                     closeLoading();
 
-                    if (response.data.success === 1) {
+                    if(response.data.success === 1){
+                        Swal.fire({
+                            title: 'Expediente Repetido',
+                            text: 'Un Paciente ya tiene Registrado el Expediente: ' + numExpediente,
+                            icon: 'error',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            allowOutsideClick: false,
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                            }
+                        })
+                    }
+
+                    else if (response.data.success === 2) {
                         alertActualizado();
                     } else {
                         toastr.error('Error al registrar');

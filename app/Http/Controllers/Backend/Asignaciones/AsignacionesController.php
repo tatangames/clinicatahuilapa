@@ -413,6 +413,7 @@ class AsignacionesController extends Controller
             ->where('estado_paciente', 1)->first()){
 
             $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
+            $nombrePaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
 
             if($infoPaciente->foto == null){
                 $hayfoto = 0;
@@ -426,12 +427,13 @@ class AsignacionesController extends Controller
             $arrayrazonuso = Motivo::orderBy('nombre')->get();
 
             // CONTEO DIRECTO
-            $numeroConsulta = Consulta_Paciente::where('paciente_id', $infoConsulta->paciente_id)->count();
+            $numeroConsulta = $infoPaciente->numero_expediente;
 
             return ['success' => 1, 'infoconsulta' => $infoConsulta,
                 'infopaciente' => $infoPaciente, 'hayfoto' => $hayfoto,
                 'horaentro' => $horaEntroSala, 'entroespera' => $horaEntroEsperar,
-                'arrayrazonuso' => $arrayrazonuso, 'numeroConsulta' => $numeroConsulta];
+                'arrayrazonuso' => $arrayrazonuso, 'numeroConsulta' => $numeroConsulta,
+                'nombrepaciente' => $nombrePaciente];
         }
         else{
             return ['success' => 2];

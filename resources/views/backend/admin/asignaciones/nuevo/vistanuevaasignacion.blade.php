@@ -391,7 +391,7 @@
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="control-label col-md-12">CONSULTA #</label>
+                                                    <label class="control-label col-md-12">EXPEDIENTE</label>
                                                     <input type="text" id="txtNumeroConsulta" autocomplete="off"
                                                            class="form-control" disabled>
                                                 </div>
@@ -1118,12 +1118,11 @@
                             document.getElementById('textofoto').innerHTML = "SIN FOTOGRAFIA";
                         }
 
-                        let unido = response.data.infopaciente.nombres + " " + response.data.infopaciente.apellidos;
 
                         $('#idpacientemodal-dentrosala').val(response.data.infoconsulta.id);
 
 
-                        $('#txtNombre').val(unido);
+                        $('#txtNombre').val(response.data.nombrepaciente);
                         $('#txtHoraEntroEspera').val(response.data.entroespera);
 
                         // CONTEO DIRECTO

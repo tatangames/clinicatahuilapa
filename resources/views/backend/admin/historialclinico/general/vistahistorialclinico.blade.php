@@ -66,12 +66,9 @@
                                                     <h5 style="font-weight: bold">FICHA CLINICA</h5>
                                                     <p class="" style="color: #2b2a2a;">{{ $nombreCompleto }}</p>
                                                     <p><span class="badge bg-primary" style="font-size: 13px">Fecha Nacimiento:  {{ $miFecha }}</span></p>
-                                                    <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Expediente #:  {{ $infoPaciente->id }}</span></p>
+                                                    <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Expediente #:  {{ $infoPaciente->numero_expediente }}</span></p>
                                                     <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Consulta #:  {{ $totalConsulta }}</span></p>
-
                                                 </div>
-
-
 
                                             </div>
 
@@ -184,9 +181,10 @@
                                                             <div class="card-body">
 
                                                                 <!-- CARGAR TABLA DE HISTORIAL CLINICO -->
-
+                                                                @can('ver.tabla.antecedentes')
                                                                 <div id="tablaAntecedentes">
                                                                 </div>
+                                                                @endcan
 
                                                             </div>
                                                         </div>
@@ -206,8 +204,10 @@
 
                                                                 <!-- CARGAR TABLA ANTROP SV -->
 
-                                                                <div id="tablaAntropSv">
-                                                                </div>
+                                                                @can('ver.tabla.antropometria')
+                                                                    <div id="tablaAntropSv">
+                                                                    </div>
+                                                                @endcan
 
                                                             </div>
                                                         </div>
@@ -229,8 +229,10 @@
 
                                                                 <!-- CARGAR TABLA RECETAS -->
 
-                                                                <div id="tablaRecetas">
-                                                                </div>
+                                                                @can('ver.tabla.recetas')
+                                                                    <div id="tablaRecetas">
+                                                                    </div>
+                                                                @endcan
 
                                                             </div>
                                                         </div>
@@ -250,8 +252,10 @@
 
                                                                 <!-- CARGAR TABLA RECETAS -->
 
-                                                                <div id="tablaCuadroClinico">
-                                                                </div>
+                                                                @can('ver.tabla.historialclinico')
+                                                                    <div id="tablaCuadroClinico">
+                                                                    </div>
+                                                                @endcan
 
                                                             </div>
                                                         </div>
@@ -449,24 +453,39 @@
 
             // TABLA ANTECEDENTES
 
-            var rutaAntecedente = "{{ URL::to('/admin/historial/bloque/antecedente') }}/" + idconsulta;
-            $('#tablaAntecedentes').load(rutaAntecedente);
+            var divtablaAntecedentes = document.getElementById('tablaAntecedentes');
+
+            if(divtablaAntecedentes){
+                var rutaAntecedente = "{{ URL::to('/admin/historial/bloque/antecedente') }}/" + idconsulta;
+                $('#tablaAntecedentes').load(rutaAntecedente);
+            }
 
 
+            var divtablaAntropSv = document.getElementById('tablaAntropSv');
 
-            // TABLA ANTROP SV
-            var rutaAntrop = "{{ URL::to('/admin/historial/bloque/antropsv') }}/" + idconsulta;
-            $('#tablaAntropSv').load(rutaAntrop);
-
-
-            // TABLA RECETAS
-            var rutaRecetas = "{{ URL::to('/admin/historial/bloque/recetas') }}/" + idconsulta;
-            $('#tablaRecetas').load(rutaRecetas);
+            if(divtablaAntropSv){
+                // TABLA ANTROP SV
+                var rutaAntrop = "{{ URL::to('/admin/historial/bloque/antropsv') }}/" + idconsulta;
+                $('#tablaAntropSv').load(rutaAntrop);
+            }
 
 
-            // TABLA CUADRO CLINICO
-            var rutaCuadroClinico = "{{ URL::to('/admin/historial/bloque/cuadroclinico') }}/" + idconsulta;
-            $('#tablaCuadroClinico').load(rutaCuadroClinico);
+            var divtablaRecetas = document.getElementById('tablaRecetas');
+
+            if(divtablaRecetas){
+                // TABLA RECETAS
+                var rutaRecetas = "{{ URL::to('/admin/historial/bloque/recetas') }}/" + idconsulta;
+                $('#tablaRecetas').load(rutaRecetas);
+            }
+
+
+            var divtablaCuadroClinico = document.getElementById('tablaCuadroClinico');
+
+            if(divtablaCuadroClinico){
+                // TABLA CUADRO CLINICO
+                var rutaCuadroClinico = "{{ URL::to('/admin/historial/bloque/cuadroclinico') }}/" + idconsulta;
+                $('#tablaCuadroClinico').load(rutaCuadroClinico);
+            }
 
 
             $('#select-tipo-diagnostico').select2({

@@ -154,8 +154,10 @@
 
                                                                             <!-- CARGAR TABLA DE HISTORIAL CLINICO -->
 
-                                                                            <div id="tablaAntecedentes">
-                                                                            </div>
+                                                                            @can('ver.tabla.antecedentes')
+                                                                                <div id="tablaAntecedentes">
+                                                                                </div>
+                                                                            @endcan
 
                                                                         </div>
                                                                     </div>
@@ -175,8 +177,10 @@
 
                                                                             <!-- CARGAR TABLA ANTROP SV -->
 
-                                                                            <div id="tablaAntropSv">
-                                                                            </div>
+                                                                            @can('ver.tabla.antropometria')
+                                                                                <div id="tablaAntropSv">
+                                                                                </div>
+                                                                            @endcan
 
                                                                         </div>
                                                                     </div>
@@ -198,8 +202,10 @@
 
                                                                             <!-- CARGAR TABLA RECETAS -->
 
-                                                                            <div id="tablaRecetas">
-                                                                            </div>
+                                                                            @can('ver.tabla.recetas')
+                                                                                <div id="tablaRecetas">
+                                                                                </div>
+                                                                            @endcan
 
                                                                         </div>
                                                                     </div>
@@ -219,8 +225,10 @@
 
                                                                             <!-- CARGAR TABLA RECETAS -->
 
-                                                                            <div id="tablaCuadroClinico">
-                                                                            </div>
+                                                                            @can('ver.tabla.historialclinico')
+                                                                                <div id="tablaCuadroClinico">
+                                                                                </div>
+                                                                            @endcan
 
                                                                         </div>
                                                                     </div>
@@ -288,27 +296,41 @@
 
 
             // TABLA ANTECEDENTES
+            var divtablaAntecedentes = document.getElementById('tablaAntecedentes');
 
-            var rutaAntecedente = "{{ URL::to('/admin/documentoreceta/bloque/antecedentes') }}/" + idPaciente;
-            $('#tablaAntecedentes').load(rutaAntecedente);
+            if(divtablaAntecedentes){
+                var rutaAntecedente = "{{ URL::to('/admin/documentoreceta/bloque/antecedentes') }}/" + idPaciente;
+                $('#tablaAntecedentes').load(rutaAntecedente);
+            }
 
 
             // TABLA ANTROPOMETRIA
+            var divtablaAntropSv = document.getElementById('tablaAntropSv');
 
-            var rutaAntropometria = "{{ URL::to('/admin/documentoreceta/bloque/antropometriasv') }}/" + idPaciente;
-            $('#tablaAntropSv').load(rutaAntropometria);
+            if(divtablaAntropSv){
+                var rutaAntropometria = "{{ URL::to('/admin/documentoreceta/bloque/antropometriasv') }}/" + idPaciente;
+                $('#tablaAntropSv').load(rutaAntropometria);
+            }
 
 
             // TABLA RECETAS
 
-            var rutaRecetas = "{{ URL::to('/admin/documentoreceta/bloque/recetas') }}/" + idPaciente;
-            $('#tablaRecetas').load(rutaRecetas);
+            var divtablaRecetas = document.getElementById('tablaRecetas');
+
+            if(divtablaRecetas){
+                var rutaRecetas = "{{ URL::to('/admin/documentoreceta/bloque/recetas') }}/" + idPaciente;
+                $('#tablaRecetas').load(rutaRecetas);
+            }
+
 
 
             // TABLA CUADRO CLINICO
+            var divtablaCuadroClinico = document.getElementById('tablaCuadroClinico');
 
-            var rutaCuadro = "{{ URL::to('/admin/documentoreceta/bloque/cuadroclinico') }}/" + idPaciente;
-            $('#tablaCuadroClinico').load(rutaCuadro);
+            if(divtablaCuadroClinico){
+                var rutaCuadro = "{{ URL::to('/admin/documentoreceta/bloque/cuadroclinico') }}/" + idPaciente;
+                $('#tablaCuadroClinico').load(rutaCuadro);
+            }
 
 
             document.getElementById("divcontenedor").style.display = "block";
@@ -324,10 +346,6 @@
         function vistaAtras(){
             window.location.href="{{ url('/admin/expediente/vista/buscar') }}";
         }
-
-
-
-
 
 
 

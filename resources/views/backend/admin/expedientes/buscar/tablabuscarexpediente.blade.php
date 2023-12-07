@@ -20,7 +20,7 @@
 
                             @foreach($arrayExpedientes as $dato)
                                 <tr>
-                                    <td>{{ $dato->id }}</td>
+                                    <td>{{ $dato->numero_expediente }}</td>
                                     <td>{{ $dato->nombres }}</td>
                                     <td>{{ $dato->apellidos }}</td>
                                     <td>{{ $dato->tipoDoc }}</td>

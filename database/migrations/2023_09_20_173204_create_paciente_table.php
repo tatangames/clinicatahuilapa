@@ -30,6 +30,7 @@ class CreatePacienteTable extends Migration
             $table->string('telefono', 25)->nullable();
             $table->string('direccion', 550)->nullable();
             $table->string('foto', 100)->nullable();
+            $table->string('numero_expediente', 100);
 
             $table->foreign('tipo_documento_id')->references('id')->on('tipo_documento');
             $table->foreign('tipo_id')->references('id')->on('tipo_paciente');

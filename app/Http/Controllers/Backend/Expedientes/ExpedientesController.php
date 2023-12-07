@@ -56,6 +56,10 @@ class ExpedientesController extends Controller
 
         try {
 
+            if(Paciente::where('numero_expediente', $request->numexpediente)->first()){
+                return ['success' => 1];
+            }
+
             if ($request->hasFile('documento')) {
 
                 $cadena = Str::random(15);
@@ -93,11 +97,12 @@ class ExpedientesController extends Controller
                     $detalle->telefono = $request->telefono;
                     $detalle->direccion = $request->direccion;
                     $detalle->foto = $nomDocumento;
+                    $detalle->numero_expediente = $request->numexpediente;
                     $detalle->save();
 
 
                     DB::commit();
-                    return ['success' => 1];
+                    return ['success' => 2];
 
                 }else{
                     return ['success' => 99];
@@ -126,10 +131,11 @@ class ExpedientesController extends Controller
                 $detalle->celular = $request->celular;
                 $detalle->telefono = $request->telefono;
                 $detalle->direccion = $request->direccion;
+                $detalle->numero_expediente = $request->numexpediente;
                 $detalle->save();
 
                 DB::commit();
-                return ['success' => 1];
+                return ['success' => 2];
             }
 
         }catch(\Throwable $e){
@@ -194,6 +200,14 @@ class ExpedientesController extends Controller
 
             if($infoPaciente = Paciente::where('id', $request->idpaciente)->first()){
 
+
+                if(Paciente::where('numero_expediente', $request->numExpediente)
+                    ->where('id', '!=', $request->idpaciente)
+                    ->first()){
+                    return ['success' => 1];
+                }
+
+
                 if ($request->hasFile('documento')) {
 
                     $cadena = Str::random(15);
@@ -235,11 +249,12 @@ class ExpedientesController extends Controller
                             'telefono' => $request->telefono,
                             'direccion' => $request->direccion,
                             'foto' => $nomDocumento,
+                            'numero_expediente' => $request->numExpediente,
                         ]);
 
 
                         DB::commit();
-                        return ['success' => 1];
+                        return ['success' => 2];
 
                     }else{
                         return ['success' => 99];
@@ -268,10 +283,11 @@ class ExpedientesController extends Controller
                         'celular' => $request->celular,
                         'telefono' => $request->telefono,
                         'direccion' => $request->direccion,
+                        'numero_expediente' => $request->numExpediente,
                     ]);
 
                     DB::commit();
-                    return ['success' => 1];
+                    return ['success' => 2];
                 }
             }else{
                 return ['success' => 99];
