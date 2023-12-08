@@ -1754,8 +1754,8 @@ class ReportesController extends Controller
 
         $imagePath = public_path('storage/archivos/' . $infoPaciente->foto);
 
-        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
 
         $mpdf->SetTitle('Ficha Paciente');
