@@ -66,7 +66,7 @@
                                                 <h5 style="font-weight: bold">FICHA CLINICA</h5>
                                                 <p class="" style="color: #2b2a2a;">{{ $nombreCompleto }}</p>
                                                 <p><span class="badge bg-primary" style="font-size: 13px">Fecha Nacimiento:  {{ $miFecha }}</span></p>
-                                                <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Expediente #:  {{ $infoPaciente->id }}</span></p>
+                                                <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Expediente #:  {{ $infoPaciente->numero_expediente }}</span></p>
                                                 <p><span class="badge bg-primary" style="font-size: 13px; color: white !important;">Total de Consultas Realizadas:  {{ $totalConsulta }}</span></p>
 
                                             </div>

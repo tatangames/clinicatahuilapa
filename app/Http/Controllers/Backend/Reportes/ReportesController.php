@@ -7,6 +7,7 @@ use App\Models\Consulta_Paciente;
 use App\Models\Diagnosticos;
 use App\Models\EntradaMedicamento;
 use App\Models\EntradaMedicamentoDetalle;
+use App\Models\Estado_Civil;
 use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
 use App\Models\Linea;
@@ -14,10 +15,12 @@ use App\Models\MotivoFarmacia;
 use App\Models\OrdenSalida;
 use App\Models\OrdenSalidaDetalle;
 use App\Models\Paciente;
+use App\Models\Profesion;
 use App\Models\Proveedores;
 use App\Models\Recetas;
 use App\Models\RecetasDetalle;
 use App\Models\SubLinea;
+use App\Models\Tipo_Documento;
 use App\Models\TipoFactura;
 use App\Models\Usuario;
 use App\Models\ViaReceta;
@@ -1731,6 +1734,143 @@ class ReportesController extends Controller
         $mpdf->Output();
     }
 
+
+
+    public function generarReporteFichaGeneralPaciente($idpaciente){
+
+
+        $infoPaciente = Paciente::where('id', $idpaciente)->first();
+
+        $nombreCompleto = $infoPaciente->nombres . ' ' . $infoPaciente->apellidos;
+        $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+
+        $fechaFormat = date("d-m-Y", strtotime($infoPaciente->fecha_nacimiento));
+
+        $infoProfesion = Profesion::where('id', $infoPaciente->profesion_id)->first();
+
+        $tipoDoc = Tipo_Documento::where('id', $infoPaciente->tipo_documento_id)->first();
+        $tipoCivil = Estado_Civil::where('id', $infoPaciente->estado_civil_id)->first();
+
+
+        $imagePath = public_path('storage/archivos/' . $infoPaciente->foto);
+
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+
+        $mpdf->SetTitle('Ficha Paciente');
+
+        // mostrar errores
+        $mpdf->showImageErrors = false;
+
+        $logoalcaldia = 'images/logo2.png';
+
+        $tabla = "<div class='contenedorp'>
+            <img id='logo' src='$logoalcaldia'>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
+            Tahuilapa Metapán<br>
+            Hoja de Datos Generales de Paciente <br><br>
+            Expediente:  $infoPaciente->numero_expediente</p>
+            </div>";
+
+        if($infoPaciente->foto != null){
+            $tabla .= "<table width='100%' style='margin-top: 25px'>
+                    <tbody>";
+
+            $tabla .= "<tr>
+                <td style='text-align: center'>
+                <img src='$imagePath' width='150px' height='150px'>
+                </td>
+            <tr>";
+
+
+            $tabla .= "</tbody></table>";
+        }
+
+
+        $tabla .= "<table id='tablaForSubrayada'>
+                    <thead>";
+
+        $tabla .= "<tr>
+                <th style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Nombre:</th>
+                <th style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$nombreCompleto</th>
+            <tr>
+            </thead>
+            </tbody>
+            ";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Fecha de Nacimiento</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$fechaFormat</td>
+            </tr>";
+
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Edad:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$edad</td>
+            </tr>";
+
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Sexo:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$infoPaciente->sexo</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Estado Civil:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$tipoCivil->nombre</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Tipo Documento:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$tipoDoc->nombre</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Número de documento:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$infoPaciente->num_documento</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Correo electrónico:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$infoPaciente->correo</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Teléfono celular:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$infoPaciente->celular</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Teléfono alternativo:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$infoPaciente->telefono</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Domicilio:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$infoPaciente->direccion</td>
+            </tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 14px; width: 20% !important; text-align: left; font-weight: bold'>Profesión:</td>
+                <td style='font-weight: bold; font-size: 14px; width: 30% !important; text-align: left; font-weight: normal'>$infoProfesion->nombre</td>
+            </tr>";
+
+
+        $tabla .= "</tbody></table>";
+
+
+
+
+
+        $stylesheet = file_get_contents('css/cssregistro.css');
+        $mpdf->WriteHTML($stylesheet,1);
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
+        $mpdf->WriteHTML($tabla,2);
+
+        $mpdf->Output();
+    }
 
 
 

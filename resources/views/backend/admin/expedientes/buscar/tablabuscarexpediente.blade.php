@@ -40,6 +40,10 @@
                                                 <i class="fas fa-user" ></i>&nbsp;
                                             </button>
 
+                                            <button type="button" title="Ficha General" class="btn btn-warning btn-sm" style="color: white" onclick="infoImpresion({{ $dato->id }})">
+                                                <i class="fas fa-print" ></i>&nbsp;
+                                            </button>
+
                                         </div>
                                     </td>
                                 </tr>

@@ -448,6 +448,9 @@ Route::get('/admin/vista/reporte/final', [ReportesController::class,'vistaReport
 Route::get('/admin/pdf/reporte/final/{desde}/{hasta}', [ReportesController::class,'generarReporteFinal']);
 
 
+// reporte de ficha general de paciente
+Route::get('/admin/pdf/reporte/fichapaciente/general/{idpaciente}', [ReportesController::class,'generarReporteFichaGeneralPaciente']);
+
 
 
 

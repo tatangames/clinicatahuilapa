@@ -78,6 +78,9 @@
             window.location.href="{{ url('/admin/documentoreceta/vista') }}/" + idpaciente;
         }
 
+        function infoImpresion(idpaciente){
+            window.open("{{ URL::to('admin/pdf/reporte/fichapaciente/general') }}/" + idpaciente);
+        }
 
 
     </script>
