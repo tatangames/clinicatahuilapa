@@ -486,6 +486,11 @@
 
             //**************
 
+            if(fechaVenc === ''){
+                toastr.error('Fecha Vencimiento no es valida');
+                return;
+            }
+
             if(cantidad === ''){
                 toastr.error('Cantidad es requerido');
                 return;
