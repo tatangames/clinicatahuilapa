@@ -581,12 +581,13 @@
                 "<input name='arrayNombre[]' disabled data-idmedicamento='" + inputBuscador.dataset.idmedicamento + "' value='" + nomProducto + "' class='form-control' type='text'>" +
                 "</td>" +
 
-                "<td>" +
-                "<input name='arrayCantidad[]' disabled value='" + cantidad + "' class='form-control' type='text'>" +
-                "</td>" +
 
                 "<td>" +
                 "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='" + precioProductoFormat + "' class='form-control' type='text'>" +
+                "</td>" +
+
+                "<td>" +
+                "<input name='arrayCantidad[]' disabled value='" + cantidad + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
