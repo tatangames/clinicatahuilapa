@@ -451,6 +451,11 @@ Route::get('/admin/pdf/reporte/final/{desde}/{hasta}', [ReportesController::clas
 // reporte de ficha general de paciente
 Route::get('/admin/pdf/reporte/fichapaciente/general/{idpaciente}', [ReportesController::class,'generarReporteFichaGeneralPaciente']);
 
+// informacion para editar una entrada medicamento detalle
+
+Route::post('/admin/modificar/entrada/medicamento/detalle', [FarmaciaController::class,'informacionEntradaMediDetalle']);
+Route::post('/admin/actualizar/entrada/medicamento/detalle', [FarmaciaController::class,'actualizarEntradaMediDetalle']);
+
 
 
 

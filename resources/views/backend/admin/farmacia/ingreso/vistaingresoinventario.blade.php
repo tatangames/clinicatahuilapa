@@ -380,7 +380,7 @@
 
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
-            var reglaNumeroDosDecimal = /^([0-9]+\.?[0-9]{0,2})$/;
+            var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
             //**************
 
@@ -434,8 +434,8 @@
                 return;
             }
 
-            if(!precioProducto.match(reglaNumeroDosDecimal)) {
-                toastr.error('Precio Producto debe ser número Decimal (2 decimales)');
+            if(!precioProducto.match(reglaNumeroDiesDecimal)) {
+                toastr.error('Precio Producto debe ser número Decimal (10 decimales)');
                 return;
             }
 
@@ -482,7 +482,7 @@
                 "</td>" +
 
                 "<td>" +
-                "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='" + precioProductoFormat + "' class='form-control' type='text'>" +
+                "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='$" + precioProducto + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
@@ -635,7 +635,7 @@
 
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
-            var reglaNumeroDosDecimal = /^([0-9]+\.?[0-9]{0,2})$/;
+            var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
 
             // VALIDACIONES DE CADA FILA, RECORRER 1 ELEMENTO YA QUE TODOS TIENEN LA MISMA CANTIDAD DE FILAS
@@ -694,9 +694,9 @@
                     return;
                 }
 
-                if (!precioProducto.match(reglaNumeroDosDecimal)) {
+                if (!precioProducto.match(reglaNumeroDiesDecimal)) {
                     colorRojoTabla(a);
-                    toastr.error('Fila #' + (a + 1) + ' Precio debe ser decimal (2 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    toastr.error('Fila #' + (a + 1) + ' Precio debe ser decimal (10 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
                     return;
                 }
 

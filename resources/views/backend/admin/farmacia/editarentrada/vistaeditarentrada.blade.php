@@ -322,7 +322,7 @@
                                 <input disabled value="{{ $item->nombre }}" class="form-control" type="text">
                             </td>
                             <td>
-                                <input disabled value="{{ $item->precioFormat }}" class="form-control" type="text">
+                                <input disabled value="${{ $item->precio }}" class="form-control" type="text">
                             </td>
                             <td>
                                 <input disabled value="{{ $item->cantidad_fija }}" class="form-control" type="text">
@@ -336,7 +336,9 @@
                                 <input disabled value="{{ $item->fechaVencimiento }}" class="form-control" type="text">
                             </td>
                             <td>
-
+                                <button type="button" title="Editar" class="btn btn-warning btn-sm" style="color: white" onclick="infoEditarDecimales({{ $item->id }})">
+                                    <i class="fas fa-edit" ></i>&nbsp;
+                                </button>
                             </td>
                         </tr>
 
@@ -352,9 +354,62 @@
 
 
 
-        <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px;">
-            <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Entrada</button>
+    <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px;">
+        <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Entrada</button>
+    </div>
+
+
+
+
+    <div class="modal fade" id="modalEditarDecimales">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar Registro</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-decimales">
+                        <div class="card-body">
+
+                            <div>
+                                <input id="id-entramedi-decimal" type="hidden">
+                            </div>
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Precio</label>
+                                </div>
+                                <input id="precio-edicion" class="form-control" autocomplete="off">
+                            </div>
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Lote</label>
+                                </div>
+                                <input id="lote-edicion" maxlength="100" class="form-control" autocomplete="off">
+                            </div>
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Fecha Vencimiento</label>
+                                </div>
+                                <input type="date" id="fechavencimiento-edicion" class="form-control" autocomplete="off">
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarEdicionFormato()">Actualizar</button>
+                </div>
+            </div>
         </div>
+    </div>
 
 
 
@@ -482,7 +537,7 @@
 
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
-            var reglaNumeroDosDecimal = /^([0-9]+\.?[0-9]{0,2})$/;
+            var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
             //**************
 
@@ -541,8 +596,8 @@
                 return;
             }
 
-            if(!precioProducto.match(reglaNumeroDosDecimal)) {
-                toastr.error('Precio Producto debe ser número Decimal (2 decimales)');
+            if(!precioProducto.match(reglaNumeroDiesDecimal)) {
+                toastr.error('Precio Producto debe ser número Decimal (10 decimales)');
                 return;
             }
 
@@ -588,7 +643,7 @@
 
 
                 "<td>" +
-                "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='" + precioProductoFormat + "' class='form-control' type='text'>" +
+                "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='$" + precioProducto + "' class='form-control' type='text'>" +
                 "</td>" +
 
                 "<td>" +
@@ -721,7 +776,7 @@
 
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
-            var reglaNumeroDosDecimal = /^([0-9]+\.?[0-9]{0,2})$/;
+            var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
 
             // VALIDACIONES DE CADA FILA, RECORRER 1 ELEMENTO YA QUE TODOS TIENEN LA MISMA CANTIDAD DE FILAS
@@ -780,9 +835,9 @@
                     return;
                 }
 
-                if (!precioProducto.match(reglaNumeroDosDecimal)) {
+                if (!precioProducto.match(reglaNumeroDiesDecimal)) {
                     colorRojoTabla(a);
-                    toastr.error('Fila #' + (a + 1) + ' Precio debe ser decimal (2 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    toastr.error('Fila #' + (a + 1) + ' Precio debe ser decimal (10 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
                     return;
                 }
 
@@ -895,6 +950,123 @@
             window.location.href="{{ url('/admin/vista/todos/listado/entradas') }}";
         }
 
+
+        function infoEditarDecimales(idmedientrada){
+
+            openLoading();
+            document.getElementById("formulario-decimales").reset();
+
+            console.log(idmedientrada)
+
+            axios.post(url+'/modificar/entrada/medicamento/detalle',{
+                'id': idmedientrada
+            })
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+                        $('#modalEditarDecimales').modal('show');
+                        $('#id-entramedi-decimal').val(idmedientrada);
+                        $('#precio-edicion').val(response.data.info.precio);
+                        $('#lote-edicion').val(response.data.info.lote);
+                        $('#fechavencimiento-edicion').val(response.data.info.fecha_vencimiento);
+
+                    }else{
+                        toastr.error('Información no encontrada');
+                    }
+
+                })
+                .catch((error) => {
+                    closeLoading();
+                    toastr.error('Información no encontrada');
+                });
+        }
+
+
+        function guardarEdicionFormato(){
+
+            var id = document.getElementById('id-entramedi-decimal').value;
+            var precioProducto = document.getElementById('precio-edicion').value;
+            var lote = document.getElementById('lote-edicion').value;
+            var fecha = document.getElementById('fechavencimiento-edicion').value;
+
+            var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
+
+            if (precioProducto === '') {
+                toastr.error('Precio es requerido');
+                return;
+            }
+
+            if (!precioProducto.match(reglaNumeroDiesDecimal)) {
+                toastr.error('Precio máximo 10 decimales');
+                return;
+            }
+
+            if (precioProducto <= 0) {
+                toastr.error('Precio no puede ser cero o negativo');
+                return;
+            }
+
+            if (precioProducto > 9000000) {
+                toastr.error('Precio no debe ser mayor a 9 millones');
+                return;
+            }
+
+
+            if(lote === ''){
+                toastr.error('Lote es requerido');
+                return;
+            }
+
+            if(fecha === ''){
+                toastr.error('Fecha de Vencimiento es requerido');
+                return;
+            }
+
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('id', id);
+            formData.append('precio', precioProducto);
+            formData.append('lote', lote);
+            formData.append('fechavencimiento', fecha);
+
+            axios.post(url+'/actualizar/entrada/medicamento/detalle', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+                    if(response.data.success === 1){
+
+                        Swal.fire({
+                            title: 'Actualizado',
+                            text: '',
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonColor: '#28a745',
+                            cancelButtonColor: '#d33',
+                            allowOutsideClick: false,
+                            cancelButtonText: 'NO',
+                            confirmButtonText: 'Recargar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                recargar();
+                            }
+                        })
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+
+        }
+
+
+        function recargar(){
+            location.reload();
+        }
 
 
     </script>

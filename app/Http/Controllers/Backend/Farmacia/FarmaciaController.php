@@ -1403,7 +1403,8 @@ class FarmaciaController extends Controller
 
         $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
             ->join('farmacia_articulo AS fama', 'fama.id', '=', 'deta.medicamento_id')
-            ->select('fama.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio', 'deta.lote', 'deta.fecha_vencimiento')
+            ->select('fama.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija',
+                'deta.precio', 'deta.lote', 'deta.fecha_vencimiento', 'deta.id')
             ->where('deta.entrada_medicamento_id', $identrada)
             ->orderBy('fama.nombre', 'ASC')
             ->get();
@@ -1415,9 +1416,6 @@ class FarmaciaController extends Controller
 
             $dato->fechaVencimiento = date("d-m-Y", strtotime($dato->fecha_vencimiento));
             $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
-
-
-
         }
 
         return view('backend.admin.farmacia.editarentrada.vistaeditarentrada', compact('identrada',
@@ -1425,6 +1423,48 @@ class FarmaciaController extends Controller
                             'arrayDetalle'));
     }
 
+
+    function informacionEntradaMediDetalle(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        if($info = EntradaMedicamentoDetalle::where('id', $request->id)->first()){
+            return ['success' => 1, 'info' => $info];
+        }
+
+        return ['success' => 2];
+    }
+
+
+    function actualizarEntradaMediDetalle(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+            'precio' => 'required',
+            'lote' => 'required',
+            'fechavencimiento' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        EntradaMedicamentoDetalle::where('id', $request->id)->update([
+            'precio' => $request->precio,
+            'lote' => $request->lote,
+            'fecha_vencimiento' => $request->fechavencimiento,
+        ]);
+
+        return ['success' => 1];
+    }
 
 
 }
