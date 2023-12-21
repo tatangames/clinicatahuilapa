@@ -534,12 +534,17 @@
             var fechaVenc = document.getElementById('fecha-vencimiento').value;
             var precioProducto = document.getElementById('precio-producto').value;
             var cantidad = document.getElementById('cantidad').value;
-
+            var inputBuscador = document.querySelector('#inputBuscador');
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
             var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
             //**************
+
+            if(inputBuscador.dataset.idmedicamento == 0){
+                toastr.error("Producto es requerido");
+                return;
+            }
 
             if(fechaVenc === ''){
                 toastr.error('Fecha Vencimiento no es valida');
@@ -579,14 +584,11 @@
             }
 
 
-            var inputBuscador = document.querySelector('#inputBuscador');
+
             var nomProducto = document.getElementById('inputBuscador').value;
 
 
-            if(inputBuscador.dataset.info == 0){
-                toastr.error("Producto es requerido");
-                return;
-            }
+
 
 
             //*************

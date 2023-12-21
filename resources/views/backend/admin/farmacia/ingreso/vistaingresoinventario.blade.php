@@ -143,12 +143,7 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
-
-
-
 
                         </div>
                     </section>
@@ -168,7 +163,7 @@
                                 </div>
 
                                 <div class="form-group col-md-3" style="margin-top: 5px">
-                                    <label class="control-label" style="color: #686868">Lote: </label>
+                                    <label style="color: #686868">Lote: </label>
                                     <div>
                                         <input type="text" maxlength="100" autocomplete="off" class="form-control" id="lote" >
                                     </div>
@@ -377,10 +372,16 @@
             var fechaVenc = document.getElementById('fecha-vencimiento').value;
             var precioProducto = document.getElementById('precio-producto').value;
             var cantidad = document.getElementById('cantidad').value;
-
+            var inputBuscador = document.querySelector('#inputBuscador');
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
             var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
+
+
+            if(inputBuscador.dataset.idmedicamento == 0){
+                toastr.error("Producto es requerido");
+                return;
+            }
 
             //**************
 
@@ -417,14 +418,10 @@
             }
 
 
-            var inputBuscador = document.querySelector('#inputBuscador');
+
             var nomProducto = document.getElementById('inputBuscador').value;
 
 
-            if(inputBuscador.dataset.info == 0){
-                toastr.error("Producto es requerido");
-                return;
-            }
 
 
             //*************
