@@ -456,6 +456,10 @@ Route::get('/admin/pdf/reporte/fichapaciente/general/{idpaciente}', [ReportesCon
 Route::post('/admin/modificar/entrada/medicamento/detalle', [FarmaciaController::class,'informacionEntradaMediDetalle']);
 Route::post('/admin/actualizar/entrada/medicamento/detalle', [FarmaciaController::class,'actualizarEntradaMediDetalle']);
 
+// ver listado de entradas para ver su factura
+Route::post('/admin/ver/listado/facturas', [FarmaciaController::class,'verListadoEntradasParaFacturas']);
+
+
 
 
 

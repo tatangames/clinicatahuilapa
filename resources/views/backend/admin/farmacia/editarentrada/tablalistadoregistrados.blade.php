@@ -28,6 +28,7 @@
                                         <button type="button" class="btn btn-info btn-xs" onclick="informacion({{ $dato->id }})">
                                             <i class="fas fa-edit" title="Editar"></i>&nbsp; Editar
                                         </button>
+
                                     </td>
                                 </tr>
                             @endforeach

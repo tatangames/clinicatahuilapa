@@ -1467,4 +1467,27 @@ class FarmaciaController extends Controller
     }
 
 
+    public function verListadoEntradasParaFacturas(Request $request){
+
+        $listado = EntradaMedicamento::orderBy('fecha', 'DESC')->get();
+
+        foreach ($listado as $info){
+
+            $fecha = date("d-m-Y", strtotime($info->fecha));
+            $fuente = FuenteFinanciamiento::where('id', $info->fuentefina_id)->first();
+
+            if($info->numero_factura != null){
+                $completo = $fecha . ' - ' . $fuente->nombre . ' - ' . $info->numero_factura;
+            }else{
+                $completo = $fecha . ' - ' . $fuente->nombre;
+            }
+
+            $info->completo = $completo;
+        }
+
+        return ['success' => 1, 'info' => $listado];
+
+    }
+
+
 }

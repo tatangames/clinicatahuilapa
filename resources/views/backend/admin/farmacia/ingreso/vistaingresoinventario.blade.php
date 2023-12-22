@@ -20,6 +20,10 @@
         color: #401fd2;
         font-weight: bold;
     }
+
+    *:focus {
+        outline: none;
+    }
 </style>
 
 <div id="divcontenedor" style="display: none">
@@ -70,7 +74,11 @@
                                             <select class="form-control" id="select-fuente-financiamiento">
                                                 <option value="">Seleccionar Opción</option>
                                                 @foreach($arrayFuente as $item)
-                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                    @if($item->id == 3)
+                                                        <option value="{{$item->id}}" selected>{{ $item->nombre }}</option>
+                                                    @else
+                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
+                                                    @endif
                                                 @endforeach
                                             </select>
                                         </div>
@@ -363,6 +371,8 @@
 
             document.getElementById("existencia").value = existencia;
             document.getElementById("ultimo-costo").value = ultimoPrecio;
+
+            document.activeElement.blur();
         }
 
 

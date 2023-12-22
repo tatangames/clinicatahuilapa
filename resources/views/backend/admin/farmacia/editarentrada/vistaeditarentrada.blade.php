@@ -339,6 +339,7 @@
                                 <button type="button" title="Editar" class="btn btn-warning btn-sm" style="color: white" onclick="infoEditarDecimales({{ $item->id }})">
                                     <i class="fas fa-edit" ></i>&nbsp;
                                 </button>
+
                             </td>
                         </tr>
 
@@ -353,12 +354,9 @@
 
 
 
-
     <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px;">
         <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Entrada</button>
     </div>
-
-
 
 
     <div class="modal fade" id="modalEditarDecimales">
@@ -411,6 +409,46 @@
         </div>
     </div>
 
+
+
+    <div class="modal fade" id="modalTraslado">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Traslado</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-traslado">
+                        <div class="card-body">
+
+                            <div>
+                                <input id="id-traslado" type="hidden">
+                            </div>
+
+
+                            <div class="form-group">
+                                <label style="color:#191818">Fecha - Fuente Financiamiento - # Factura</label>
+                                <br>
+                                <div>
+                                    <select class="form-control" id="select-factura">
+                                    </select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="guardarTraslado()">Traslada</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -1068,6 +1106,47 @@
 
         function recargar(){
             location.reload();
+        }
+
+
+        function informacionTraslado(identradeta){
+
+            // abrir modal y cargar facturas a donde se puede trasladas
+            openLoading();
+
+            axios.post(url+'/ver/listado/facturas', {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+
+                        $('#id-traslado').val(identradeta);
+
+
+                        document.getElementById("select-factura").options.length = 0;
+
+                        $.each(response.data.info, function( key, val ){
+                            $('#select-factura').append('<option value="' +val.id +'">'+val.completo+'</option>');
+                        });
+
+                        $('#modalTraslado').modal('show');
+                    }
+                    else{
+                        toastr.error('error al guardar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al guardar');
+                    closeLoading();
+                });
+        }
+
+        function guardarTraslado(){
+
+
+
         }
 
 
