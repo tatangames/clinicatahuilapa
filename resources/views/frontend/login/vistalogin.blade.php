@@ -135,9 +135,9 @@
         formData.append('usuario', usuario);
         formData.append('password', password);
 
-        //clinica
+        //clinica.com
 
-        axios.post('/clinica/login', formData, {
+        axios.post('/clinica.com/login', formData, {
         })
             .then((response) => {
                 closeLoading();

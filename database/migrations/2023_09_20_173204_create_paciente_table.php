@@ -24,7 +24,7 @@ class CreatePacienteTable extends Migration
             $table->date('fecha_nacimiento');
             $table->char('sexo')->nullable();
             $table->string('referido_por', 300)->nullable();
-            $table->string('num_documento', 100);
+            $table->string('num_documento', 100)->nullable();
             $table->string('correo', 150)->nullable();
             $table->string('celular', 25)->nullable();
             $table->string('telefono', 25)->nullable();

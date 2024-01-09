@@ -498,11 +498,6 @@
                 return;
             }
 
-            if (numeroDocumento === '') {
-                toastr.error('Número de documento es requerido');
-                return;
-            }
-
             if (selectProfesion === '') {
                 toastr.error('Profesión es requerido');
                 return;
