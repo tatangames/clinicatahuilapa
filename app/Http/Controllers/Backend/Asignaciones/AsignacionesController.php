@@ -234,7 +234,7 @@ class AsignacionesController extends Controller
         // lista de pacientes en modo espera para tabla enfermeria
         $arrayTablaEnfermeria = Consulta_Paciente::where('estado_paciente', 0)
             ->where('salaespera_id', 2) // ENFERMERIA
-            ->orderBy('id', 'ASC')
+            ->orderBy('fecha_hora', 'ASC')
             ->get();
 
 
@@ -261,7 +261,7 @@ class AsignacionesController extends Controller
         // lista de pacientes en modo espera para tabla enfermeria
         $arrayTablaConsultoria = Consulta_Paciente::where('estado_paciente', 0)
             ->where('salaespera_id', 1) // CONSULTORIA
-            ->orderBy('id', 'ASC')
+            ->orderBy('fecha_hora', 'ASC')
             ->get();
 
 
