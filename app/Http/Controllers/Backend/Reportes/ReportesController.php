@@ -1429,17 +1429,18 @@ class ReportesController extends Controller
 
         foreach ($arrayRecetaDeta as $dato){
                 $vueltas++;
+
                 if($vueltas == 0){
                     $tabla .= "
-                    <table width='100%' style='margin-top: 0px; line-height: 1.2'>
+                    <table width='100%' style='margin-top: 0px; line-height: 1'>
                     ";
                 }else{
                     $tabla .= "
-                    <table width='100%' style='margin-top: 20px; line-height: 1.2'>
+                    <table width='100%' style='margin-top: 20px; line-height: 1'>
                     ";
                 }
 
-                $tabla .= " <tr>
+                $tabla .= " <tr style='line-height: 1'>
                     <td style='text-align: left; width: 33%'>
                         <!-- Contenido izquierdo -->
                          <p style='font-size: 11px; font-family: normal'><strong><ul><li>$dato->nombre</li></ul></strong></p>
@@ -1455,12 +1456,12 @@ class ReportesController extends Controller
                 </tr>
             </table>
 
-            <p style='font-size: 12px; line-height: 1.2'><strong>Indicaciones del Medicamento:</strong> <br>
+            <p style='font-size: 12px; line-height: 1'><strong>Indicaciones del Medicamento:</strong> <br>
                     $dato->descripcion
             </p>
             ";
 
-            $vueltas++;
+
         }
 
 
