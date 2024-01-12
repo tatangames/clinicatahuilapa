@@ -274,17 +274,15 @@
 
                                         <div class="col-md-6">
 
-                                            <div class="col-md-offset-3 col-md-12">
-                                                <button type="button" class="btn btn-warning"
-                                                        style="color: white"
-                                                        onclick="abrirModalFoto();">
-                                            <span>
 
-                                            <img class="manImg" src="{{ asset('images/camera360.png') }}" height="25px" width="25px">
 
-                                            </span>
-                                                    Agregar Fotografía</button>
+                                            <div class="form-group">
+                                                <label>Subir Foto (Opcional)</label>
+                                                <input type="file" id="documento" class="form-control" accept="image/jpeg, image/jpg, image/png"/>
                                             </div>
+
+
+
 
                                         </div>
 
@@ -468,6 +466,11 @@
             var numExpediente = document.getElementById('numero-expediente-nuevo').value;
 
 
+            // subir foto
+            var documento = document.getElementById('documento');
+
+
+
             if (nombre === '') {
                 toastr.error('Nombre es requerido');
                 return;
@@ -512,7 +515,9 @@
             var formData = new FormData();
 
 
-            formData.append('documento', fileImagenWebCam);
+            //formData.append('documento', fileImagenWebCam);
+
+            formData.append('documento', documento.files[0]);
             formData.append('nombre', nombre);
             formData.append('tipopaciente', selectTipoPaciente);
             formData.append('apellido', apellido);

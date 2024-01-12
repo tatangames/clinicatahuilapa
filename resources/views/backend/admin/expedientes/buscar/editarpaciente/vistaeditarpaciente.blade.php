@@ -319,18 +319,12 @@
 
                                         <div class="col-md-6">
 
-                                            <div class="col-md-offset-3 col-md-12">
-                                                <button type="button" class="btn"
-                                                        style="color: white; background-color: #ffa616"
 
-                                                        onclick="abrirModalFoto();">
-                                            <span>
-
-                                            <img class="manImg" src="{{ asset('images/camera360.png') }}" height="25px" width="25px">
-
-                                            </span>
-                                                    Modificar Fotografía</button>
+                                            <div class="form-group">
+                                                <label>Subir Foto (Opcional)</label>
+                                                <input type="file" id="documento" class="form-control" accept="image/jpeg, image/jpg, image/png"/>
                                             </div>
+
 
                                         </div>
 
@@ -535,6 +529,8 @@
             var selectProfesion = document.getElementById('select-profesion').value; //*
             var numExpediente = document.getElementById('numero-expediente-nuevo').value;
 
+            // subir foto
+            var documento = document.getElementById('documento');
 
             if (numExpediente === '') {
                 toastr.error('Número Expediente es requerido');
@@ -577,7 +573,8 @@
             openLoading();
             var formData = new FormData();
             formData.append('idpaciente', idpaciente);
-            formData.append('documento', fileImagenWebCam);
+            //formData.append('documento', fileImagenWebCam);
+            formData.append('documento', documento.files[0]);
             formData.append('nombre', nombre);
             formData.append('tipopaciente', selectTipoPaciente);
             formData.append('apellido', apellido);
