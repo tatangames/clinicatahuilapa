@@ -923,7 +923,7 @@ class FarmaciaController extends Controller
                         'cantidadsalida' => $filaArray->cantidad];
                 }
 
-                EntradaMedicamentoDetalle::where('id', $filaArray['idEntradaDetalle'])->update([
+                EntradaMedicamentoDetalle::where('id', $filaArray->entrada_detalle_id)->update([
                     'cantidad' => $resta
                 ]);
 
