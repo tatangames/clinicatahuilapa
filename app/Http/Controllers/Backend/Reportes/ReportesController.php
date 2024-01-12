@@ -1391,15 +1391,15 @@ class ReportesController extends Controller
                 <tr>
                     <td style='text-align: left; width: 33%'>
                         <!-- Contenido izquierdo -->
-                        <p style='font-size: 13px'><strong>Paciente: </strong>$nombrePaciente</p>
+                        <p style='font-size: 12px; font-family: normal'><strong>Paciente: </strong>$nombrePaciente</p>
                     </td>
                     <td style='text-align: center; width: 34%'>
                         <!-- Contenido central -->
-                         <p style='font-size: 13px'><strong>Edad: </strong>$edad</p>
+                         <p style='font-size: 12px; font-family: normal'><strong>Edad: </strong>$edad</p>
                     </td>
                     <td style='text-align: right; width: 33%'>
                         <!-- Contenido derecho -->
-                         <p style='font-size: 13px'><strong>Fecha: </strong>$fechaReceta</p>
+                         <p style='font-size: 12px; font-family: normal'><strong>Fecha: </strong>$fechaReceta</p>
                     </td>
                 </tr> ";
 
@@ -1415,7 +1415,7 @@ class ReportesController extends Controller
                     </td>
                     <td style='text-align: right; width: 40%'>
                         <!-- Contenido derecho -->
-                         <p style='font-size: 13px'><strong>Proxima Consulta: </strong>$fechaProxCita</p>
+                         <p style='font-size: 12px; font-family: normal'><strong>Proxima Consulta: </strong>$fechaProxCita</p>
                     </td>
                 </tr> ";
         }
@@ -1431,36 +1431,33 @@ class ReportesController extends Controller
                 $vueltas++;
                 if($vueltas == 0){
                     $tabla .= "
-                    <table width='100%' style='margin-top: 0px'>
+                    <table width='100%' style='margin-top: 0px; line-height: 1.2'>
                     ";
                 }else{
                     $tabla .= "
-                    <table width='100%' style='margin-top: 20px'>
+                    <table width='100%' style='margin-top: 20px; line-height: 1.2'>
                     ";
                 }
 
                 $tabla .= " <tr>
                     <td style='text-align: left; width: 33%'>
                         <!-- Contenido izquierdo -->
-
-                         <p style='font-size: 13px'><strong><ul><li>$dato->nombre</li></ul></strong></p>
-
+                         <p style='font-size: 11px; font-family: normal'><strong><ul><li>$dato->nombre</li></ul></strong></p>
                     </td>
                     <td style='text-align: center; width: 34%'>
                         <!-- Contenido central -->
-                         <p style='font-size: 13px'><strong>Cantidad: </strong>$dato->cantidad</p>
+                         <p style='font-size: 11px; font-family: normal'><strong>Cantidad: </strong>$dato->cantidad</p>
                     </td>
                     <td style='text-align: right; width: 33%'>
                         <!-- Contenido derecho -->
-                         <p style='font-size: 13px'><strong>Vía: </strong>$dato->nombreVia</p>
+                         <p style='font-size: 11px; font-family: normal'><strong>Vía: </strong>$dato->nombreVia</p>
                     </td>
                 </tr>
             </table>
 
-            <p style='font-size: 14px'><strong>Indicaciones del Medicamento:</strong> <br>
+            <p style='font-size: 12px; line-height: 1.2'><strong>Indicaciones del Medicamento:</strong> <br>
                     $dato->descripcion
             </p>
-
             ";
 
             $vueltas++;
