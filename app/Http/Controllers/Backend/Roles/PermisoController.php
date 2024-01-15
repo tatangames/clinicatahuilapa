@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Backend\Roles;
 
 use App\Http\Controllers\Controller;
+use App\Models\EntradaMedicamentoDetalle;
+use App\Models\RecetasDetalle;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -115,7 +117,48 @@ class PermisoController extends Controller
         return ['success' => 2];
     }
 
+
     public function nuevoPermisoExtra(Request $request){
+
+        $lista = EntradaMedicamentoDetalle::all();
+
+        foreach ($lista as $info){
+
+            EntradaMedicamentoDetalle::where('id', $info->id)->update([
+                'cantidad' => $info->cantidad_fija,
+            ]);
+        }
+
+        /*foreach ($lista as $info){
+
+            $arrayDato = RecetasDetalle::where('entrada_detalle_id', $info->id)->get();
+            $suma = 0;
+
+            foreach ($arrayDato as $dato) {
+
+                $suma = $suma + $dato->cantidad;
+
+            }
+
+            // restar
+
+            $resta = $info->cantidad_fija - $suma;
+
+
+            EntradaMedicamentoDetalle::where('id', $info->id)->update([
+                'cantidad' => $resta,
+            ]);
+
+        }*/
+
+
+
+        return ['success' => 1];
+
+    }
+
+
+    public function nuevoPermisoExtra2(Request $request){
 
         // verificar si existe el permiso
         if(Permission::where('name', $request->nombre)->first()){
