@@ -122,14 +122,14 @@ class PermisoController extends Controller
 
         $lista = EntradaMedicamentoDetalle::all();
 
-        foreach ($lista as $info){
+        /*foreach ($lista as $info){
 
             EntradaMedicamentoDetalle::where('id', $info->id)->update([
                 'cantidad' => $info->cantidad_fija,
             ]);
-        }
+        }*/
 
-        /*foreach ($lista as $info){
+        foreach ($lista as $info){
 
             $arrayDato = RecetasDetalle::where('entrada_detalle_id', $info->id)->get();
             $suma = 0;
@@ -149,7 +149,7 @@ class PermisoController extends Controller
                 'cantidad' => $resta,
             ]);
 
-        }*/
+        }
 
 
 
