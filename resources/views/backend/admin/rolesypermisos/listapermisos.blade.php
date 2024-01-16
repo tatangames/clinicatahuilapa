@@ -181,7 +181,7 @@
                     closeLoading()
                     $('#modalAgregar').modal('hide');
 
-                    toastr.success('hecho v1');
+                    toastr.success('hecho v2');
                     /*if(response.data.success === 1){
                         alertaMensaje('warning', 'Nombre Repetido', 'Cambiar el nombre del Permiso');
                     }
