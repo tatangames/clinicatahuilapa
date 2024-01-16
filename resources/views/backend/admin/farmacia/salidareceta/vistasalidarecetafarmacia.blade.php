@@ -168,7 +168,7 @@
             window.location.href="{{ url('/admin/vista/procesar/recetamedica') }}/" + idreceta;
         }
 
-
+        
         function infoDenegarReceta(idreceta){
 
             openLoading();
