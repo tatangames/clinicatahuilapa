@@ -369,7 +369,7 @@ class HistorialClinicoController extends Controller
     }
 
 
-
+    // UNICAMENTE SALE LA DE LA CONSULTA
     public function bloqueHistorialAntropSv($idconsulta){
 
         $bloqueAntropSv = Antropometria::where('consulta_id', $idconsulta)

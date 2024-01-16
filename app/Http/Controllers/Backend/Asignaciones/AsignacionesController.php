@@ -246,7 +246,7 @@ class AsignacionesController extends Controller
             $dato->nombrepaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
             $dato->razonUso = $infoRazonUso->nombre;
 
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha_hora));
+            $dato->horaFormat = date("d-m-Y h:i A", strtotime($dato->fecha_hora));
         }
 
 
@@ -273,7 +273,7 @@ class AsignacionesController extends Controller
             $dato->nombrepaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
             $dato->razonUso = $infoRazonUso->nombre;
 
-            $dato->horaFormat = date("h:i A", strtotime($dato->fecha_hora));
+            $dato->horaFormat = date("d-m-Y h:i A", strtotime($dato->fecha_hora));
         }
 
         return view('backend.admin.asignaciones.tablamodalconsultoria.vistamodaltablaconsultoria', compact('arrayTablaConsultoria'));
