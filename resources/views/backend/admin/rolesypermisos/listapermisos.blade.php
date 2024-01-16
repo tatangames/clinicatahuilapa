@@ -148,7 +148,7 @@
         }
 
         function agregarPermiso(){
-            /*var nombre = document.getElementById('nombre-nuevo').value;
+            var nombre = document.getElementById('nombre-nuevo').value;
             var descripcion = document.getElementById('descripcion-nuevo').value;
 
             if(nombre === ''){
@@ -173,16 +173,15 @@
 
             var formData = new FormData();
             formData.append('nombre', nombre);
-            formData.append('descripcion', descripcion);*/
+            formData.append('descripcion', descripcion);
 
-            axios.post(url+'/permisos/extra-nuevo',  {
+            axios.post(url+'/permisos/extra-nuevo',formData,  {
             })
                 .then((response) => {
                     closeLoading()
                     $('#modalAgregar').modal('hide');
 
-                    toastr.success('hecho v2');
-                    /*if(response.data.success === 1){
+                    if(response.data.success === 1){
                         alertaMensaje('warning', 'Nombre Repetido', 'Cambiar el nombre del Permiso');
                     }
                     else if(response.data.success === 2){
@@ -191,7 +190,7 @@
                     }
                     else{
                         toastr.error('Error al agregar');
-                    }*/
+                    }
                 })
                 .catch((error) => {
                     closeLoading()
