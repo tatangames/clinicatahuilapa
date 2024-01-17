@@ -496,8 +496,7 @@ class AsignacionesController extends Controller
 
         if($info = Consulta_Paciente::where('id', $request->idconsulta)->first()){
 
-            $arraySala = SalasEspera::where('id', '!=', $info->salaespera_id)
-            ->orderBy('nombre', 'ASC')
+            $arraySala = SalasEspera::orderBy('nombre', 'ASC')
             ->get();
 
             $infoSala = SalasEspera::where('id', $info->salaespera_id)->first();

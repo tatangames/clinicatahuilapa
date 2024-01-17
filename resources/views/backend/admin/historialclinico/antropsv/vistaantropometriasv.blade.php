@@ -293,6 +293,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
+            var fecha = new Date();
+            document.getElementById('fecha-antro').value = fecha.toJSON().slice(0,10);
 
 
             document.getElementById("divcontenedor").style.display = "block";
