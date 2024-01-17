@@ -1,4 +1,14 @@
 
+@page {
+    margin: 0mm;
+    margin-header: 8mm;
+    margin-footer: 8mm;
+    margin-top: 8mm;
+    margin-right: 10mm;
+    margin-left: 10mm;
+    margin-bottom: 8mm;
+}
+
 .firma {
     left: 0;
     font-size: 20px;
@@ -13,7 +23,7 @@ br[style] {
 
 #titulo{
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     font-family: "Arial Black", arial-black;
     margin-right: 10px;
@@ -32,8 +42,8 @@ br[style] {
 
 #logo{
     float: left;
-    height : 100px;
-    width : 74px;
+    height : 90px;
+    width : 64px;
     margin-left: 20px;
 }
 

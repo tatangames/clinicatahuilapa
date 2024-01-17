@@ -1460,14 +1460,9 @@ class ReportesController extends Controller
                     $dato->descripcion
             </p>
             ";
-
-
         }
 
 
-
-        $htmlFooter = '<div style="text-align: center;">Pie de página solo en la página 1</div>';
-        $mpdf->SetHTMLFooter($htmlFooter, 'EVEN|ODD');
 
         $stylesheet = file_get_contents('css/cssreceta.css');
         $mpdf->WriteHTML($stylesheet,1);
