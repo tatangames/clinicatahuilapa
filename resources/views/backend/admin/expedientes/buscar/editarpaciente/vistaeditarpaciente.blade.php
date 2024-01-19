@@ -484,6 +484,22 @@
                 edad--;
             }
 
+            if(edad == 0){
+
+                // Supongamos que tienes la fecha de nacimiento en formato YYYY-MM-DD
+                var fechaCalcular = new Date(fechaNacimiento);
+
+                // Obtener la fecha actual
+                var fechaActual = new Date();
+
+                // Calcular la diferencia en milisegundos
+                var diferenciaMilisegundos = fechaActual - fechaCalcular;
+
+                // Convertir la diferencia a meses
+                let resultado = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24 * 30.44));
+                edad = "Meses: " + resultado;
+            }
+
             var inputEdad = document.getElementById("edad");
             inputEdad.value = edad;
         }
