@@ -1597,19 +1597,61 @@ class ReportesController extends Controller
         $totalColumnaDescargado = $totalFondoPropioDescargado + $totalMaterialCovidDescargado + $totalMaterialFundelDescargado;
         $totalColumnaExistencia = $totalFondoPropioExistencia + $totalMaterialCovidExistencia + $totalMaterialFundelExistencia;
 
-        $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 3, '.', ',');
-        $totalColumnaExistencia = '$' . number_format((float)$totalColumnaExistencia, 3, '.', ',');
+
+        $totalColumnaExistenciaEntero = intval($totalColumnaExistencia);
+
+        $numeroCadena = (string) $totalColumnaExistencia;
+        $posicionPunto = strpos($numeroCadena, '.');
+
+        if ($posicionPunto !== false) {
+            // Extraer los dos primeros caracteres después del punto decimal
+            $totalColumnaExistenciaDosDecimales = substr($numeroCadena, $posicionPunto + 1, 2);
+        } else {
+            // Si no hay punto decimal, establecer los dos decimales como "00"
+            $totalColumnaExistenciaDosDecimales = '00';
+        }
+
+        $totalCoEx = $totalColumnaExistenciaEntero . "." . $totalColumnaExistenciaDosDecimales;
+
+        $totalColumnaExistenciaFinal = number_format($totalCoEx, 2, '.', ',');
 
 
-        $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 3, '.', ',');
-        $totalFondoPropioExistencia = '$' . number_format((float)$totalFondoPropioExistencia, 3, '.', ',');
+        $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
+        $totalColumnaExistencia = '$' . number_format((float)$totalColumnaExistencia, 2, '.', ',');
 
-        $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 3, '.', ',');
-        $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 3, '.', ',');
 
-        $totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 3, '.', ',');
-        $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 3, '.', ',');
 
+        $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
+        //$totalFondoPropioExistencia = '$' . number_format((float)$totalFondoPropioExistencia, 2, '.', ',');
+
+
+
+        $totalFondoPropioExistenciaEntero = intval($totalFondoPropioExistencia);
+
+
+        $numeroCadena2 = (string) $totalFondoPropioExistencia;
+        $posicionPunto2 = strpos($numeroCadena2, '.');
+
+        if ($posicionPunto2 !== false) {
+            // Extraer los dos primeros caracteres después del punto decimal
+            $totalColumnaPropiosDecimales = substr($numeroCadena2, $posicionPunto2 + 1, 2);
+        } else {
+            // Si no hay punto decimal, establecer los dos decimales como "00"
+            $totalColumnaPropiosDecimales = '00';
+        }
+
+        $totalCoExFondoPro = $totalFondoPropioExistenciaEntero . "." . $totalColumnaPropiosDecimales;
+
+        $totalFondoPropioExistenciaFinal = number_format($totalCoExFondoPro, 2, '.', ',');
+
+
+
+
+        $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
+        $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
+
+        $totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
+        $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
 
 
         //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER', 'orientation' => 'L']);
@@ -1697,7 +1739,7 @@ class ReportesController extends Controller
             $tabla .= "<tr>
                             <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL FONDOS PROPIOS: </td>
                             <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
-                            <td style='font-weight: bold'>$totalFondoPropioExistencia</td>
+                            <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
                         <tr>";
 
 
@@ -1716,7 +1758,7 @@ class ReportesController extends Controller
         $tabla .= "<tr>
                             <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL: </td>
                             <td style='font-weight: bold'>$totalColumnaDescargado</td>
-                            <td style='font-weight: bold'>$totalColumnaExistencia</td>
+                            <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
                         <tr>";
 
                 $tabla .= "</tbody></table>";
