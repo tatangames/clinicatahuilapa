@@ -1112,21 +1112,23 @@ class ReportesController extends Controller
             $infoFila->nombreProveedor = $infoProveedor->nombre;
 
             $totalColumna = 0;
+            $contador = 0;
 
             $arrayDetalle = EntradaMedicamentoDetalle::where('entrada_medicamento_id', $infoFila->id)
                 ->orderBy('fecha_vencimiento', 'ASC')
                 ->get();
 
             foreach ($arrayDetalle as $dato){
-
+                $contador++;
                 $infoArticulo = FarmaciaArticulo::where('id', $dato->medicamento_id)->first();
                 $dato->nombreArticulo = $infoArticulo->nombre;
 
                 $dato->fechaVecFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
 
-                $multiFila = $dato->precio * $dato->cantidad;
+                $multiFila = $dato->precio * $dato->cantidad_fija;
                 $totalColumna = $totalColumna + $multiFila;
 
+                $dato->contador = $contador;
                 $dato->precioXFila = '$' . number_format((float)$multiFila, 2, '.', ',');
                 $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
             }
@@ -1187,6 +1189,7 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
+ <td style='font-weight: bold; width: 6%; font-size: 14px'>#.</td>
                 <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Venc.</td>
                 <td style='font-weight: bold; width: 11%; font-size: 14px'>Artículo</td>
                 <td style='font-weight: bold; width: 11%; font-size: 14px'>Lote</td>
@@ -1199,6 +1202,7 @@ class ReportesController extends Controller
 
                 if($dato->cantidad > 0){
                     $tabla .= "<tr>
+                    <td>$dato->contador</td>
                     <td>$dato->fechaVecFormat</td>
                     <td>$dato->nombreArticulo</td>
                     <td>$dato->lote</td>
