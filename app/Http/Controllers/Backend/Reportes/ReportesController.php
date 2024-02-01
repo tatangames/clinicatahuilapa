@@ -1504,9 +1504,7 @@ class ReportesController extends Controller
 
 
         // obtener ID de entradas de esa fecha
-        $arrayEntradas = EntradaMedicamento::whereBetween('fecha', [$start, $end])
-            ->orderBy('fecha', 'ASC')
-            ->get();
+        $arrayEntradas = EntradaMedicamento::all();
 
         $pilaIdEntradas = array();
 
@@ -1522,9 +1520,8 @@ class ReportesController extends Controller
 
         foreach ($arrayMedicamentos as $dato){
 
-            $arrayDetalle = EntradaMedicamentoDetalle::whereIn('entrada_medicamento_id', $pilaIdEntradas)
-                ->where('medicamento_id', $dato->id)
-                ->get();
+            $arrayDetalle = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)->get();
+
 
             $infoLinea = Linea::where('id', $dato->linea_id)->first();
 
@@ -1569,6 +1566,8 @@ class ReportesController extends Controller
                 }
 
 
+
+
                 $dataArray[] = [
                     'contador' => $contador,
                     'codigo' => $dato->codigo_articulo,
@@ -1585,8 +1584,11 @@ class ReportesController extends Controller
                     'total_descargado' => $multiDescargadoFormat,
                     'total_existencia' => $multiExistFormat,
                 ];
+
             }
         }
+
+
 
         $totalColumnaDescargado = $totalFondoPropioDescargado + $totalMaterialCovidDescargado + $totalMaterialFundelDescargado;
         $totalColumnaExistencia = $totalFondoPropioExistencia + $totalMaterialCovidExistencia + $totalMaterialFundelExistencia;
