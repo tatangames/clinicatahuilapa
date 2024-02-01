@@ -1597,18 +1597,18 @@ class ReportesController extends Controller
         $totalColumnaDescargado = $totalFondoPropioDescargado + $totalMaterialCovidDescargado + $totalMaterialFundelDescargado;
         $totalColumnaExistencia = $totalFondoPropioExistencia + $totalMaterialCovidExistencia + $totalMaterialFundelExistencia;
 
-        $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
-        $totalColumnaExistencia = '$' . number_format((float)$totalColumnaExistencia, 2, '.', ',');
+        $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 3, '.', ',');
+        $totalColumnaExistencia = '$' . number_format((float)$totalColumnaExistencia, 3, '.', ',');
 
 
-        $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
-        $totalFondoPropioExistencia = '$' . number_format((float)$totalFondoPropioExistencia, 2, '.', ',');
+        $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 3, '.', ',');
+        $totalFondoPropioExistencia = '$' . number_format((float)$totalFondoPropioExistencia, 3, '.', ',');
 
-        $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
-        $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
+        $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 3, '.', ',');
+        $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 3, '.', ',');
 
-        $totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
-        $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
+        $totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 3, '.', ',');
+        $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 3, '.', ',');
 
 
 
