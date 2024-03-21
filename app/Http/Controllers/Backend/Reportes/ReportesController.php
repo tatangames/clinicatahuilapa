@@ -46,7 +46,6 @@ class ReportesController extends Controller
 
     public function reporteEntradaArticulos($idfuente, $desde, $hasta){
 
-
         $start = Carbon::parse($desde)->startOfDay();
         $end = Carbon::parse($hasta)->endOfDay();
 
@@ -97,7 +96,7 @@ class ReportesController extends Controller
             $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
                 ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
                 ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio',
-                        'deta.lote', 'deta.fecha_vencimiento')
+                        'deta.lote', 'deta.fecha_vencimiento', 'fa.id')
                 ->where('deta.entrada_medicamento_id', $infoFila->id)
                 ->orderBy('fa.nombre', 'ASC')
                 ->get();
@@ -106,12 +105,15 @@ class ReportesController extends Controller
 
                 foreach ($arrayDetalle as $dato){
 
+
+
+
                     $multi = $dato->cantidad_fija * $dato->precio;
                     $totalXColumna = $totalXColumna + $multi;
 
-                    $dato->multiFormat = '$' . number_format((float)$multi, 2, '.', ',');
+                    $dato->multiFormat = '$' . number_format((float)$multi, 4, '.', ',');
                     $dato->fechaVencFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
-                    $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
+                    $dato->precioFormat = '$' . number_format((float)$dato->precio, 4, '.', ',');
                 }
 
 
@@ -138,11 +140,11 @@ class ReportesController extends Controller
         }
 
 
-        $totalFundel = '$' . number_format((float)$totalFundel, 2, '.', ',');
-        $totalCovid = '$' . number_format((float)$totalCovid, 2, '.', ',');
-        $totalPropios = '$' . number_format((float)$totalPropios, 2, '.', ',');
+        $totalFundel = '$' . number_format((float)$totalFundel, 4, '.', ',');
+        $totalCovid = '$' . number_format((float)$totalCovid, 4, '.', ',');
+        $totalPropios = '$' . number_format((float)$totalPropios, 4, '.', ',');
 
-        $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
+        $totalGeneral = '$' . number_format((float)$totalGeneral, 4, '.', ',');
 
 
 
@@ -208,7 +210,7 @@ class ReportesController extends Controller
 
             foreach ($detaFila->detallefila as $dato) {
                 $tabla .= "<tr>
-                <td>$dato->fechaVencFormat</td>
+                <td>$dato->id</td>
                 <td>$dato->nombre</td>
                 <td>$dato->lote</td>
                 <td>$dato->cantidad_fija</td>

@@ -23,7 +23,7 @@ use App\Http\Controllers\Backend\Historial\RecetasController;
 use App\Http\Controllers\Backend\Expedientes\DocumentoRecetaController;
 use App\Http\Controllers\Backend\Historial\HistorialReportesController;
 use App\Http\Controllers\Backend\Reportes\ReportesController;
-
+use App\Http\Controllers\Backend\Recursos\ExistenciasController;
 
 
 
@@ -460,7 +460,8 @@ Route::post('/admin/actualizar/entrada/medicamento/detalle', [FarmaciaController
 Route::post('/admin/ver/listado/facturas', [FarmaciaController::class,'verListadoEntradasParaFacturas']);
 
 
-
+Route::get('/admin/existencias/index', [ExistenciasController::class,'vistaExistencias'])->name('admin.existencias.index');
+Route::get('/admin/existencias/tablas', [ExistenciasController::class,'tablaExistencias']);
 
 
 

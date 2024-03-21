@@ -137,7 +137,7 @@
 
         //clinica.com
 
-        axios.post('/clinica.com/login', formData, {
+        axios.post('/login', formData, {
         })
             .then((response) => {
                 closeLoading();
