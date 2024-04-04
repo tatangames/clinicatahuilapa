@@ -140,12 +140,18 @@ class ReportesController extends Controller
         }
 
 
-        $totalFundel = '$' . number_format((float)$totalFundel, 4, '.', ',');
-        $totalCovid = '$' . number_format((float)$totalCovid, 4, '.', ',');
-        $totalPropios = '$' . number_format((float)$totalPropios, 4, '.', ',');
+        $totalFundel = sprintf("%.2f", floor($totalFundel * 100) / 100);
+        $totalFundel = '$' . number_format((float)$totalFundel, 2, '.', ',');
 
-        $totalGeneral = '$' . number_format((float)$totalGeneral, 4, '.', ',');
+        $totalCovid = sprintf("%.2f", floor($totalCovid * 100) / 100);
+        $totalCovid = '$' . number_format((float)$totalCovid, 2, '.', ',');
 
+        $totalPropios = sprintf("%.2f", floor($totalPropios * 100) / 100);
+        $totalPropios = '$' . number_format((float)$totalPropios, 2, '.', ',');
+
+
+        $totalGeneral = sprintf("%.2f", floor($totalGeneral * 100) / 100);
+        $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
 
 
         //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
