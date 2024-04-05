@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Schema;
 class CreateSalidaRecetaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * ESTAS SON LAS SALIDAS FINALES DE LA RECETA MEDICA Y QUEDA REGISTRADO
+     * EL DESCUENTO
      *
      * @return void
      */
@@ -19,8 +20,6 @@ class CreateSalidaRecetaTable extends Migration
             $table->bigInteger('usuario_id')->unsigned();
             $table->dateTime('fecha');
             $table->text('notas')->nullable();
-
-
 
 
             $table->foreign('recetas_id')->references('id')->on('recetas');

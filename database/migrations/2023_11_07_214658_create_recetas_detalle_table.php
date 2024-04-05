@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateRecetasDetalleTable extends Migration
 {
     /**
-     * Run the migrations.
+     * DETALLE DE RECETA DE LA CONSULTA MEDICA
      *
      * @return void
      */

@@ -19,6 +19,7 @@ use App\Models\Profesion;
 use App\Models\Proveedores;
 use App\Models\Recetas;
 use App\Models\RecetasDetalle;
+use App\Models\SalidaRecetaDetalle;
 use App\Models\SubLinea;
 use App\Models\Tipo_Documento;
 use App\Models\TipoFactura;
@@ -104,8 +105,6 @@ class ReportesController extends Controller
                 $totalXColumna = 0;
 
                 foreach ($arrayDetalle as $dato){
-
-
 
 
                     $multi = $dato->cantidad_fija * $dato->precio;
@@ -1782,6 +1781,357 @@ class ReportesController extends Controller
 
         $mpdf->Output();
     }
+
+
+    public function generarReporteFinalv2($desde, $hasta){
+
+        $start = Carbon::parse($desde)->startOfDay();
+        $end = Carbon::parse($hasta)->endOfDay();
+
+        $desdeFormat = date("d-m-Y", strtotime($desde));
+        $hastaFormat = date("d-m-Y", strtotime($hasta));
+
+        $dataArray = array();
+
+        $totalFondoPropioDescargado = 0;
+        $totalMaterialCovidDescargado = 0;
+        $totalMaterialFundelDescargado = 0;
+
+        $totalFondoPropioExistencia = 0;
+        $totalMaterialCovidExistencia = 0;
+        $totalMaterialFundelExistencia = 0;
+
+
+        // obtener ID de entradas de esa fecha
+        $arrayEntradas = EntradaMedicamento::all();
+
+        $pilaIdEntradas = array();
+
+        foreach ($arrayEntradas as $info) {
+            array_push($pilaIdEntradas, $info->id);
+        }
+
+
+        $arrayMedicamentos = FarmaciaArticulo::orderBy('nombre', 'ASC')->get();
+        $contador = 0;
+
+        $hayDatos = false;
+
+        // TABLAS
+        // recetas
+        // recetas_detalle
+        // salida_receta
+        // salida_receta_detalle
+
+
+        foreach ($arrayMedicamentos as $dato){
+
+            $arrayDetalle = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)->get();
+
+
+
+            $infoLinea = Linea::where('id', $dato->linea_id)->first();
+
+            foreach ($arrayDetalle as $fila){
+                $contador++;
+                $hayDatos = true;
+
+                $entregadoTotal = 0;
+
+                $infoEntradaFi = EntradaMedicamento::where('id', $fila->entrada_medicamento_id)->first();
+                $infoProve = Proveedores::where('id', $infoEntradaFi->proveedor_id)->first();
+                $infoFuenteFi = FuenteFinanciamiento::where('id', $infoEntradaFi->fuentefina_id)->first();
+
+                $fechaVen = date("d-m-Y", strtotime($fila->fecha_vencimiento));
+                $precioFormat = '$' . number_format((float)$fila->precio, 2, '.', ',');
+
+                $cantiEntregada = $fila->cantidad_fija - $fila->cantidad;
+
+                $multiDescargado = $fila->precio * $cantiEntregada;
+
+
+                $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
+
+                $multiExist = $fila->precio * $fila->cantidad;
+                $multiExistFormat = '$' . number_format((float)$multiExist, 2, '.', ',');
+
+
+                if($infoFuenteFi->id == 1){
+                    // MATERIALES FUNDEL
+                    $totalMaterialFundelDescargado += $multiDescargado;
+                    $totalMaterialFundelExistencia += $multiExist;
+
+                }else if($infoFuenteFi->id == 2){
+                    // MATERIALES COVID
+                    $totalMaterialCovidDescargado += $multiDescargado;
+                    $totalMaterialCovidExistencia += $multiExist;
+
+                }else{
+                    // FONDOS PROPIOS
+                    $totalFondoPropioDescargado += $multiDescargado;
+                    $totalFondoPropioExistencia += $multiExist;
+                }
+
+
+                // necesito obtener de ese medicamento cuantas salidas hubo,
+                $totalDescaFecha = 0;
+
+
+                $listaIDR = DB::table('recetas AS r')
+                    ->join('salida_receta AS sr', 'sr.recetas_id', '=', 'r.id')
+                    ->select('r.estado', 'sr.fecha', 'sr.id')
+                    ->where('r.estado', 2) // solo procesadas
+                    ->whereBetween('sr.fecha', [$start, $end])
+                    ->get();
+
+
+                $pilaIdSalidaReceta = array();
+
+                foreach ($listaIDR as $infoR){
+                    array_push($pilaIdSalidaReceta, $infoR->id);
+                }
+
+                // hoy sumar la cantidad de esos materiales
+                $listaSumadaR = SalidaRecetaDetalle::whereIn('salidareceta_id', $pilaIdSalidaReceta)
+                    ->where('entrada_detalle_id', $fila->id)
+                    ->get();
+
+
+                foreach ($listaSumadaR as $datoR){
+                    $entregadoTotal = $entregadoTotal + $datoR->cantidad;
+                }
+
+                $total2Dec = sprintf("%.2f", floor($fila->precio * 100) / 100);
+                $totalDescaFecha = $total2Dec * $entregadoTotal;
+                $totalDescaFecha = '$' . number_format((float)$totalDescaFecha, 2, '.', ',');
+
+
+
+                $dataArray[] = [
+                    'contador' => $contador,
+                    'codigo' => $dato->codigo_articulo,
+                    'nombre' => $dato->nombre,
+                    'financiamiento' => $infoFuenteFi->nombre,
+                    'linea' => $infoLinea->nombre,
+                    'proveedor' => $infoProve->nombre,
+                    'lote' => $fila->lote,
+                    'fecha_vencimiento' => $fechaVen,
+                    'costo' => $precioFormat,
+                    'cantidad_inicial' => $fila->cantidad_fija,
+                    'entregado' => $cantiEntregada,
+
+                    'entregadototal' => $entregadoTotal,
+
+                    'existencia' => $fila->cantidad,
+                    'total_descargado' => $multiDescargadoFormat,
+
+                    'totaldescafecha' => $totalDescaFecha,
+
+                    'total_existencia' => $multiExistFormat,
+                ];
+
+            }
+        }
+
+
+
+        $totalColumnaDescargado = $totalFondoPropioDescargado + $totalMaterialCovidDescargado + $totalMaterialFundelDescargado;
+        $totalColumnaExistencia = $totalFondoPropioExistencia + $totalMaterialCovidExistencia + $totalMaterialFundelExistencia;
+
+
+        $totalColumnaExistenciaEntero = intval($totalColumnaExistencia);
+
+        $numeroCadena = (string) $totalColumnaExistencia;
+        $posicionPunto = strpos($numeroCadena, '.');
+
+        if ($posicionPunto !== false) {
+            // Extraer los dos primeros caracteres después del punto decimal
+            $totalColumnaExistenciaDosDecimales = substr($numeroCadena, $posicionPunto + 1, 2);
+        } else {
+            // Si no hay punto decimal, establecer los dos decimales como "00"
+            $totalColumnaExistenciaDosDecimales = '00';
+        }
+
+        $totalCoEx = $totalColumnaExistenciaEntero . "." . $totalColumnaExistenciaDosDecimales;
+
+        $totalColumnaExistenciaFinal = number_format($totalCoEx, 2, '.', ',');
+
+
+        $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
+
+
+
+        $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
+
+
+
+        $totalFondoPropioExistenciaEntero = intval($totalFondoPropioExistencia);
+
+
+        $numeroCadena2 = (string) $totalFondoPropioExistencia;
+        $posicionPunto2 = strpos($numeroCadena2, '.');
+
+        if ($posicionPunto2 !== false) {
+            // Extraer los dos primeros caracteres después del punto decimal
+            $totalColumnaPropiosDecimales = substr($numeroCadena2, $posicionPunto2 + 1, 2);
+        } else {
+            // Si no hay punto decimal, establecer los dos decimales como "00"
+            $totalColumnaPropiosDecimales = '00';
+        }
+
+        $totalCoExFondoPro = $totalFondoPropioExistenciaEntero . "." . $totalColumnaPropiosDecimales;
+
+        $totalFondoPropioExistenciaFinal = number_format($totalCoExFondoPro, 2, '.', ',');
+
+
+
+
+        $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
+        $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
+
+        $totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
+        $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
+
+
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER', 'orientation' => 'L']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
+
+        $mpdf->SetTitle('Reporte Existencias');
+
+
+        // mostrar errores
+        $mpdf->showImageErrors = false;
+
+        $logoalcaldia = 'images/logo2.png';
+
+
+
+        $tabla = "<div class='contenedorp'>
+            <img id='logo' src='$logoalcaldia'>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza Tahuilapa, Metapan<br>
+                REPORTE DE EXISTENCIAS POR FECHAS <br><br>
+             <strong>INTERVALO DESDE</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</p>
+            </div>";
+
+
+        $tabla .= "<table id='tablaFor'>
+                    <tbody>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 12px'>#</td>
+                <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
+                <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
+                <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
+                <td style='font-weight: bold; font-size: 12px'>LINEA</td>
+                <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
+                <td style='font-weight: bold; font-size: 12px'>LOTE</td>
+                <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
+                <td style='font-weight: bold; font-size: 12px'>COSTO</td>
+                <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
+                <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
+
+                 <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
+
+                <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
+
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
+
+                <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
+            <tr>";
+
+        foreach ($dataArray as $fila){
+            if($hayDatos){
+
+                $detaContador = $fila['contador'];
+                $detaCodigo = $fila['codigo'];
+                $detaNombre = $fila['nombre'];
+                $detaFinanci = $fila['financiamiento'];
+                $detaLinea = $fila['linea'];
+                $detaProveedor = $fila['proveedor'];
+                $detaLote = $fila['lote'];
+                $detaFechaVen = $fila['fecha_vencimiento'];
+                $detaCosto = $fila['costo'];
+                $detaCantiIni = $fila['cantidad_inicial'];
+                $detaEntregado = $fila['entregado'];
+
+                $detaEntregadoTotal = $fila['entregadototal'];
+
+                $detaExistencia = $fila['existencia'];
+                $detaTotalDesc = $fila['total_descargado'];
+
+                $totalDescaFecha = $fila['totaldescafecha'];
+
+                $detaTotalExis = $fila['total_existencia'];
+
+                $tabla .= "<tr>
+                            <td>$detaContador</td>
+                            <td>$detaCodigo</td>
+                            <td>$detaNombre</td>
+                            <td>$detaFinanci</td>
+                            <td>$detaLinea</td>
+                            <td>$detaProveedor</td>
+                            <td>$detaLote</td>
+                            <td>$detaFechaVen</td>
+                            <td>$detaCosto</td>
+                            <td>$detaCantiIni</td>
+                            <td>$detaEntregado</td>
+
+                             <td>$detaEntregadoTotal</td>
+
+                            <td>$detaExistencia</td>
+                            <td>$detaTotalDesc</td>
+
+                             <td>$totalDescaFecha</td>
+
+                            <td>$detaTotalExis</td>
+                        <tr>";
+            }
+        }
+
+
+
+
+
+        $tabla .= "<tr>
+                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL FONDOS PROPIOS: </td>
+                            <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
+                            <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
+                        <tr>";
+
+
+        $tabla .= "<tr>
+                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES COVID: </td>
+                            <td style='font-weight: bold'>$totalMaterialCovidDescargado</td>
+                            <td style='font-weight: bold'>$totalMaterialCovidExistencia</td>
+                        <tr>";
+
+        $tabla .= "<tr>
+                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES FUNDEL: </td>
+                            <td style='font-weight: bold'>$totalMaterialFundelDescargado</td>
+                            <td style='font-weight: bold'>$totalMaterialFundelExistencia</td>
+                    <tr>";
+
+        $tabla .= "<tr>
+                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL: </td>
+                            <td style='font-weight: bold'>$totalColumnaDescargado</td>
+                            <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
+                        <tr>";
+
+        $tabla .= "</tbody></table>";
+
+
+        $mpdf->setMargins(5, 5, 5);
+
+        $stylesheet = file_get_contents('css/cssreportefinal.css');
+        $mpdf->WriteHTML($stylesheet,1);
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
+        $mpdf->WriteHTML($tabla,2);
+
+        $mpdf->Output();
+    }
+
 
 
 

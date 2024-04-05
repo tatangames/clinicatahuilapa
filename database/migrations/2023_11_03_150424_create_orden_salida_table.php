@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateOrdenSalidaTable extends Migration
 {
     /**
-     * Run the migrations.
+     * ESTAS SON SALIDAS MANUALES,
      *
      * @return void
      */
