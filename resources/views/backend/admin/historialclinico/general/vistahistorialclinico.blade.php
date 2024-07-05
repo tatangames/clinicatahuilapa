@@ -161,6 +161,14 @@
                                                     CUADRO CLINICO
                                                 </a>
                                             </li>
+
+                                            <li style="margin-left: 15px; font-weight: bold; font-size: 16px" class="nav-item"><a class="nav-link" href="#tab_5"  data-toggle="tab">
+                                                        <span>
+                                                            <img class="manImg" src="{{ asset('images/notas.png') }}" height="25px" width="25px">
+                                                        </span>
+                                                    NOTAS
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -263,6 +271,34 @@
                                                 </div>
                                             </section>
                                         </div>
+
+
+
+                                        <!-- NOTAS - TABS 5 -->
+                                        <div class="tab-pane" id="tab_5">
+                                            <section class="content">
+                                                <div class="container-fluid">
+                                                    <div class="row">
+
+                                                        <div class="col-md-12">
+                                                            <div class="card-body">
+
+                                                                <!-- CARGAR TABLA NOTAS -->
+
+                                                                @can('ver.tabla.notas')
+                                                                    <div id="tablaNotas">
+                                                                    </div>
+                                                                @endcan
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+
+
+
 
 
 
@@ -428,6 +464,98 @@
 
 
 
+
+
+
+    <!-- MODAL PARA AGREGAR NOTAS -->
+    <div class="modal fade" id="modalNuevaNota">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Notas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-notas-nuevo">
+                        <div class="card-body">
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Fecha</label>
+                                </div>
+                                <input style="width: 26%;" id="notas-fecha-nuevo" type="date" class="form-control" autocomplete="off">
+                            </div>
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">Notas</h3>
+                                </div>
+                                <textarea style="width: 75%" name="editorNotas" id="editorNotas"></textarea>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="registrarNuevaNota()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PARA NOTAS -->
+    <div class="modal fade" id="modalEditarNota">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Notas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-notas-editar">
+                        <div class="card-body">
+
+                            <div>
+                                <input type="hidden" id="idnota-editar">
+                            </div>
+
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Fecha</label>
+                                </div>
+                                <input style="width: 26%;" id="notas-fecha-editar" type="date" class="form-control" autocomplete="off">
+                            </div>
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">Notas</h3>
+                                </div>
+                                <textarea style="width: 75%" name="editorNotasEditar" id="editorNotasEditar"></textarea>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" style="font-weight: bold; background-color: #28a745; color: white !important;" class="button button-rounded button-pill button-small" onclick="registrarNotaEditar()">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
@@ -448,8 +576,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-            let idconsulta = {{ $idconsulta }};
 
+            let idconsulta = {{ $idconsulta }};
 
             // TABLA ANTECEDENTES
 
@@ -459,7 +587,6 @@
                 var rutaAntecedente = "{{ URL::to('/admin/historial/bloque/antecedente') }}/" + idconsulta;
                 $('#tablaAntecedentes').load(rutaAntecedente);
             }
-
 
             var divtablaAntropSv = document.getElementById('tablaAntropSv');
 
@@ -486,6 +613,17 @@
                 var rutaCuadroClinico = "{{ URL::to('/admin/historial/bloque/cuadroclinico') }}/" + idconsulta;
                 $('#tablaCuadroClinico').load(rutaCuadroClinico);
             }
+
+
+
+            var divtablaNotas = document.getElementById('tablaNotas');
+
+            if(divtablaNotas){
+                // TABLA NOTAS
+                var rutaNotas = "{{ URL::to('/admin/historial/bloque/notas') }}/" + idconsulta;
+                $('#tablaNotas').load(rutaNotas);
+            }
+
 
 
             $('#select-tipo-diagnostico').select2({
@@ -569,6 +707,75 @@
                 } )
                 .catch( error => {
                 } );
+
+
+
+
+            window.varGlobalNuevaNota;
+            window.varGlobalEditarNota;
+
+            ClassicEditor
+                .create( document.querySelector( '#editorNotas' ), {
+
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strikethrough',
+                            '|',
+                            'numberedList',
+                            'bulletedList',
+                            '|',
+                            'alignment',
+                            '|',
+                            'undo',
+                            'redo'
+                        ]
+                    },
+                    language: 'es'
+
+                })
+                .then( editor => {
+                    varGlobalNuevaNota = editor;
+                } )
+                .catch( error => {
+                } );
+
+
+
+            ClassicEditor
+                .create( document.querySelector( '#editorNotasEditar' ), {
+
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strikethrough',
+                            '|',
+                            'numberedList',
+                            'bulletedList',
+                            '|',
+                            'alignment',
+                            '|',
+                            'undo',
+                            'redo'
+                        ]
+                    },
+                    language: 'es'
+
+                })
+                .then( editor => {
+                    varGlobalEditarNota = editor;
+                } )
+                .catch( error => {
+                } );
+
 
             document.getElementById("divcontenedor").style.display = "block";
         });
@@ -825,6 +1032,213 @@
         }
 
 
+
+
+        function vistaNuevaNota(id){
+            document.getElementById("formulario-notas-nuevo").reset();
+
+            var fechaNota = new Date();
+            document.getElementById('notas-fecha-nuevo').value = fechaNota.toJSON().slice(0,10);
+
+            $('#modalNuevaNota').modal('show');
+        }
+
+
+        function registrarNuevaNota(){
+            const editorNota = varGlobalNuevaNota.getData();
+
+            if (editorNota.trim() === '') {
+                toastr.error("Nota es requerido");
+                return;
+            }
+
+            // ID CONSULTA
+            let idconsulta = {{ $idconsulta }};
+            var fecha = document.getElementById('notas-fecha-nuevo').value;
+
+            if(fecha === ''){
+                toastr.error('Fecha es requerida');
+                return;
+            }
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('idconsulta', idconsulta);
+            formData.append('fecha', fecha);
+            formData.append('nota', editorNota);
+
+            axios.post(url+'/historial/bloque/registrar/nota', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Registrado correctamente');
+                        $('#modalNuevaNota').modal('hide');
+                        recargarTablaNotas();
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
+
+
+
+        function recargarTablaNotas(){
+            let idconsulta = {{ $idconsulta }};
+            var ruta = "{{ URL::to('/admin/historial/bloque/notas') }}/" + idconsulta;
+            $('#tablaNotas').load(ruta);
+        }
+
+        function modalBorrarNota(id){
+            Swal.fire({
+                title: '¿Borrar Nota?',
+                text: '',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+
+                allowOutsideClick: false,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    borrarNota(id);
+                }
+            })
+        }
+
+        function borrarNota(id){
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('id', id);
+
+            axios.post(url+'/historial/bloque/notas/borrar', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Borrado');
+
+
+                        recargarTablaNotas();
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
+
+
+        function informacionEditarNota(id){
+            openLoading();
+            var formData = new FormData();
+            formData.append('id', id);
+
+            axios.post(url+'/historial/bloque/notas/informacion', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        $('#idnota-editar').val(id);
+
+
+
+                        let nota = response.data.info.nota;
+                        let fecha = response.data.info.fecha;
+
+                        varGlobalEditarNota.setData(nota);
+                        $('#notas-fecha-editar').val(fecha);
+
+
+                        $('#modalEditarNota').modal('show');
+                    }
+                    else {
+                        toastr.error('Error al buscar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al buscar');
+                    closeLoading();
+                });
+        }
+
+
+        function registrarNotaEditar(){
+
+            const editorNota = varGlobalEditarNota.getData();
+
+            if (editorNota.trim() === '') {
+                toastr.error("Nota es requerido");
+                return;
+            }
+
+
+            var fecha = document.getElementById('notas-fecha-editar').value;
+            var idfila = document.getElementById('idnota-editar').value;
+
+            if(fecha === ''){
+                toastr.error('Fecha es requerida');
+                return;
+            }
+
+            openLoading();
+            var formData = new FormData();
+            formData.append('idfila', idfila);
+            formData.append('fecha', fecha);
+            formData.append('nota', editorNota);
+
+            axios.post(url+'/historial/bloque/actualizar/nota', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+                        toastr.success('Actualizado correctamente');
+                        $('#modalEditarNota').modal('hide');
+                        recargarTablaNotas();
+                    }
+                    else {
+                        toastr.error('Error al registrar');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('Error al registrar');
+                    closeLoading();
+                });
+        }
+
+
+        function generarReporteNota(id){
+            window.open("{{ URL::to('admin/pdf/reporte/notapaciente') }}/" + id);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
         function modalAntropometria(){
 
             $('#modalAntro').modal({backdrop: 'static', keyboard: false})
@@ -852,6 +1266,8 @@
             let idconsulta = {{ $idconsulta }};
             window.location.href="{{ url('/admin/vista/nueva/antropometria') }}/" + idconsulta;
         }
+
+
 
 
 

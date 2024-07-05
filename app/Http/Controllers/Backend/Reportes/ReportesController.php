@@ -12,6 +12,7 @@ use App\Models\FarmaciaArticulo;
 use App\Models\FuenteFinanciamiento;
 use App\Models\Linea;
 use App\Models\MotivoFarmacia;
+use App\Models\NotasPaciente;
 use App\Models\OrdenSalida;
 use App\Models\OrdenSalidaDetalle;
 use App\Models\Paciente;
@@ -2137,7 +2138,6 @@ class ReportesController extends Controller
 
     public function generarReporteFichaGeneralPaciente($idpaciente){
 
-
         $infoPaciente = Paciente::where('id', $idpaciente)->first();
 
         $nombreCompleto = $infoPaciente->nombres . ' ' . $infoPaciente->apellidos;
@@ -2271,6 +2271,70 @@ class ReportesController extends Controller
         $mpdf->Output();
     }
 
+
+
+
+    public function reporteNotaPaciente($idfila){
+
+
+        $infoNota = NotasPaciente::where('id', $idfila)->first();
+        $infoPaciente = Paciente::where('id', $infoNota->id_paciente)->first();
+        $nombrePaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
+        $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+
+        $fechaFormat = date("d-m-Y", strtotime($infoNota->fecha));
+
+        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+        $mpdf->SetTitle('Nota Paciente');
+
+        // mostrar errores
+        $mpdf->showImageErrors = false;
+
+        $logoalcaldia = 'images/logo2.png';
+
+        $tabla = "<div class='contenedorp'>
+            <img id='logo' src='$logoalcaldia'>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
+            Tahuilapa Metapán<br>
+            Nota de Paciente <br>
+            </div>";
+
+
+
+        $tabla .= "
+
+             <table width='100%'>
+                <tr>
+                    <td style='text-align: left; width: 45%'>
+                        <!-- Contenido izquierdo -->
+                        <p style='font-size: 12px; font-family: normal'><strong>Paciente: </strong>$nombrePaciente</p>
+                    </td>
+                    <td style='text-align: center; width: 20%'>
+                        <!-- Contenido central -->
+                         <p style='font-size: 12px; font-family: normal'><strong>Edad: </strong>$edad</p>
+                    </td>
+                    <td style='text-align: right; width: 20%'>
+                        <!-- Contenido derecho -->
+                         <p style='font-size: 12px; font-family: normal'><strong>Fecha: </strong>$fechaFormat</p>
+                    </td>
+                </tr> </table> <br><br> ";
+
+
+
+        $tabla .= "$infoNota->nota";
+
+
+
+        $stylesheet = file_get_contents('css/cssregistro.css');
+        $mpdf->WriteHTML($stylesheet,1);
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
+        $mpdf->WriteHTML($tabla,2);
+
+        $mpdf->Output();
+    }
 
 
 

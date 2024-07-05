@@ -321,6 +321,23 @@ Route::post('/admin/historial/actualizar/historialclinico', [HistorialClinicoCon
 Route::get('/admin/historial/bloque/recetas/{idconsulta}', [HistorialClinicoController::class, 'bloqueHistorialRecetas']);
 
 
+// BLOQUE NOTAS
+Route::get('/admin/historial/bloque/notas/{idconsulta}', [HistorialClinicoController::class, 'bloqueNotasPaciente']);
+Route::post('/admin/historial/bloque/registrar/nota', [HistorialClinicoController::class, 'registrarNotaPaciente']);
+Route::post('/admin/historial/bloque/notas/borrar', [HistorialClinicoController::class, 'borrarNotaPaciente']);
+Route::post('/admin/historial/bloque/notas/informacion', [HistorialClinicoController::class, 'informacionNotaPaciente']);
+Route::post('/admin/historial/bloque/actualizar/nota', [HistorialClinicoController::class, 'actualizarNotaPaciente']);
+
+
+
+
+
+
+
+
+
+
+
 // vista de agregar receta
 Route::get('/admin/recetas/vista/general/{idconsulta}', [RecetasController::class, 'indexVistaNuevaReceta']);
 
@@ -449,6 +466,8 @@ Route::get('/admin/pdf/reporte/final/{desde}/{hasta}', [ReportesController::clas
 Route::get('/admin/pdf/reporte/finalv2/{desde}/{hasta}', [ReportesController::class,'generarReporteFinalv2']);
 
 
+// Reporte para notas paciente
+Route::get('/admin/pdf/reporte/notapaciente/{idfila}', [ReportesController::class,'reporteNotaPaciente']);
 
 
 // reporte de ficha general de paciente

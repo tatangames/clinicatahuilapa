@@ -10,6 +10,7 @@ use App\Models\Consulta_Paciente;
 use App\Models\CuadroClinico;
 use App\Models\Diagnosticos;
 use App\Models\FuenteFinanciamiento;
+use App\Models\NotasPaciente;
 use App\Models\Paciente;
 use App\Models\PacienteAntecedentes;
 use App\Models\Recetas;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\DomCrawler\Crawler;
+
 
 class HistorialClinicoController extends Controller
 {
@@ -429,6 +432,108 @@ class HistorialClinicoController extends Controller
 
         return view('backend.admin.historialclinico.bloques.bloquerecetas', compact('arrayRecetas', 'existeReceta'));
     }
+
+
+    public function bloqueNotasPaciente($idconsulta){
+
+        $infoConsulta = Consulta_Paciente::where('id', $idconsulta)->first();
+
+        $arrayNotas = NotasPaciente::where('id_paciente', $infoConsulta->paciente_id)
+            ->orderBy('fecha')
+            ->get();
+
+        foreach ($arrayNotas as $dato){
+            $dato->fechaFormat = date("d-m-Y", strtotime($dato->fecha));
+        }
+
+        return view('backend.admin.historialclinico.bloques.bloquenotas', compact('arrayNotas'));
+    }
+
+
+
+    public function registrarNotaPaciente(Request $request){
+
+        $regla = array(
+            'fecha' => 'required',
+            'nota' => 'required',
+            'idconsulta' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        $infoConsulta = Consulta_Paciente::where('id', $request->idconsulta)->first();
+
+        $registro = new NotasPaciente();
+        $registro->consulta_id = $request->idconsulta;
+        $registro->id_paciente = $infoConsulta->paciente_id;
+        $registro->fecha = $request->fecha;
+        $registro->nota = $request->nota;
+
+        if($registro->save()){
+            return ['success' => 1];
+        }
+        return ['success' => 99];
+    }
+
+
+    public function borrarNotaPaciente(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        if(NotasPaciente::where('id', $request->id)->first()){
+            NotasPaciente::where('id', $request->id)->delete();
+        }
+
+        return ['success' => 1];
+    }
+
+
+    public function informacionNotaPaciente(Request $request){
+
+        $regla = array(
+            'id' => 'required',
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        $info = NotasPaciente::where('id', $request->id)->first();
+
+        return ['success' => 1, 'info' => $info];
+    }
+
+
+    public function actualizarNotaPaciente(Request $request){
+
+        $regla = array(
+            'fecha' => 'required',
+            'nota' => 'required',
+            'idfila' => 'required'
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+
+        NotasPaciente::where('id', $request->idfila)->update([
+            'fecha' => $request->fecha,
+            'nota' => $request->nota,
+        ]);
+
+
+        return ['success' => 1];
+    }
+
 
 
     public function bloqueHistorialCuadroClinico($idconsulta){
