@@ -16,7 +16,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <table id="tableRecetas" class="table table-bordered table-striped">
+                        <table id="tableNotas" class="table table-bordered table-striped">
                             <thead>
                             <tr>
                                 <th>FECHA</th>
@@ -66,7 +66,7 @@
         };
 
 
-        $("#tableRecetas").DataTable({
+        $("#tableNotas").DataTable({
             columnDefs: [
                 { type: 'date-dmy', targets: 0 } // La columna de fecha es la primera (índice 0)
             ],
