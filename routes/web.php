@@ -91,6 +91,13 @@ Route::post('/admin/asignaciones/finalizar/consulta',  [AsignacionesController::
 Route::post('/admin/asignaciones/ingresar/paciente/sala',  [AsignacionesController::class,'ingresarPacienteALaSala']);
 
 
+// devuelve lista de personas que estan dentro de una x sala
+Route::post('/admin/asignaciones/personas/sala',  [AsignacionesController::class,'personasDentroSala']);
+
+
+
+
+
 // EDITAR PACIENTE
 Route::get('/admin/asignaciones/info/vista/editarpaciente/{idpaciente}', [AsignacionesController::class,'vistaEditarPaciente']);
 

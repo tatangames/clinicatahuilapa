@@ -69,7 +69,7 @@
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <button id="opciones-enfermeria" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaAdministrativaModal(2)">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
+                                                    <button id="opciones-enfermeria" class="btn btn-info" style="width: 100%;" disabled="" onclick="abrirSelectPaciente(2)">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
                                             </div>
 
@@ -93,7 +93,7 @@
                                                 </div>
 
                                                 <div class="small-box bg-info">
-                                                    <button id="opciones-consultorio" class="btn btn-info" style="width: 100%;" disabled="" onclick="buscarFichaAdministrativaModal(1)">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
+                                                    <button id="opciones-consultorio" class="btn btn-info" style="width: 100%;" disabled="" onclick="abrirSelectPaciente(1)">OPCIONES <i class="fas fa-arrow-circle-right"></i></button>
                                                 </div>
 
                                             </div>
@@ -515,6 +515,50 @@
     </div>
 
 
+
+    <!-- SELECT PORQUE HAY MAS DE 1 PACIENTE EN SALA Y ELEGIR CUAL QUIERE VER -->
+
+    <div class="modal fade" id="modalSelectConteoSala">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h4 class="modal-title" style="color: darkred; font-weight: bold; text-align: center">PACIENTES EN SALA</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formulario-conteo-select">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+
+
+                                    <div class="form-group">
+                                        <label>Seleccionar Paciente</label>
+                                        <div>
+                                            <select class="form-control" id="select-conteo-paciente">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="buscarFichaAdministrativaModal()">Ver Ficha</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 
@@ -616,8 +660,6 @@
         }
 
         function recargarPaginaCronometro(){
-
-
             var spinHandle = loadingOverlay().activate();
 
             document.getElementById("bloque01enfermeria").style.display = "none";
@@ -638,7 +680,6 @@
                         }else{
                             document.getElementById("opciones-consultorio").disabled = true;
                         }
-
 
                         if(btnEnfermeria > 0){
                             document.getElementById("opciones-enfermeria").disabled = false;
@@ -1042,24 +1083,6 @@
 
                     if(response.data.success === 1) {
 
-                        Swal.fire({
-                            title: 'Sala Ocupada',
-                            text: 'Se encuentra un Paciente dentro de la Sala',
-                            icon: 'error',
-                            showCancelButton: false,
-                            confirmButtonColor: '#28a745',
-                            cancelButtonColor: '#d33',
-                            allowOutsideClick: false,
-                            cancelButtonText: 'Cancelar',
-                            confirmButtonText: 'Aceptar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                            }
-                        })
-
-                    }
-                    else if(response.data.success === 2){
-
                         let sala = response.data.nombresala;
 
                         Swal.fire({
@@ -1078,7 +1101,12 @@
                                 recargarVista();
                             }
                         })
+
                     }
+                    /*else if(response.data.success === 2){
+
+
+                    }*/
                     else{
                         toastr.error('error al guardar');
                     }
@@ -1090,18 +1118,58 @@
         }
 
 
-        function buscarFichaAdministrativaModal(tipoficha){
 
-            // Tipo Ficha
-            // 1 CONSULTORIA
-            // 2 ENFERMERIA
+        // ABRE MODAL CUANDO HAY 1 O MAS PACIENTE, SERA UN SELECT ELEGIR
+        function abrirSelectPaciente(tipo){
 
-            // buscara al primer paciente que encuentre
+            // 1- CUNSULTORIA
+            // 2- ENFERMERIA
 
-            openLoading();
+            openLoading()
+            let formData = new FormData();
+            formData.append('tipo', tipo);
+            axios.post(url+'/asignaciones/personas/sala', formData, {
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        document.getElementById("select-conteo-paciente").options.length = 0;
+
+                        $.each(response.data.listado, function( key, val ){
+                            $('#select-conteo-paciente').append('<option value="' +val.id +'">'+val.nombre+'</option>');
+                        });
+
+                        // colocar en posicion 0
+                        document.getElementById('select-conteo-paciente').selectedIndex = 0;
+
+                        $('#modalSelectConteoSala').modal('show');
+                    }
+                    else{
+                        toastr.error('error al buscar');
+                        closeLoading();
+                    }
+                })
+                .catch((error) => {
+                    toastr.error('error al buscar');
+                    closeLoading();
+                });
+        }
+
+
+        // ABRE MODAL CON INFORMACION DEL PACIENTE
+        function buscarFichaAdministrativaModal(){
+
+
+            $('#modalSelectConteoSala').modal('hide');
+            openLoading()
+
+            // OBTENER DATOS
+            let idConsulta = document.getElementById('select-conteo-paciente').value;
 
             let formData = new FormData();
-            formData.append('tipoficha', tipoficha);
+            formData.append('idconsulta', idConsulta);
             axios.post(url+'/asignaciones/info/paciente/dentrosala', formData, {
             })
                 .then((response) => {
@@ -1297,7 +1365,6 @@
                     closeLoading();
 
                     if(response.data.success === 1){
-
 
                         $('#txtSalaActual-info').val(response.data.salactual);
 
