@@ -477,7 +477,12 @@ Route::get('/admin/vista/editar/info/entrada/{identrada}', [FarmaciaController::
 // --- REPORTE FINAL ---
 Route::get('/admin/vista/reporte/final', [ReportesController::class,'vistaReporteFinal'])->name('admin.reporte.final');
 Route::get('/admin/pdf/reporte/final/{desde}/{hasta}', [ReportesController::class,'generarReporteFinal']);
+
+// reporte que si toma en cuenta fechas (entregado total y total desca. fechas)
 Route::get('/admin/pdf/reporte/finalv2/{desde}/{hasta}', [ReportesController::class,'generarReporteFinalv2']);
+
+
+
 
 
 // Reporte para notas paciente

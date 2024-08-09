@@ -1104,8 +1104,9 @@ class ReportesController extends Controller
         $index = 0;
 
         $arrayEntradas = EntradaMedicamento::whereIn('id', $pilaIdEntrada)->get();
-
         $totalGeneral = 0;
+
+        $totalColumna = 0;
 
         foreach ($arrayEntradas as $infoFila){
 
@@ -1120,7 +1121,6 @@ class ReportesController extends Controller
             $infoFila->nombreFuente = $infoFuente->nombre;
             $infoFila->nombreProveedor = $infoProveedor->nombre;
 
-            $totalColumna = 0;
             $contador = 0;
 
             $arrayDetalle = EntradaMedicamentoDetalle::where('entrada_medicamento_id', $infoFila->id)
@@ -1128,24 +1128,29 @@ class ReportesController extends Controller
                 ->get();
 
             foreach ($arrayDetalle as $dato){
-                $contador++;
-                $infoArticulo = FarmaciaArticulo::where('id', $dato->medicamento_id)->first();
-                $dato->nombreArticulo = $infoArticulo->nombre;
 
-                $dato->fechaVecFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
+               if($dato->cantidad > 0){
+                   $contador++;
+                   $infoArticulo = FarmaciaArticulo::where('id', $dato->medicamento_id)->first();
+                   $dato->nombreArticulo = $infoArticulo->nombre;
 
-                $multiFila = $dato->precio * $dato->cantidad_fija;
-                $totalColumna = $totalColumna + $multiFila;
+                   $dato->fechaVecFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
 
-                $dato->contador = $contador;
-                $dato->precioXFila = '$' . number_format((float)$multiFila, 2, '.', ',');
-                $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
+                   $multiFila = $dato->precio * $dato->cantidad_fija;
+
+                   $totalColumna += $multiFila;
+
+                   $dato->contador = $contador;
+                   $dato->precioXFila = '$' . number_format((float)$multiFila, 2, '.', ',');
+                   $dato->precioFormat = '$' . number_format((float)$dato->precio, 2, '.', ',');
+               }
             }
 
-            $totalGeneral = $totalGeneral + $totalColumna;
+            $totalGeneral += $totalColumna;
 
             $totalColumna = '$' . number_format((float)$totalColumna, 2, '.', ',');
             $infoFila->totalColumna = $totalColumna;
+
 
             $resultsBloque[$index]->detallefila = $arrayDetalle;
             $index++;
@@ -1160,7 +1165,7 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
         $mpdf->SetTitle('Existencias');
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logonuevo.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
@@ -1175,19 +1180,19 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Entrada</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Tipo Factura</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'># Factura</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Fuente</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Proveedor</td>
+                <td style='font-weight: bold; width: 11%; font-size: 11px'>Fecha Entrada</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'>Tipo Factura</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'># Factura</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Fuente</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Proveedor</td>
             <tr>";
 
-            $tabla .= "<tr>
-                <td>$detaFila->fechaFormat</td>
-                <td>$detaFila->nombreTipoFactura</td>
-                <td>$detaFila->numero_factura</td>
-                <td>$detaFila->nombreFuente</td>
-                <td>$detaFila->nombreProveedor</td>
+            $tabla .= "<tr style='font-size: 10px'>
+                <td style='font-size: 10px'>$detaFila->fechaFormat</td>
+                <td style='font-size: 10px'>$detaFila->nombreTipoFactura</td>
+                <td style='font-size: 10px'>$detaFila->numero_factura</td>
+                <td style='font-size: 10px'>$detaFila->nombreFuente</td>
+                <td style='font-size: 10px'>$detaFila->nombreProveedor</td>
             <tr>";
 
 
@@ -1198,32 +1203,33 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
- <td style='font-weight: bold; width: 6%; font-size: 14px'>#.</td>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Venc.</td>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Artículo</td>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Lote</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Cantidad</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Precio</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Monto</td>
+                <td style='font-weight: bold; width: 6%;  font-size: 14px'>#.</td>
+                <td style='font-weight: bold; width: 11%; font-size: 11px'>Fecha Venc.</td>
+                <td style='font-weight: bold; width: 11%; font-size: 11px'>Artículo</td>
+                <td style='font-weight: bold; width: 11%; font-size: 11px'>Lote</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'>Cantidad</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'>Precio</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'>Monto</td>
             <tr>";
 
             foreach ($detaFila->detallefila as $dato) {
 
-                if($dato->cantidad > 0){
-                    $tabla .= "<tr>
-                    <td>$dato->contador</td>
-                    <td>$dato->fechaVecFormat</td>
-                    <td>$dato->nombreArticulo</td>
-                    <td>$dato->lote</td>
-                    <td>$dato->cantidad</td>
-                    <td>$dato->precioFormat</td>
-                    <td>$dato->precioXFila</td>
-                <tr>";
+                if($dato->cantidad > 0) {
+
+                        $tabla .= "<tr style='font-size: 10px'>
+                        <td style='font-size: 10px'>$dato->contador</td>
+                        <td style='font-size: 10px'>$dato->fechaVecFormat</td>
+                        <td style='font-size: 10px'>$dato->nombreArticulo</td>
+                        <td style='font-size: 10px'>$dato->lote</td>
+                        <td style='font-size: 10px'>$dato->cantidad</td>
+                        <td style='font-size: 10px'>$dato->precioFormat</td>
+                        <td style='font-size: 10px'>$dato->precioXFila</td>
+                    <tr>";
                 }
             }
 
             $tabla .= "<tr>
-                <td colspan='5'>Total</td>
+                <td colspan='6'>Total</td>
                 <td>$detaFila->totalColumna</td>
             <tr>";
 
@@ -1296,7 +1302,7 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
         $mpdf->SetTitle('Existencias');
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logonuevo.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
@@ -1311,12 +1317,12 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Artículo</td>
-                <td style='font-weight: bold; width: 9%; font-size: 14px'>Fecha Vencimiento</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Lote</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Cantidad</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Precio</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Monto</td>
+                <td style='font-weight: bold; width: 11%; font-size: 11px'>Artículo</td>
+                <td style='font-weight: bold; width: 9%; font-size: 11px'>Fecha Vencimiento</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'>Lote</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'>Cantidad</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Precio</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Monto</td>
             <tr>";
 
         foreach ($arrayEntradasDetalle as $detaFila) {
@@ -1826,10 +1832,16 @@ class ReportesController extends Controller
         // salida_receta_detalle
 
 
+        // Columna: Total Existencias
+        $columnaTotalExistencia = 0;
+        // Columna: Total Desca. Fechas
+        $columnaTotalDescaFecha = 0;
+        // Columna: Total Descargado
+        $columnaTotalDescargado = 0;
+
         foreach ($arrayMedicamentos as $dato){
 
             $arrayDetalle = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)->get();
-
 
 
             $infoLinea = Linea::where('id', $dato->linea_id)->first();
@@ -1852,9 +1864,17 @@ class ReportesController extends Controller
                 $multiDescargado = $fila->precio * $cantiEntregada;
 
 
+                // Columna: Total Descargado
+                $columnaTotalDescargado += $multiDescargado;
+
                 $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
 
                 $multiExist = $fila->precio * $fila->cantidad;
+
+                // Columna: Total Existencias
+                $columnaTotalExistencia += $multiExist;
+
+
                 $multiExistFormat = '$' . number_format((float)$multiExist, 2, '.', ',');
 
 
@@ -1905,6 +1925,10 @@ class ReportesController extends Controller
 
                 $total2Dec = sprintf("%.2f", floor($fila->precio * 100) / 100);
                 $totalDescaFecha = $total2Dec * $entregadoTotal;
+
+                // Columna: Total Desca. Fechas
+                $columnaTotalDescaFecha += $totalDescaFecha;
+
                 $totalDescaFecha = '$' . number_format((float)$totalDescaFecha, 2, '.', ',');
 
 
@@ -1956,7 +1980,7 @@ class ReportesController extends Controller
 
         $totalCoEx = $totalColumnaExistenciaEntero . "." . $totalColumnaExistenciaDosDecimales;
 
-        $totalColumnaExistenciaFinal = number_format($totalCoEx, 2, '.', ',');
+        $totalColumnaExistenciaFinal = '$' . number_format($totalCoEx, 2, '.', ',');
 
 
         $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
@@ -1983,7 +2007,7 @@ class ReportesController extends Controller
 
         $totalCoExFondoPro = $totalFondoPropioExistenciaEntero . "." . $totalColumnaPropiosDecimales;
 
-        $totalFondoPropioExistenciaFinal = number_format($totalCoExFondoPro, 2, '.', ',');
+        $totalFondoPropioExistenciaFinal = '$' . number_format($totalCoExFondoPro, 2, '.', ',');
 
 
 
@@ -1995,6 +2019,125 @@ class ReportesController extends Controller
         $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
 
 
+        // Columna: Total existencias
+        $columnaTotalExistencia = '$' . number_format((float)$columnaTotalExistencia, 2, '.', ',');
+        // Columna: Total Desca. Fechas
+        $columnaTotalDescaFecha = '$' . number_format((float)$columnaTotalDescaFecha, 2, '.', ',');
+        // Columna: Total Descargado
+        $columnaTotalDescargado = '$' . number_format((float)$columnaTotalDescargado, 2, '.', ',');
+
+
+
+
+
+
+
+        //************ DATOS PARA SABER LOS INGRESOS POR MES (FECHA DESDE - FECHA HASTA), OBTENER EL TOTAL DINERO INGRESADO
+
+       /* $arrayEntradas = EntradaMedicamento::whereBetween('fecha', [$start, $end])
+            ->orderBy('fecha', 'ASC')
+            ->get();
+
+        // Inicializando un array para los meses
+        $meses = [];
+
+        foreach ($arrayEntradas as $entrada) {
+            // Convertir la fecha en un objeto Carbon
+            $fecha = Carbon::parse($entrada->fecha);
+
+            // Obtener el mes en español
+            $mes = $fecha->locale('es')->translatedFormat('F');
+
+            // Agregar el mes al array si no está duplicado
+            if (!in_array($mes, $meses)) {
+                $meses[] = $mes;
+            }
+        }
+
+        $totalGeneral = 0;
+
+        foreach ($arrayEntradas as $infoFila){
+
+            $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
+                ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
+                ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio',
+                    'deta.lote', 'deta.fecha_vencimiento', 'fa.id')
+                ->where('deta.entrada_medicamento_id', $infoFila->id)
+                ->orderBy('fa.nombre', 'ASC')
+                ->get();
+
+            $totalXColumna = 0;
+
+            foreach ($arrayDetalle as $dato){
+                $multi = $dato->cantidad_fija * $dato->precio;
+                $totalXColumna = $totalXColumna + $multi;
+            }
+
+            $totalGeneral = $totalGeneral + $totalXColumna;
+        }
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //*******************************************************************************************
+
+
+
         //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER', 'orientation' => 'L']);
         $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
 
@@ -2004,7 +2147,7 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logonuevo.png';
 
 
 
@@ -2078,41 +2221,56 @@ class ReportesController extends Controller
                             <td>$detaCosto</td>
                             <td>$detaCantiIni</td>
                             <td>$detaEntregado</td>
-
-                             <td>$detaEntregadoTotal</td>
-
+                            <td>$detaEntregadoTotal</td>
                             <td>$detaExistencia</td>
                             <td>$detaTotalDesc</td>
-
-                             <td>$totalDescaFecha</td>
-
+                            <td>$totalDescaFecha</td>
                             <td>$detaTotalExis</td>
                         <tr>";
             }
         }
 
-
-
-
-
         $tabla .= "<tr>
+                            <td colspan='13' style='text-align: right; font-weight: bold'></td>
+                            <td style='font-weight: bold'>$columnaTotalDescargado</td>
+                            <td style='font-weight: bold'>$columnaTotalDescaFecha</td>
+                            <td style='font-weight: bold'>$columnaTotalExistencia</td>
+                        <tr>";
+
+
+
+
+        $tabla .= "</tbody></table>";
+
+
+        $tabla .= "<table id='tablaFor'>
+                    <tbody>";
+
+        if($totalFondoPropioDescargado != "$0.00" && $totalFondoPropioExistenciaFinal != "$0.00") {
+
+            $tabla .= "<tr>
                             <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL FONDOS PROPIOS: </td>
                             <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
                             <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
                         <tr>";
+        }
 
-
-        $tabla .= "<tr>
+        if($totalMaterialCovidDescargado != "$0.00" && $totalMaterialCovidExistencia != "$0.00"){
+            $tabla .= "<tr>
                             <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES COVID: </td>
                             <td style='font-weight: bold'>$totalMaterialCovidDescargado</td>
                             <td style='font-weight: bold'>$totalMaterialCovidExistencia</td>
                         <tr>";
+        }
 
-        $tabla .= "<tr>
+
+        if($totalMaterialFundelDescargado != "$0.00" && $totalMaterialFundelExistencia != "$0.00") {
+            $tabla .= "<tr>
                             <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES FUNDEL: </td>
                             <td style='font-weight: bold'>$totalMaterialFundelDescargado</td>
                             <td style='font-weight: bold'>$totalMaterialFundelExistencia</td>
                     <tr>";
+        }
 
         $tabla .= "<tr>
                             <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL: </td>
@@ -2121,6 +2279,37 @@ class ReportesController extends Controller
                         <tr>";
 
         $tabla .= "</tbody></table>";
+
+
+        $tabla .= "<br><br>";
+
+        // PARTE DE INGRESOS POR MES, PERO DE FECHA A FECHA
+
+        $tabla .= "<table style='border-collapse: collapse;' border='1'; width='280'>
+                    <tbody>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 12px'>Enero</td>
+                <td style='font-weight: bold; font-size: 12px'>xxx</td>
+            <tr>";
+
+        $tabla .= "</tbody></table>";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         $mpdf->setMargins(5, 5, 5);
