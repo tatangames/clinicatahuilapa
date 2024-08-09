@@ -162,7 +162,6 @@
                                             <label class="control-label">Fuente Financiamiento</label>
 
                                             <select id="select-fuente" class="form-control" onchange="cargarTablaProducto()">
-                                                <option value="">Seleccionar Opción</option>
                                                 @foreach($arrayFuente as $item)
                                                     <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                 @endforeach
@@ -423,6 +422,12 @@
                 },
             });
 
+
+            // CARGA DATOS DE UNA VEZ
+            cargarTablaProducto()
+
+
+
             document.getElementById("divcontenedor").style.display = "block";
         });
     </script>
@@ -541,6 +546,7 @@
 
 
 
+
         function cargarTablaProducto(){
 
             var idFuente = document.getElementById('select-fuente').value;
@@ -587,6 +593,7 @@
                     });
             }
         }
+
 
 
         function getNombreGenerico(){

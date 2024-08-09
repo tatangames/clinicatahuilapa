@@ -48,9 +48,12 @@
                                     </td>
                                 </tr>
                             @endforeach
-
                             </tbody>
                         </table>
+
+                        <script>
+                            closeLoading();
+                        </script>
                     </div>
                 </div>
             </div>

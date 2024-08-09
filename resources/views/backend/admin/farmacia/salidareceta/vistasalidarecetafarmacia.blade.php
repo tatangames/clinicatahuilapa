@@ -168,7 +168,7 @@
             window.location.href="{{ url('/admin/vista/procesar/recetamedica') }}/" + idreceta;
         }
 
-        
+
         function infoDenegarReceta(idreceta){
 
             openLoading();
@@ -279,6 +279,52 @@
         }
 
 
+        function retornarPaciente(id){
+            // id receta
+            Swal.fire({
+                title: '¿Retornar Paciente?',
+                text: 'Regresara a Dentro de Sala',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+
+                allowOutsideClick: false,
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Sí'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    retornarPacienteSala(id)
+                }
+            })
+        }
+
+
+        function retornarPacienteSala(id){
+
+            // viene id: tabla recetas
+
+            openLoading();
+            document.getElementById("formulario-denegar").reset();
+
+            axios.post(url+'/paciente/retonarsala',{
+                'id': id
+            })
+                .then((response) => {
+                    closeLoading();
+
+                    if(response.data.success === 1){
+
+                        location.reload();
+                    }else{
+                        toastr.error('Información no encontrada');
+                    }
+                })
+                .catch((error) => {
+                    closeLoading();
+                    toastr.error('Información no encontrada');
+                });
+        }
 
 
     </script>

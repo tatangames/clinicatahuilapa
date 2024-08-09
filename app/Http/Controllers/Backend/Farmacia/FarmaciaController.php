@@ -131,8 +131,11 @@ class FarmaciaController extends Controller
     public function indexIngresoArticulo(){
 
         $arrayTipoFactura = TipoFactura::orderBy('nombre')->get();
-        $arrayFuente = FuenteFinanciamiento::orderBy('nombre')->get();
         $arrayProveedor = Proveedores::orderBy('nombre')->get();
+
+        // SOLO USAR FONDOS PROPIOS
+        $arrayFuente = FuenteFinanciamiento::
+            where('id', 3)->get();
 
         return view('backend.admin.farmacia.ingreso.vistaingresoinventario', compact('arrayTipoFactura',
             'arrayFuente', 'arrayProveedor'));
@@ -503,6 +506,18 @@ class FarmaciaController extends Controller
 
                 $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
                 $info->doctor = $infoUsuario->nombre;
+
+                $botonRetornar = 0;
+                // VERIFICAR SI YA FINALIZO LA FICHA O NO
+                if($infoConsu = Consulta_Paciente::where('id', $info->consulta_id)->first()){
+
+                    if($infoConsu->estado_paciente == 2){
+                        // LA FINA ES FINALIZADA, SE DEBE DE VOLVER A 1
+                          $botonRetornar = 1;
+                    }
+                }
+
+                $info->btnRetornar = $botonRetornar;
             }
 
             return view('backend.admin.farmacia.salidareceta.tablarecetapendiente', compact('arrayRecetas'));
@@ -949,6 +964,28 @@ class FarmaciaController extends Controller
             Log::info('err ' . $e);
             return ['success' => 99];
         }
+    }
+
+
+    // retornar paciente sala
+    public function retornarPacienteSala(Request $request){
+
+        $regla = array(
+            'id' => 'required', // tabla: recetas
+        );
+
+        $validar = Validator::make($request->all(), $regla);
+
+        if ($validar->fails()){ return ['success' => 0];}
+
+        $infoReceta = Recetas::where('id', $request->id)->first();
+
+        // actualizar
+        Consulta_Paciente::where('id', $infoReceta->consulta_id)->update([
+            'estado_paciente' => 1, // VUELVE DENTRO DE SALA
+        ]);
+
+        return ['success' => 1];
     }
 
 

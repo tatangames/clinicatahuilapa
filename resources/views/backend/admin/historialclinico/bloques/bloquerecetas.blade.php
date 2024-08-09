@@ -84,9 +84,30 @@
 
 <script>
     $(function () {
+
+
+        // Añadir la función de ordenación personalizada
+        jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+            "date-dmy-pre": function(a) {
+                var ukDatea = a.split('-');
+
+                // Convierte la fecha al formato YYYYMMDD para que pueda ser comparada fácilmente
+                return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
+            },
+
+            "date-dmy-asc": function(a, b) {
+                return a - b;
+            },
+
+            "date-dmy-desc": function(a, b) {
+                return b - a;
+            }
+        });
+
+
         $("#tableRecetas").DataTable({
-            columnDefs: [
-                { type: 'date-euro', targets: 0 } // Suponiendo que la columna de fecha es la primera (índice 0)
+            "columnDefs": [
+                { "type": "date-dmy", "targets": 0 } // Cambia el índice según la columna de fecha
             ],
             "paging": true,
             "lengthChange": true,

@@ -151,7 +151,6 @@
                                             <label class="control-label">Fuente Financiamiento</label>
 
                                             <select id="select-fuente" class="form-control" onchange="cargarTablaProducto()">
-                                                <option value="">Seleccionar Opción</option>
                                                 @foreach($arrayFuente as $item)
                                                     <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                 @endforeach
@@ -386,6 +385,9 @@
                     }
                 },
             });
+
+
+            cargarTablaProducto()
 
             document.getElementById("divcontenedor").style.display = "block";
         });

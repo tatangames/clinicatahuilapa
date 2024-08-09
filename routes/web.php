@@ -263,6 +263,13 @@ Route::post('/admin/orden/salida/guardar/denegacion', [FarmaciaController::class
 // guardar salida de receta procesada por farmacia
 Route::post('/admin/receta/procesar/guardarsalida', [FarmaciaController::class, 'guardarSalidaProcesadaDeReceta']);
 
+// retornar paciente a sala de nuevo
+Route::post('/admin/paciente/retonarsala', [FarmaciaController::class, 'retornarPacienteSala']);
+
+
+
+
+
 
 // --- VIA PARA RECETA ---
 Route::get('/admin/receta/via/vista', [LineasController::class,'indexVistaViaReceta'])->name('admin.vista.via.receta');

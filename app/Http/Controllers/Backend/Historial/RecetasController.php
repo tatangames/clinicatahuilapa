@@ -33,7 +33,8 @@ class RecetasController extends Controller
 
         $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
 
-        $arrayFuente = FuenteFinanciamiento::orderBy('nombre', 'ASC')->get();
+        // SOLO SERA FONDOS PROPIOS
+        $arrayFuente = FuenteFinanciamiento::where('id', 3)->get();
 
         $arrayDiagnostico = Diagnosticos::orderBy('nombre', 'ASC')->get();
 
@@ -180,7 +181,7 @@ class RecetasController extends Controller
 
         $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
 
-        $arrayFuente = FuenteFinanciamiento::orderBy('nombre', 'ASC')->get();
+        $arrayFuente = FuenteFinanciamiento::where('id',3)->get();
 
         $arrayDiagnostico = Diagnosticos::orderBy('nombre', 'ASC')->get();
 

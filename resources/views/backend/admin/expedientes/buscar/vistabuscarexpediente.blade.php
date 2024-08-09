@@ -51,6 +51,9 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+
+            openLoading()
+
             var ruta = "{{ URL::to('/admin/expediente/tabla/buscar') }}";
             $('#tablaDatatable').load(ruta);
 

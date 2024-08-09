@@ -40,7 +40,8 @@ class ReportesController extends Controller
 
     public function vistaReporteEntradas(){
 
-        $arrayFuente = FuenteFinanciamiento::orderBy('nombre', 'ASC')->get();
+
+        $arrayFuente = FuenteFinanciamiento::where('id', 3)->get();
 
         return view('backend.admin.reportes.entradas.vistareporteentradas', compact('arrayFuente'));
     }
@@ -161,7 +162,7 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logonuevo.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
@@ -181,20 +182,20 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Entrada</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Factura</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'># Factura</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Proveedor</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Fuente F.</td>
+                <td style='font-weight: bold; width: 11%; font-size: 11px'>Fecha Entrada</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'>Factura</td>
+                <td style='font-weight: bold; width: 12%; font-size: 11px'># Factura</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Proveedor</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Fuente F.</td>
             <tr>";
 
 
-            $tabla .= "<tr>
-                <td>$detaFila->fechaFormat</td>
-                <td>$detaFila->tipofactura</td>
-                <td>$detaFila->numero_factura</td>
-                <td>$detaFila->nombreprove</td>
-                <td>$detaFila->nombrefuente</td>
+            $tabla .= "<tr style='font-size: 10px'>
+                <td style='font-size: 10px'>$detaFila->fechaFormat</td>
+                <td style='font-size: 10px'>$detaFila->tipofactura</td>
+                <td style='font-size: 10px'>$detaFila->numero_factura</td>
+                <td style='font-size: 10px'>$detaFila->nombreprove</td>
+                <td style='font-size: 10px'>$detaFila->nombrefuente</td>
             <tr>";
 
 
@@ -205,29 +206,30 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Venc.</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Artículo</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Lote</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Cantidad</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Precio</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Monto</td>
+                <td style='font-weight: bold; width: 11%; font-size: 10px'>Fecha Venc.</td>
+                <td style='font-weight: bold; width: 15%; font-size: 10px'>Artículo</td>
+                <td style='font-weight: bold; width: 8%; font-size: 10px'>Lote</td>
+                <td style='font-weight: bold; width: 13%; font-size: 10px'>Cantidad</td>
+                <td style='font-weight: bold; width: 15%; font-size: 10px'>Precio</td>
+                <td style='font-weight: bold; width: 15%; font-size: 10px'>Monto</td>
             <tr>";
 
 
             foreach ($detaFila->detallefila as $dato) {
-                $tabla .= "<tr>
-                <td>$dato->id</td>
-                <td>$dato->nombre</td>
-                <td>$dato->lote</td>
-                <td>$dato->cantidad_fija</td>
-                <td>$dato->precioFormat</td>
-                <td>$dato->multiFormat</td>
+
+                $tabla .= "<tr style='font-size: 10px'>
+                <td style='font-size: 10px;' >$dato->fechaVencFormat</td>
+                <td style='font-size: 10px;' >$dato->nombre</td>
+                <td style='font-size: 10px;' >$dato->lote</td>
+                <td style='font-size: 10px;' >$dato->cantidad_fija</td>
+                <td style='font-size: 10px;' >$dato->precioFormat</td>
+                <td style='font-size: 10px;' >$dato->multiFormat</td>
             <tr>";
             }
 
             $tabla .= "<tr>
-                <td colspan='5'>Total</td>
-                <td>$detaFila->totalxfilas</td>
+                <td colspan='5' style='font-size: 10px; font-weight: bold'>Total</td>
+                <td style='font-size: 10px; font-weight: normal'>$detaFila->totalxfilas</td>
             <tr>";
 
             $tabla .= "</tbody></table>";
@@ -262,7 +264,6 @@ class ReportesController extends Controller
                     <p id='textoFinal'>Materiales PROPIOS:  $totalPropios<br>
                 </div>";
             }
-
         }
 
 
@@ -353,7 +354,7 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logonuevo.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
@@ -370,18 +371,18 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Fecha Salida</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Hora</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Motivo</td>
-                <td style='font-weight: bold; width: 15%; font-size: 14px'>Usuario Descargo</td>
+                <td style='font-weight: bold; width: 11%; font-size: 12px'>Fecha Salida</td>
+                <td style='font-weight: bold; width: 12%; font-size: 12px'>Hora</td>
+                <td style='font-weight: bold; width: 12%; font-size: 12px'>Motivo</td>
+                <td style='font-weight: bold; width: 15%; font-size: 12px'>Usuario Descargo</td>
             <tr>";
 
 
             $tabla .= "<tr>
-                <td>$detaFila->fechaFormat</td>
-                <td>$detaFila->horaFormat</td>
-                <td>$detaFila->nombremotivo</td>
-                <td>$detaFila->nombreUser</td>
+                <td style='font-size: 11px'>$detaFila->fechaFormat</td>
+                <td style='font-size: 11px'>$detaFila->horaFormat</td>
+                <td style='font-size: 11px'>$detaFila->nombremotivo</td>
+                <td style='font-size: 11px'>$detaFila->nombreUser</td>
             <tr>";
 
 
@@ -393,20 +394,20 @@ class ReportesController extends Controller
                     <tbody>";
 
             $tabla .= "<tr>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Artículo.</td>
-                <td style='font-weight: bold; width: 11%; font-size: 14px'>Lote.</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Cantidad</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Precio</td>
-                <td style='font-weight: bold; width: 12%; font-size: 14px'>Monto</td>
+                <td style='font-weight: bold; width: 11%; font-size: 12px'>Artículo.</td>
+                <td style='font-weight: bold; width: 9%; font-size: 12px'>Lote.</td>
+                <td style='font-weight: bold; width: 12%; font-size: 12px'>Cantidad</td>
+                <td style='font-weight: bold; width: 12%; font-size: 12px'>Precio</td>
+                <td style='font-weight: bold; width: 12%; font-size: 12px'>Monto</td>
             <tr>";
 
             foreach ($detaFila->detallefila as $dato) {
                 $tabla .= "<tr>
-                <td>$dato->nombre</td>
-                <td>$dato->lote</td>
-                <td>$dato->cantidad</td>
-                <td>$dato->precioFormat</td>
-                <td>$dato->multiFormat</td>
+                <td style='font-size: 11px; width: 11%'>$dato->nombre</td>
+                <td style='font-size: 11px; width: 9%'>$dato->lote</td>
+                <td style='font-size: 11px; width: 12%'>$dato->cantidad</td>
+                <td style='font-size: 11px; width: 12%'>$dato->precioFormat</td>
+                <td style='font-size: 11px; width: 12%'>$dato->multiFormat</td>
             <tr>";
             }
 

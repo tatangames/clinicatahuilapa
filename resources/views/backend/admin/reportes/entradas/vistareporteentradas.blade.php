@@ -35,7 +35,6 @@
                                 <div class="form-group col-md-3" >
                                     <label style="color: #686868">Fuente Financiamiento: </label>
                                     <select class="form-control" id="select-fuente">
-                                        <option value="0">Todos</option>
                                         @foreach($arrayFuente as $item)
                                             <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                         @endforeach

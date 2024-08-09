@@ -72,13 +72,8 @@
                                         <label style="color: #686868">Fuente de Financiamiento: </label>
                                         <div >
                                             <select class="form-control" id="select-fuente-financiamiento">
-                                                <option value="">Seleccionar Opción</option>
                                                 @foreach($arrayFuente as $item)
-                                                    @if($item->id == 3)
-                                                        <option value="{{$item->id}}" selected>{{ $item->nombre }}</option>
-                                                    @else
-                                                        <option value="{{$item->id}}">{{ $item->nombre }}</option>
-                                                    @endif
+                                                    <option value="{{$item->id}}">{{ $item->nombre }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

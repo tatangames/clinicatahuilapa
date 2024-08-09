@@ -28,12 +28,20 @@
                                             <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir
                                         </button>
 
-                                        <button type="button" class="btn btn-success btn-xs" style="color: white" onclick="procesarRecetaMedica({{ $dato->id }})">
-                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Procesar
+                                        <button type="button" class="btn btn-success btn-xs" style="color: white; margin: 5px" onclick="procesarRecetaMedica({{ $dato->id }})">
+                                            <i class="fas fa-list" title="Imprimir"></i>&nbsp; Procesar
                                         </button>
 
-                                        <button type="button" class="btn btn-danger btn-xs" style="color: white" onclick="infoDenegarReceta({{ $dato->id }})">
-                                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Denegar
+
+                                        @if($dato->btnRetornar == 1)
+                                            <button type="button" class="btn btn-dark btn-xs" style="color: white; margin: 5px" onclick="retornarPaciente({{ $dato->id }})">
+                                                <i class="fas fa-list" title="Retornar"></i>&nbsp; Retornar
+                                            </button>
+                                        @endif
+
+
+                                        <button type="button" class="btn btn-danger btn-xs" style="color: white; margin: 5px" onclick="infoDenegarReceta({{ $dato->id }})">
+                                            <i class="fas fa-trash" title="Denegar"></i>&nbsp; Denegar
                                         </button>
                                     </td>
                                 </tr>
