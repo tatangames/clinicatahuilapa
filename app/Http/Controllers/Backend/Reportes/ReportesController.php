@@ -1832,8 +1832,7 @@ class ReportesController extends Controller
         // salida_receta_detalle
 
 
-        // Columna: Total Existencias
-        $columnaTotalExistencia = 0;
+
         // Columna: Total Desca. Fechas
         $columnaTotalDescaFecha = 0;
         // Columna: Total Descargado
@@ -1871,8 +1870,6 @@ class ReportesController extends Controller
 
                 $multiExist = $fila->precio * $fila->cantidad;
 
-                // Columna: Total Existencias
-                $columnaTotalExistencia += $multiExist;
 
 
                 $multiExistFormat = '$' . number_format((float)$multiExist, 2, '.', ',');
@@ -1896,7 +1893,6 @@ class ReportesController extends Controller
 
 
                 // necesito obtener de ese medicamento cuantas salidas hubo,
-                $totalDescaFecha = 0;
 
 
                 $listaIDR = DB::table('recetas AS r')
@@ -1928,7 +1924,6 @@ class ReportesController extends Controller
 
                 // Columna: Total Desca. Fechas
                 $columnaTotalDescaFecha += $totalDescaFecha;
-
                 $totalDescaFecha = '$' . number_format((float)$totalDescaFecha, 2, '.', ',');
 
 
@@ -1945,14 +1940,10 @@ class ReportesController extends Controller
                     'costo' => $precioFormat,
                     'cantidad_inicial' => $fila->cantidad_fija,
                     'entregado' => $cantiEntregada,
-
                     'entregadototal' => $entregadoTotal,
-
                     'existencia' => $fila->cantidad,
                     'total_descargado' => $multiDescargadoFormat,
-
                     'totaldescafecha' => $totalDescaFecha,
-
                     'total_existencia' => $multiExistFormat,
                 ];
 
@@ -1979,20 +1970,10 @@ class ReportesController extends Controller
         }
 
         $totalCoEx = $totalColumnaExistenciaEntero . "." . $totalColumnaExistenciaDosDecimales;
-
         $totalColumnaExistenciaFinal = '$' . number_format($totalCoEx, 2, '.', ',');
-
-
         $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
-
-
-
         $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
-
-
-
         $totalFondoPropioExistenciaEntero = intval($totalFondoPropioExistencia);
-
 
         $numeroCadena2 = (string) $totalFondoPropioExistencia;
         $posicionPunto2 = strpos($numeroCadena2, '.');
@@ -2006,11 +1987,7 @@ class ReportesController extends Controller
         }
 
         $totalCoExFondoPro = $totalFondoPropioExistenciaEntero . "." . $totalColumnaPropiosDecimales;
-
         $totalFondoPropioExistenciaFinal = '$' . number_format($totalCoExFondoPro, 2, '.', ',');
-
-
-
 
         $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
         $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
@@ -2020,7 +1997,6 @@ class ReportesController extends Controller
 
 
         // Columna: Total existencias
-        $columnaTotalExistencia = '$' . number_format((float)$columnaTotalExistencia, 2, '.', ',');
         // Columna: Total Desca. Fechas
         $columnaTotalDescaFecha = '$' . number_format((float)$columnaTotalDescaFecha, 2, '.', ',');
         // Columna: Total Descargado
@@ -2028,99 +2004,111 @@ class ReportesController extends Controller
 
 
 
-
-
-
-
         //************ DATOS PARA SABER LOS INGRESOS POR MES (FECHA DESDE - FECHA HASTA), OBTENER EL TOTAL DINERO INGRESADO
 
-       /* $arrayEntradas = EntradaMedicamento::whereBetween('fecha', [$start, $end])
-            ->orderBy('fecha', 'ASC')
-            ->get();
 
-        // Inicializando un array para los meses
-        $meses = [];
 
-        foreach ($arrayEntradas as $entrada) {
-            // Convertir la fecha en un objeto Carbon
-            $fecha = Carbon::parse($entrada->fecha);
 
-            // Obtener el mes en español
-            $mes = $fecha->locale('es')->translatedFormat('F');
 
-            // Agregar el mes al array si no está duplicado
-            if (!in_array($mes, $meses)) {
-                $meses[] = $mes;
+        // Definir el rango de fechas
+        $start = Carbon::parse('2023-11-15');
+        $end = Carbon::parse('2024-02-04');
+
+// Inicializar un array para almacenar los resultados
+        $rangosFechas = [];
+        $rangosFechasReparado = [];
+
+// Iterar a través de cada mes en el rango
+        $current = $start->copy();
+        while ($current->startOfMonth()->lessThanOrEqualTo($end)) {
+            // Calcular el inicio del mes actual
+            $inicioMes = $current->copy()->startOfMonth()->toDateString();
+            // Si es el primer mes del rango, ajustar la fecha de inicio
+            if ($current->isSameMonth($start)) {
+                $inicioMes = $start->toDateString();
             }
+
+            // Calcular el fin del mes actual
+            $finMes = $current->copy()->endOfMonth()->toDateString();
+            // Si es el último mes del rango, ajustar la fecha de fin
+            if ($current->isSameMonth($end)) {
+                $finMes = $end->toDateString();
+            }
+
+            // Almacenar las fechas en el array
+            $rangosFechas[] = [
+                'mes' => $current->locale('es')->translatedFormat('F Y'),
+                'inicio' => $inicioMes,
+                'fin' => $finMes
+            ];
+
+            // Avanzar al siguiente mes
+            $current->addMonth();
         }
 
-        $totalGeneral = 0;
 
-        foreach ($arrayEntradas as $infoFila){
+        usort($rangosFechas, function ($a, $b) {
+            return strtotime($a['inicio']) <=> strtotime($b['inicio']);
+        });
 
-            $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
-                ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
-                ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio',
-                    'deta.lote', 'deta.fecha_vencimiento', 'fa.id')
-                ->where('deta.entrada_medicamento_id', $infoFila->id)
-                ->orderBy('fa.nombre', 'ASC')
+
+
+        // RECORRER FECHAS
+        foreach ($rangosFechas as $datoArray){
+
+            $desdeFecha = date("Y-m-d", strtotime($datoArray['inicio']));
+            $hastaFecha = date("Y-m-d", strtotime($datoArray['fin']));
+
+            $startF = Carbon::parse($desdeFecha)->startOfDay(); // año - mes - dia
+            $endF = Carbon::parse($hastaFecha)->endOfDay();
+
+            $arrayEntradas = EntradaMedicamento::whereBetween('fecha', [$startF, $endF])
+                ->orderBy('fecha', 'ASC')
                 ->get();
 
-            $totalXColumna = 0;
+            $totalGeneral = 0; // sumatoria de todas las fuentes de financiamiento
 
-            foreach ($arrayDetalle as $dato){
-                $multi = $dato->cantidad_fija * $dato->precio;
-                $totalXColumna = $totalXColumna + $multi;
+            foreach ($arrayEntradas as $infoFila){
+
+                $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
+                    ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
+                    ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio',
+                        'deta.lote', 'deta.fecha_vencimiento', 'fa.id')
+                    ->where('deta.entrada_medicamento_id', $infoFila->id)
+                    ->orderBy('fa.nombre', 'ASC')
+                    ->get();
+
+                $totalXColumna = 0;
+
+                foreach ($arrayDetalle as $dato){
+
+                    $multi = $dato->cantidad_fija * $dato->precio;
+                    $totalXColumna = $totalXColumna + $multi;
+
+                    $dato->multiFormat = '$' . number_format((float)$multi, 4, '.', ',');
+                    $dato->fechaVencFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
+                    $dato->precioFormat = '$' . number_format((float)$dato->precio, 4, '.', ',');
+                }
+
+
+                $totalGeneral = $totalGeneral + $totalXColumna;
             }
 
-            $totalGeneral = $totalGeneral + $totalXColumna;
+
+            $totalGeneral = sprintf("%.2f", floor($totalGeneral * 100) / 100);
+            $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
+
+            $miMes =  $datoArray['mes'];
+            $miInicio =  $datoArray['inicio'];
+            $miFinal =  $datoArray['fin'];
+
+            $rangosFechasReparado[] = [
+                'mes' => $miMes,
+                'inicio' => $miInicio,
+                'fin' => $miFinal,
+                'total' => $totalGeneral
+            ];
         }
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2138,7 +2126,6 @@ class ReportesController extends Controller
 
 
 
-        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER', 'orientation' => 'L']);
         $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
 
         $mpdf->SetTitle('Reporte Existencias');
@@ -2174,14 +2161,10 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>COSTO</td>
                 <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
                 <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
-
-                 <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
-
+                <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
                 <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
-
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
-
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
             <tr>";
 
@@ -2234,17 +2217,16 @@ class ReportesController extends Controller
                             <td colspan='13' style='text-align: right; font-weight: bold'></td>
                             <td style='font-weight: bold'>$columnaTotalDescargado</td>
                             <td style='font-weight: bold'>$columnaTotalDescaFecha</td>
-                            <td style='font-weight: bold'>$columnaTotalExistencia</td>
+                            <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
                         <tr>";
-
-
 
 
         $tabla .= "</tbody></table>";
 
 
-        $tabla .= "<table id='tablaFor'>
+        $tabla .= "<table style='border-collapse: collapse;' border='1'; width='500'>
                     <tbody>";
+        /*
 
         if($totalFondoPropioDescargado != "$0.00" && $totalFondoPropioExistenciaFinal != "$0.00") {
 
@@ -2253,6 +2235,7 @@ class ReportesController extends Controller
                             <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
                             <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
                         <tr>";
+
         }
 
         if($totalMaterialCovidDescargado != "$0.00" && $totalMaterialCovidExistencia != "$0.00"){
@@ -2272,33 +2255,64 @@ class ReportesController extends Controller
                     <tr>";
         }
 
+           */
+
         $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL: </td>
-                            <td style='font-weight: bold'>$totalColumnaDescargado</td>
-                            <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
-                        <tr>";
+                <td style='font-weight: bold; font-size: 11px'>Total Descargado</td>
+                <td style='font-weight: bold; font-size: 11px'>Total Existencias</td>
+            <tr>";
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 11px'>$totalColumnaDescargado</td>
+                <td style='font-weight: bold; font-size: 11px'>$totalColumnaExistenciaFinal</td>
+            <tr>";
+
+
 
         $tabla .= "</tbody></table>";
+
+
+
+
+
 
 
         $tabla .= "<br><br>";
 
         // PARTE DE INGRESOS POR MES, PERO DE FECHA A FECHA
 
-        $tabla .= "<table style='border-collapse: collapse;' border='1'; width='280'>
+        $tabla .= "<table style='border-collapse: collapse;' border='1'; width='330'>
                     <tbody>";
 
         $tabla .= "<tr>
-                <td style='font-weight: bold; font-size: 12px'>Enero</td>
-                <td style='font-weight: bold; font-size: 12px'>xxx</td>
+                <td colspan='4' style='font-weight: bold; font-size: 11px; text-align: center'>Ingresos</td>
             <tr>";
 
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 11px'>Mes</td>
+                <td style='font-weight: bold; font-size: 11px'>Fecha Desde</td>
+                <td style='font-weight: bold; font-size: 11px'>Fecha Hasta</td>
+                <td style='font-weight: bold; font-size: 11px'>Total</td>
+            <tr>";
+
+        foreach ($rangosFechasReparado as $dato){
+
+            $dInicio = $dato['inicio'];
+            $dHasta = $dato['fin'];
+            $dMes = $dato['mes'];
+            $dTotal = $dato['total'];
+
+            $tabla .= "<tr>
+                <td style='font-size: 10px'>$dMes</td>
+                <td style='font-size: 10px'>$dInicio</td>
+                <td style='font-size: 10px'>$dHasta</td>
+                <td style='font-size: 10px'>$dTotal</td>
+            <tr>";
+        }
+
+
+
         $tabla .= "</tbody></table>";
-
-
-
-
-
 
 
 
