@@ -2008,17 +2008,11 @@ class ReportesController extends Controller
 
 
 
-
-
-        // Definir el rango de fechas
-        $start = Carbon::parse('2023-11-15');
-        $end = Carbon::parse('2024-02-04');
-
-// Inicializar un array para almacenar los resultados
+        // Inicializar un array para almacenar los resultados
         $rangosFechas = [];
         $rangosFechasReparado = [];
 
-// Iterar a través de cada mes en el rango
+        // Iterar a través de cada mes en el rango
         $current = $start->copy();
         while ($current->startOfMonth()->lessThanOrEqualTo($end)) {
             // Calcular el inicio del mes actual
