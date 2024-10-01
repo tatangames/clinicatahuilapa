@@ -212,7 +212,6 @@ class FarmaciaController extends Controller
 
     public function registrarNuevoMedicamento(Request $request){
 
-
         $regla = array(
             'numFactura' => 'required',
             'tipoFactura' => 'required',
@@ -247,6 +246,8 @@ class FarmaciaController extends Controller
 
             foreach ($datosContenedor as $filaArray) {
 
+                // infoPrecioDonacion
+
                 $infoMedicamento = FarmaciaArticulo::where('id', $filaArray['infoIdMedicamento'])->first();
 
                 $detalle = new EntradaMedicamentoDetalle();
@@ -256,6 +257,7 @@ class FarmaciaController extends Controller
                 $detalle->cantidad = $filaArray['infoCantidad'];
                 $detalle->cantidad_fija = $filaArray['infoCantidad'];
                 $detalle->precio = $filaArray['infoPrecio'];
+                $detalle->precio_donacion = $filaArray['infoPrecioDonacion'];
                 $detalle->lote = $filaArray['infoLote'];
                 $detalle->fecha_vencimiento = $filaArray['infoFecha'];
                 $detalle->save();
@@ -284,6 +286,8 @@ class FarmaciaController extends Controller
             'fecha' => 'required'
         );
 
+
+
         $validar = Validator::make($request->all(), $regla);
 
         if ($validar->fails()){ return ['success' => 0];}
@@ -295,7 +299,6 @@ class FarmaciaController extends Controller
 
             // Obtiene los datos enviados desde el formulario como una cadena JSON y luego decódificala
             $datosContenedor = json_decode($request->contenedorArray, true); // El segundo argumento convierte el resultado en un arreglo
-
 
 
             EntradaMedicamento::where('id', $request->identrada)->update([
@@ -318,11 +321,12 @@ class FarmaciaController extends Controller
                 $detalle->cantidad = $filaArray['infoCantidad'];
                 $detalle->cantidad_fija = $filaArray['infoCantidad'];
                 $detalle->precio = $filaArray['infoPrecio'];
+                $detalle->precio_donacion = $filaArray['infoPrecioDonacion'];
+
                 $detalle->lote = $filaArray['infoLote'];
                 $detalle->fecha_vencimiento = $filaArray['infoFecha'];
                 $detalle->save();
             }
-
 
             DB::commit();
             return ['success' => 1];
@@ -1471,7 +1475,6 @@ class FarmaciaController extends Controller
 
         if ($validar->fails()){ return ['success' => 0];}
 
-
         if($info = EntradaMedicamentoDetalle::where('id', $request->id)->first()){
             return ['success' => 1, 'info' => $info];
         }
@@ -1487,6 +1490,7 @@ class FarmaciaController extends Controller
             'precio' => 'required',
             'lote' => 'required',
             'fechavencimiento' => 'required',
+            'preciodonacion' => 'required'
         );
 
         $validar = Validator::make($request->all(), $regla);
@@ -1498,6 +1502,7 @@ class FarmaciaController extends Controller
             'precio' => $request->precio,
             'lote' => $request->lote,
             'fecha_vencimiento' => $request->fechavencimiento,
+            'precio_donacion' => $request->preciodonacion
         ]);
 
         return ['success' => 1];

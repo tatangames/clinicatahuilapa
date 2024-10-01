@@ -87,11 +87,8 @@
 
                                                 @endforeach
                                             </select>
-
                                         </div>
                                     </div>
-
-
 
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -106,27 +103,16 @@
                                                     @endif
                                                 @endforeach
                                             </select>
-
                                         </div>
                                     </div>
-
-
                                 </div>
-
                             </section>
 
-
-
-
                             <section>
-
                                 <div class="row">
-
-
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">Proveedor</label>
-
                                             <select id="select-proveedor" class="form-control">
                                                 @foreach($arrayProvee as $item)
                                                     @if($infoEntrada->proveedor_id == $item->id)
@@ -257,6 +243,13 @@
                     </div>
                 </div>
 
+                <div class="form-group col-md-3" style="margin-top: 5px">
+                    <label class="control-label" style="color: #686868">Precio Donación: </label>
+                    <div>
+                        <input type="text" autocomplete="off" class="form-control" id="precio-donacion" >
+                    </div>
+                </div>
+
 
             </div>
         </div>
@@ -327,11 +320,9 @@
                             <td>
                                 <input disabled value="{{ $item->cantidad_fija }}" class="form-control" type="text">
                             </td>
-
                             <td>
                                 <input disabled value="{{ $item->lote }}" class="form-control" type="text">
                             </td>
-
                             <td>
                                 <input disabled value="{{ $item->fechaVencimiento }}" class="form-control" type="text">
                             </td>
@@ -339,25 +330,18 @@
                                 <button type="button" title="Editar" class="btn btn-warning btn-sm" style="color: white" onclick="infoEditarDecimales({{ $item->id }})">
                                     <i class="fas fa-edit" ></i>&nbsp;
                                 </button>
-
                             </td>
                         </tr>
-
                     @endforeach
-
-
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
 
-
-
     <div class="modal-footer justify-content-between float-right" style="margin-top: 25px; margin-bottom: 30px;">
         <button type="button" class="btn btn-success" onclick="preguntarGuardar()">Actualizar Entrada</button>
     </div>
-
 
     <div class="modal fade" id="modalEditarDecimales">
         <div class="modal-dialog modal-lg">
@@ -382,6 +366,15 @@
                                 </div>
                                 <input id="precio-edicion" class="form-control" autocomplete="off">
                             </div>
+
+
+                            <div class="form-group" style="margin-top: 20px">
+                                <div class="box-header with-border">
+                                    <label>Precio Donación</label>
+                                </div>
+                                <input id="precio-donacion-editar" class="form-control" autocomplete="off">
+                            </div>
+
 
                             <div class="form-group" style="margin-top: 20px">
                                 <div class="box-header with-border">
@@ -577,6 +570,8 @@
             var reglaNumeroEntero = /^[0-9]\d*$/;
             var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
+            var precioDonacion = document.getElementById('precio-donacion').value;
+
             //**************
 
             if(inputBuscador.dataset.idmedicamento == 0){
@@ -629,7 +624,8 @@
 
 
 
-            //*************
+            //*************  PRECIO PRODUCTO
+
 
             if(precioProducto === ''){
                 toastr.error('Precio Producto es requerido');
@@ -651,9 +647,30 @@
                 return;
             }
 
-            let precioProductoFormat = "$" + Number(precioProducto).toFixed(2);
 
-            //**************
+            //*************  PRECIO DONACION
+
+            if(precioDonacion === ''){
+                toastr.error('Precio Donación es requerido');
+                return;
+            }
+
+            if(!precioDonacion.match(reglaNumeroDiesDecimal)) {
+                toastr.error('Precio Donación debe ser número Decimal (10 decimales)');
+                return;
+            }
+
+            if(precioDonacion < 0){
+                toastr.error('Precio Donación no debe ser negativo');
+                return;
+            }
+
+            if(precioDonacion > 9000000){
+                toastr.error('Precio Donación debe ser máximo 9 millones');
+                return;
+            }
+
+
 
 
 
@@ -684,6 +701,7 @@
 
                 "<td>" +
                 "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='$" + precioProducto + "' class='form-control' type='text'>" +
+                "<input name='arrayPrecioDonacion[]' data-preciodonacion='" + precioDonacion + "' disabled value='$" + precioDonacion + "' class='form-control' type='hidden'>" +
                 "</td>" +
 
                 "<td>" +
@@ -721,6 +739,8 @@
             document.getElementById('cantidad').value = '';
             document.getElementById('fecha-vencimiento').value = '';
             document.getElementById('precio-producto').value = '';
+            document.getElementById('precio-donacion').value = '';
+
             document.getElementById('inputBuscador').value = '';
             document.getElementById('existencia').value = '';
             document.getElementById('ultimo-costo').value = '';
@@ -807,13 +827,13 @@
                 return;
             }
 
-
             var arrayIdMedicamento = $("input[name='arrayNombre[]']").map(function(){return $(this).attr("data-idmedicamento");}).get();
             var arrayCantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
             var arrayPrecio = $("input[name='arrayPrecio[]']").map(function(){return $(this).attr("data-precio");}).get();
             var arrayLote = $("input[name='arrayLote[]']").map(function(){return $(this).val();}).get();
             var arrayFecha = $("input[name='arrayFecha[]']").map(function(){return $(this).attr("data-fecha");}).get();
 
+            var arrayPrecioDonacion = $("input[name='arrayPrecioDonacion[]']").map(function(){return $(this).attr("data-preciodonacion");}).get();
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
             var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
@@ -831,6 +851,7 @@
                 let loteProducto = arrayLote[a];
                 let fechaProducto = arrayFecha[a];
 
+                let precioProductoDonacion = arrayPrecioDonacion[a];
 
                 // identifica si el 0 es tipo number o texto
                 if(idMedicamento == 0){
@@ -894,6 +915,35 @@
                 }
 
 
+                // **** VALIDAR PRECIO DONACION PRODUCTO
+                if (precioProductoDonacion === '') {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio de Donación es requerida. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (!precioProductoDonacion.match(reglaNumeroDiesDecimal)) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio Donación debe ser decimal (10 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (precioProductoDonacion <= 0) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio Donación no debe ser negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (precioProductoDonacion > 9000000) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio Donación máximo 9 millones. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+
+
+
+
                 if(loteProducto === ''){
                     colorRojoTabla(a);
                     toastr.error('Fila #' + (a + 1) + ' Lote de Producto no se encuentra. Por favor borrar la Fila y buscar de nuevo el Producto');
@@ -923,8 +973,10 @@
                 let infoLote = arrayLote[i];
                 let infoFecha = arrayFecha[i];
 
+                let infoPrecioDonacion = arrayPrecioDonacion[i];
+
                 // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
-                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoPrecio, infoLote, infoFecha });
+                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoPrecio, infoLote, infoFecha, infoPrecioDonacion });
             }
 
             let identrada = {{ $infoEntrada->id }};
@@ -1007,6 +1059,8 @@
                         $('#modalEditarDecimales').modal('show');
                         $('#id-entramedi-decimal').val(idmedientrada);
                         $('#precio-edicion').val(response.data.info.precio);
+                        $('#precio-donacion-editar').val(response.data.info.precio_donacion);
+
                         $('#lote-edicion').val(response.data.info.lote);
                         $('#fechavencimiento-edicion').val(response.data.info.fecha_vencimiento);
 
@@ -1028,6 +1082,8 @@
             var precioProducto = document.getElementById('precio-edicion').value;
             var lote = document.getElementById('lote-edicion').value;
             var fecha = document.getElementById('fechavencimiento-edicion').value;
+
+            var precioDonacion = document.getElementById('precio-donacion-editar').value;
 
             var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
@@ -1052,6 +1108,32 @@
             }
 
 
+            //*** PRECIO DONACION
+
+            if (precioDonacion === '') {
+                toastr.error('Precio Donación es requerido');
+                return;
+            }
+
+            if (!precioDonacion.match(reglaNumeroDiesDecimal)) {
+                toastr.error('Precio Donación máximo 10 decimales');
+                return;
+            }
+
+            if (precioDonacion <= 0) {
+                toastr.error('Precio Donación no puede ser cero o negativo');
+                return;
+            }
+
+            if (precioDonacion > 9000000) {
+                toastr.error('Precio Donación no debe ser mayor a 9 millones');
+                return;
+            }
+
+
+
+
+
             if(lote === ''){
                 toastr.error('Lote es requerido');
                 return;
@@ -1067,6 +1149,7 @@
             var formData = new FormData();
             formData.append('id', id);
             formData.append('precio', precioProducto);
+            formData.append('preciodonacion', precioDonacion);
             formData.append('lote', lote);
             formData.append('fechavencimiento', fecha);
 
@@ -1100,14 +1183,11 @@
                     toastr.error('Error al registrar');
                     closeLoading();
                 });
-
         }
-
 
         function recargar(){
             location.reload();
         }
-
 
         function informacionTraslado(identradeta){
 

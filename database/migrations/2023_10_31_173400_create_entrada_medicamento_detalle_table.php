@@ -28,9 +28,12 @@ class CreateEntradaMedicamentoDetalleTable extends Migration
             // ESTO SERA FIJO PARA REPORTES
             $table->integer('cantidad_fija');
 
-            $table->decimal('precio', 10, 2);
+            $table->decimal('precio', 16, 10);
             $table->string('lote', 100);
             $table->date('fecha_vencimiento');
+
+            // COSTO DONACION
+            $table->decimal('precio_donacion', 16,10);
 
             $table->foreign('entrada_medicamento_id')->references('id')->on('entrada_medicamento');
             $table->foreign('medicamento_id')->references('id')->on('farmacia_articulo');

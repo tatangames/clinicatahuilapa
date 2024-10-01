@@ -1553,16 +1553,28 @@ class ReportesController extends Controller
                 $infoFuenteFi = FuenteFinanciamiento::where('id', $infoEntradaFi->fuentefina_id)->first();
 
 
-
                 $fechaVen = date("d-m-Y", strtotime($fila->fecha_vencimiento));
                 $precioFormat = '$' . number_format((float)$fila->precio, 2, '.', ',');
 
-                $cantiEntregada = $fila->cantidad_fija - $fila->cantidad;
+                if($fila->precio_donacion != null){
+                    $precioFormatDonacion = '$' . number_format((float)$fila->precio_donacion, 2, '.', ',');
+                }else{
+                    $precioFormatDonacion = '$0.00';
+                }
 
+
+                $cantiEntregada = $fila->cantidad_fija - $fila->cantidad;
                 $multiDescargado = $fila->precio * $cantiEntregada;
 
+                if($fila->precio_donacion != null){
+                    $multiDescargadoDonacion = $fila->precio_donacion * $cantiEntregada;
+                }else{
+                    $multiDescargadoDonacion = 0;
+                }
 
                 $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
+                $multiDescargadoFormatDonacion = '$' . number_format((float)$multiDescargadoDonacion, 2, '.', ',');
+
 
                 $multiExist = $fila->precio * $fila->cantidad;
                 $multiExistFormat = '$' . number_format((float)$multiExist, 2, '.', ',');
@@ -1586,7 +1598,6 @@ class ReportesController extends Controller
 
 
 
-
                 $dataArray[] = [
                     'contador' => $contador,
                     'codigo' => $dato->codigo_articulo,
@@ -1597,11 +1608,13 @@ class ReportesController extends Controller
                     'lote' => $fila->lote,
                     'fecha_vencimiento' => $fechaVen,
                     'costo' => $precioFormat,
+                    'costo_donacion' => $precioFormatDonacion,
                     'cantidad_inicial' => $fila->cantidad_fija,
                     'entregado' => $cantiEntregada,
                     'existencia' => $fila->cantidad,
                     'total_descargado' => $multiDescargadoFormat,
                     'total_existencia' => $multiExistFormat,
+                    'total_descargado_donacion' => $multiDescargadoFormatDonacion,
                 ];
 
             }
@@ -1703,10 +1716,12 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>LOTE</td>
                 <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
                 <td style='font-weight: bold; font-size: 12px'>COSTO</td>
+                <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
                 <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
                 <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
                 <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
+                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONA.</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
             <tr>";
 
@@ -1722,10 +1737,12 @@ class ReportesController extends Controller
                         $detaLote = $fila['lote'];
                         $detaFechaVen = $fila['fecha_vencimiento'];
                         $detaCosto = $fila['costo'];
+                        $detaCostoDonacion = $fila['costo_donacion'];
                         $detaCantiIni = $fila['cantidad_inicial'];
                         $detaEntregado = $fila['entregado'];
                         $detaExistencia = $fila['existencia'];
                         $detaTotalDesc = $fila['total_descargado'];
+                        $detaTotalDescDonacion = $fila['total_descargado_donacion'];
                         $detaTotalExis = $fila['total_existencia'];
 
                         $tabla .= "<tr>
@@ -1738,10 +1755,12 @@ class ReportesController extends Controller
                             <td>$detaLote</td>
                             <td>$detaFechaVen</td>
                             <td>$detaCosto</td>
+                            <td>$detaCostoDonacion</td>
                             <td>$detaCantiIni</td>
                             <td>$detaEntregado</td>
                             <td>$detaExistencia</td>
                             <td>$detaTotalDesc</td>
+                            <td>$detaTotalDescDonacion</td>
                             <td>$detaTotalExis</td>
                         <tr>";
                     }
@@ -1857,21 +1876,23 @@ class ReportesController extends Controller
 
                 $fechaVen = date("d-m-Y", strtotime($fila->fecha_vencimiento));
                 $precioFormat = '$' . number_format((float)$fila->precio, 2, '.', ',');
+                $precioFormatDonacion = '$' . number_format((float)$fila->precio_donacion, 2, '.', ',');
+
+
+
 
                 $cantiEntregada = $fila->cantidad_fija - $fila->cantidad;
 
                 $multiDescargado = $fila->precio * $cantiEntregada;
-
+                $multiDescargadoDonacion = $fila->precio_donacion * $cantiEntregada;
 
                 // Columna: Total Descargado
                 $columnaTotalDescargado += $multiDescargado;
 
                 $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
+                $multiDescargadoFormatDonacion = '$' . number_format((float)$multiDescargadoDonacion, 2, '.', ',');
 
                 $multiExist = $fila->precio * $fila->cantidad;
-
-
-
                 $multiExistFormat = '$' . number_format((float)$multiExist, 2, '.', ',');
 
 
@@ -1938,11 +1959,16 @@ class ReportesController extends Controller
                     'lote' => $fila->lote,
                     'fecha_vencimiento' => $fechaVen,
                     'costo' => $precioFormat,
+                    'costo_donacion' => $precioFormatDonacion,
+
+
                     'cantidad_inicial' => $fila->cantidad_fija,
                     'entregado' => $cantiEntregada,
                     'entregadototal' => $entregadoTotal,
                     'existencia' => $fila->cantidad,
                     'total_descargado' => $multiDescargadoFormat,
+                    'total_descargado_donacion' => $multiDescargadoFormatDonacion,
+
                     'totaldescafecha' => $totalDescaFecha,
                     'total_existencia' => $multiExistFormat,
                 ];
@@ -2153,18 +2179,21 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>LOTE</td>
                 <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
                 <td style='font-weight: bold; font-size: 12px'>COSTO</td>
+                <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
                 <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
                 <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
                 <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
                 <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
+
+
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
             <tr>";
 
         foreach ($dataArray as $fila){
             if($hayDatos){
-
                 $detaContador = $fila['contador'];
                 $detaCodigo = $fila['codigo'];
                 $detaNombre = $fila['nombre'];
@@ -2174,6 +2203,9 @@ class ReportesController extends Controller
                 $detaLote = $fila['lote'];
                 $detaFechaVen = $fila['fecha_vencimiento'];
                 $detaCosto = $fila['costo'];
+                $detaCostoDonacion = $fila['costo_donacion'];
+
+
                 $detaCantiIni = $fila['cantidad_inicial'];
                 $detaEntregado = $fila['entregado'];
 
@@ -2181,6 +2213,7 @@ class ReportesController extends Controller
 
                 $detaExistencia = $fila['existencia'];
                 $detaTotalDesc = $fila['total_descargado'];
+                $detaTotalDescDonacion = $fila['total_descargado_donacion'];
 
                 $totalDescaFecha = $fila['totaldescafecha'];
 
@@ -2196,11 +2229,15 @@ class ReportesController extends Controller
                             <td>$detaLote</td>
                             <td>$detaFechaVen</td>
                             <td>$detaCosto</td>
+                            <td>$detaCostoDonacion</td>
+
                             <td>$detaCantiIni</td>
                             <td>$detaEntregado</td>
                             <td>$detaEntregadoTotal</td>
                             <td>$detaExistencia</td>
                             <td>$detaTotalDesc</td>
+                            <td>$detaTotalDescDonacion</td>
+
                             <td>$totalDescaFecha</td>
                             <td>$detaTotalExis</td>
                         <tr>";
@@ -2220,36 +2257,7 @@ class ReportesController extends Controller
 
         $tabla .= "<table style='border-collapse: collapse;' border='1'; width='500'>
                     <tbody>";
-        /*
 
-        if($totalFondoPropioDescargado != "$0.00" && $totalFondoPropioExistenciaFinal != "$0.00") {
-
-            $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL FONDOS PROPIOS: </td>
-                            <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
-                            <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
-                        <tr>";
-
-        }
-
-        if($totalMaterialCovidDescargado != "$0.00" && $totalMaterialCovidExistencia != "$0.00"){
-            $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES COVID: </td>
-                            <td style='font-weight: bold'>$totalMaterialCovidDescargado</td>
-                            <td style='font-weight: bold'>$totalMaterialCovidExistencia</td>
-                        <tr>";
-        }
-
-
-        if($totalMaterialFundelDescargado != "$0.00" && $totalMaterialFundelExistencia != "$0.00") {
-            $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES FUNDEL: </td>
-                            <td style='font-weight: bold'>$totalMaterialFundelDescargado</td>
-                            <td style='font-weight: bold'>$totalMaterialFundelExistencia</td>
-                    <tr>";
-        }
-
-           */
 
         $tabla .= "<tr>
                 <td style='font-weight: bold; font-size: 11px'>Total Descargado</td>
@@ -2262,13 +2270,7 @@ class ReportesController extends Controller
             <tr>";
 
 
-
         $tabla .= "</tbody></table>";
-
-
-
-
-
 
 
         $tabla .= "<br><br>";

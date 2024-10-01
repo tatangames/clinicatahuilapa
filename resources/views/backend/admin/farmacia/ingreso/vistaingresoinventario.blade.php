@@ -188,6 +188,13 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group col-md-3" style="margin-top: 5px">
+                                    <label class="control-label" style="color: #686868">Precio Costo (Donación):</label>
+                                    <div>
+                                        <input type="text" autocomplete="off" class="form-control" id="precio-donacion" >
+                                    </div>
+                                </div>
+
 
                             </div>
                         </div>
@@ -252,10 +259,12 @@
                     <thead>
                     <tr style="float: right">
                         <th>Precio Total</th>
+                        <th>Precio Costo</th>
                     </tr>
                     </thead>
                     <tbody style="float: right">
-                    <td style="width: 125px"> <label type="text" class="form-control" id="precioTotal" >$0.00</label></td>
+                        <td style="width: 125px"> <label type="text" class="form-control" id="precioTotal" >$0.00</label></td>
+                        <td style="width: 125px"> <label type="text" class="form-control" id="precioTotalDonacion" >$0.00</label></td>
 
                     </tbody>
                 </table>
@@ -382,6 +391,7 @@
             var reglaNumeroEntero = /^[0-9]\d*$/;
             var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
 
+            var precioDonacion = document.getElementById('precio-donacion').value;
 
             if(inputBuscador.dataset.idmedicamento == 0){
                 toastr.error("Producto es requerido");
@@ -451,7 +461,32 @@
                 return;
             }
 
-            let precioProductoFormat = "$" + Number(precioProducto).toFixed(2);
+
+
+            ///************* COSTO DONACION ********************
+
+
+            if(precioDonacion === ''){
+                toastr.error('Precio Donación es requerido');
+                return;
+            }
+
+            if(!precioDonacion.match(reglaNumeroDiesDecimal)) {
+                toastr.error('Precio Donación debe ser número Decimal (10 decimales)');
+                return;
+            }
+
+            if(precioDonacion < 0){
+                toastr.error('Precio Donación no debe ser negativo');
+                return;
+            }
+
+            if(precioDonacion > 9000000){
+                toastr.error('Precio Donación debe ser máximo 9 millones');
+                return;
+            }
+
+
 
             //**************
 
@@ -485,6 +520,7 @@
 
                 "<td>" +
                 "<input name='arrayPrecio[]' data-precio='" + precioProducto + "' disabled value='$" + precioProducto + "' class='form-control' type='text'>" +
+                "<input name='arrayPrecioDonacion[]' data-preciodonacion='" + precioDonacion + "' disabled value='$" + precioDonacion + "' class='form-control' type='hidden'>" +
                 "</td>" +
 
                 "<td>" +
@@ -523,6 +559,7 @@
             document.getElementById('cantidad').value = '';
             document.getElementById('fecha-vencimiento').value = '';
             document.getElementById('precio-producto').value = '';
+            document.getElementById('precio-donacion').value = '';
             document.getElementById('inputBuscador').value = '';
             document.getElementById('existencia').value = '';
             document.getElementById('ultimo-costo').value = '';
@@ -553,22 +590,28 @@
 
             var cantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
             var precio = $("input[name='arrayPrecio[]']").map(function(){return $(this).attr("data-precio");}).get();
-
+            var precioDonacion = $("input[name='arrayPrecioDonacion[]']").map(function(){return $(this).attr("data-preciodonacion");}).get();
             var precioTotal = 0;
+            var precioTotalDonacion = 0;
 
             for(var a = 0; a < cantidad.length; a++){
 
                 let infoCantidad = cantidad[a];
                 let infoPrecio = precio[a];
+                let infoPrecioDonacion = precioDonacion[a];
 
                 let multiplicado = infoCantidad * infoPrecio;
+                let multiplicadoDonacion = infoCantidad * infoPrecioDonacion;
 
                 precioTotal += multiplicado;
+                precioTotalDonacion += multiplicadoDonacion;
             }
 
              let precioFormat = '$' + Number(precioTotal).toFixed(2);
+             let precioFormatDonacion = '$' + Number(precioTotalDonacion).toFixed(2);
 
             document.getElementById('precioTotal').innerHTML = precioFormat;
+            document.getElementById('precioTotalDonacion').innerHTML = precioFormatDonacion;
         }
 
 
@@ -632,9 +675,10 @@
             var arrayIdMedicamento = $("input[name='arrayNombre[]']").map(function(){return $(this).attr("data-idmedicamento");}).get();
             var arrayCantidad = $("input[name='arrayCantidad[]']").map(function(){return $(this).val();}).get();
             var arrayPrecio = $("input[name='arrayPrecio[]']").map(function(){return $(this).attr("data-precio");}).get();
+            var arrayPrecioDonacion = $("input[name='arrayPrecioDonacion[]']").map(function(){return $(this).attr("data-preciodonacion");}).get();
+
             var arrayLote = $("input[name='arrayLote[]']").map(function(){return $(this).val();}).get();
             var arrayFecha = $("input[name='arrayFecha[]']").map(function(){return $(this).attr("data-fecha");}).get();
-
 
             var reglaNumeroEntero = /^[0-9]\d*$/;
             var reglaNumeroDiesDecimal = /^([0-9]+\.?[0-9]{0,10})$/;
@@ -649,9 +693,10 @@
                 let idMedicamento = arrayIdMedicamento[a];
                 let cantidadProducto = arrayCantidad[a];
                 let precioProducto = arrayPrecio[a];
+                let precioProductoDonacion = arrayPrecioDonacion[a];
+
                 let loteProducto = arrayLote[a];
                 let fechaProducto = arrayFecha[a];
-
 
                 // identifica si el 0 es tipo number o texto
                 if(idMedicamento == 0){
@@ -688,7 +733,7 @@
 
 
 
-                // **** VALIDAR CANTIDAD DE PRODUCTO
+                // **** VALIDAR PRECIO DE PRODUCTO
 
                 if (precioProducto === '') {
                     colorRojoTabla(a);
@@ -713,6 +758,38 @@
                     toastr.error('Fila #' + (a + 1) + ' Precio máximo 9 millones. Por favor borrar la Fila y buscar de nuevo el Producto');
                     return;
                 }
+
+
+
+                // **** VALIDAR PRECIO DE DONACION
+
+                if (precioProductoDonacion === '') {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio de donación es requerida. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (!precioProductoDonacion.match(reglaNumeroDiesDecimal)) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio donación debe ser decimal (10 decimales) y no negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (precioProductoDonacion <= 0) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio donación no debe ser negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+                if (precioProductoDonacion > 9000000) {
+                    colorRojoTabla(a);
+                    toastr.error('Fila #' + (a + 1) + ' Precio máximo 9 millones. Por favor borrar la Fila y buscar de nuevo el Producto');
+                    return;
+                }
+
+
+
+
 
 
                 if(loteProducto === ''){
@@ -741,11 +818,12 @@
                 let infoIdMedicamento = arrayIdMedicamento[i];
                 let infoCantidad = arrayCantidad[i];
                 let infoPrecio = arrayPrecio[i];
+                let infoPrecioDonacion = arrayPrecioDonacion[i];
                 let infoLote = arrayLote[i];
                 let infoFecha = arrayFecha[i];
 
                 // ESTOS NOMBRES SE UTILIZAN EN CONTROLADOR
-                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoPrecio, infoLote, infoFecha });
+                contenedorArray.push({ infoIdMedicamento, infoCantidad, infoPrecio, infoLote, infoFecha, infoPrecioDonacion, });
             }
 
 
@@ -784,7 +862,11 @@
             document.getElementById('lote').value = '';
             document.getElementById('fecha-vencimiento').value = '';
             document.getElementById('precio-producto').value = '';
+            document.getElementById('precio-donacion').value = '';
+
             document.getElementById('precioTotal').innerHTML = "$0.00";
+            document.getElementById('precioTotalDonacion').innerHTML = "$0.00";
+
             document.getElementById('numero-factura').value = '';
 
 
