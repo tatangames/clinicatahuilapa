@@ -42,7 +42,7 @@
                                     <input type="date" autocomplete="off" class="form-control" id="fecha-hasta">
                                 </div>
 
-                                <div class="form-group col-md-1" style="margin-top: 30px">
+                                <div class="form-group" style="margin-top: 30px">
                                     <button type="button" class="btn btn-success form-control" onclick="verificar()">Generar</button>
                                 </div>
 
@@ -68,7 +68,7 @@
                                     <input type="date" autocomplete="off" class="form-control" id="fecha2-hasta">
                                 </div>
 
-                                <div class="form-group col-md-1" style="margin-top: 30px">
+                                <div class="form-group " style="margin-top: 30px">
                                     <button type="button" class="btn btn-success form-control" onclick="verificar2()">Generar</button>
                                 </div>
 
