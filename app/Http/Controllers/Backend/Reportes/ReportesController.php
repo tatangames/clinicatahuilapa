@@ -162,12 +162,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logonuevo.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Reporte de Entradas<br>
             Fecha:  $desdeFormat - $hastaFormat</p>
             </div>";
@@ -354,12 +353,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logonuevo.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Reporte de Salida Manual<br>
             Fecha:  $desdeFormat - $hastaFormat</p>
             </div>";
@@ -631,12 +629,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             $tituloReporte<br>
             Fecha:  $desdeFormat - $hastaFormat</p>
             </div>";
@@ -895,12 +892,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             $tituloReporte<br>
             Fecha:  $desdeFormat - $hastaFormat</p>
             </div>";
@@ -1032,12 +1028,11 @@ class ReportesController extends Controller
         $mpdf->showImageErrors = false;
         $mpdf->SetTitle('Catálogo');
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Catálogo<br>
             </div>";
 
@@ -1165,12 +1160,12 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
         $mpdf->SetTitle('Existencias');
-        $logoalcaldia = 'images/logonuevo.png';
+
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Existencias<br>
             </div>";
 
@@ -1302,12 +1297,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
         $mpdf->SetTitle('Existencias');
-        $logoalcaldia = 'images/logonuevo.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Existencias<br>
             </div>";
 
@@ -1395,12 +1389,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
         $mpdf->SetTitle('Receta');
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Unidad de Salud Cristobal Peraza <br>
-            Tahuilapa
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             </div>";
 
 
@@ -1691,13 +1684,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
-
-
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza Tahuilapa, Metapan<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
                 REPORTE DE EXISTENCIAS POR FECHAS <br><br>
              <strong>INTERVALO DESDE</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</p>
             </div>";
@@ -2154,13 +2145,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logonuevo.png';
-
-
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza Tahuilapa, Metapan<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
                 REPORTE DE EXISTENCIAS POR FECHAS <br><br>
              <strong>INTERVALO DESDE</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</p>
             </div>";
@@ -2362,12 +2351,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Hoja de Datos Generales de Paciente <br><br>
             Expediente:  $infoPaciente->numero_expediente</p>
             </div>";
@@ -2492,12 +2480,11 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logo2.png';
+        $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
             <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza<br>
-            Tahuilapa Metapán<br>
+            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Nota de Paciente <br>
             </div>";
 

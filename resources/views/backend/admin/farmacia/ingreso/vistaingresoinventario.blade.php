@@ -747,7 +747,7 @@
                     return;
                 }
 
-                if (precioProducto <= 0) {
+                if (precioProducto < 0) {
                     colorRojoTabla(a);
                     toastr.error('Fila #' + (a + 1) + ' Precio no debe ser negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
                     return;
@@ -775,7 +775,7 @@
                     return;
                 }
 
-                if (precioProductoDonacion <= 0) {
+                if (precioProductoDonacion < 0) {
                     colorRojoTabla(a);
                     toastr.error('Fila #' + (a + 1) + ' Precio donación no debe ser negativo. Por favor borrar la Fila y buscar de nuevo el Producto');
                     return;

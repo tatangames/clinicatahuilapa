@@ -8,7 +8,7 @@
 
     <ul class="navbar-nav">
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="#" class="nav-link" style="color: white">Clinica Municipal Cristobal Peraza Tahuilapa, Metapan</a>
+            <a href="#" class="nav-link" style="color: white">Clinica Municipal Cristobal Peraza, Distrito de Metapán</a>
         </li>
     </ul>
 
