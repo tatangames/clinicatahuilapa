@@ -147,7 +147,7 @@ class ReportesController extends Controller
         $totalCovid = sprintf("%.2f", floor($totalCovid * 100) / 100);
         $totalCovid = '$' . number_format((float)$totalCovid, 2, '.', ',');
 
-        $totalPropios = sprintf("%.2f", floor($totalPropios * 100) / 100);
+       // $totalPropios = sprintf("%.2f", floor($totalPropios * 100) / 100);
 
         $totalPropios = '$' . round($totalPropios, 2);
 
