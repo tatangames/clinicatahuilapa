@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Controles;
 
 use App\Http\Controllers\Controller;
+use App\Models\Extras;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 class ControlController extends Controller
@@ -45,8 +46,9 @@ class ControlController extends Controller
             $ruta = 'no.permisos.index';
         }
 
+        $infoRutaWeb = Extras::where('id', 1)->first();
 
-        return view('backend.index', compact( 'ruta', 'user'));
+        return view('backend.index', compact( 'ruta', 'user', 'infoRutaWeb'));
     }
 
     public function indexSinPermiso(){

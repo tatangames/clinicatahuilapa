@@ -135,9 +135,15 @@
         formData.append('usuario', usuario);
         formData.append('password', password);
 
-        //clinica.com
+        let tipoUrl = {{ $info->tipo_url }};
 
-        axios.post('/clinica.com/login', formData, {
+        var urlWeb = "/login"
+
+        if(tipoUrl === 1){
+            urlWeb = "/clinica.com/login"
+        }
+
+        axios.post(urlWeb, formData, {
         })
             .then((response) => {
                 closeLoading();

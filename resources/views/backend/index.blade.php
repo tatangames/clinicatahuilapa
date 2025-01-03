@@ -15,6 +15,13 @@
     <!-- Mensajes Toast -->
     <link href="{{ asset('css/toastr.min.css') }}" type="text/css" rel="stylesheet" />
     @yield('content-admin-css')
+
+
+    @if($infoRutaWeb->tipo_url == 1)
+        <script type="text/javascript"> var url = "/clinica.com/admin"; </script>
+    @else
+        <script type="text/javascript"> var url = "/admin"; </script>
+    @endif
 </head>
 
 

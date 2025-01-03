@@ -1120,8 +1120,8 @@
                 return;
             }
 
-            if (precioDonacion <= 0) {
-                toastr.error('Precio Donación no puede ser cero o negativo');
+            if (precioDonacion < 0) {
+                toastr.error('Precio Donación no puede ser negativo');
                 return;
             }
 

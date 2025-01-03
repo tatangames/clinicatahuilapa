@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Login;
 
 use App\Http\Controllers\Controller;
+use App\Models\Extras;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,10 @@ class LoginController extends Controller
     }
 
     public function index(){
-        return view('frontend.login.vistalogin');
+
+        $info = Extras::where('id', 1)->first();
+
+        return view('frontend.login.vistalogin', compact('info'));
     }
 
     public function login(Request $request){

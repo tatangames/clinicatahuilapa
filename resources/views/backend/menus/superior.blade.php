@@ -17,6 +17,11 @@
 
     <!--  /clinica.com/admin -->
 
-    <script type="text/javascript"> var url = "/clinica.com/admin"; </script>
+
+
+
+
+
+
 </head>
 <body class="hold-transition sidebar-mini">
