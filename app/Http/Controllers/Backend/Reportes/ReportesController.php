@@ -1641,6 +1641,10 @@ class ReportesController extends Controller
 
 
         $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
+
+
+
+        $totalColumnaExistencia = round($totalColumnaExistencia, 2);
         $totalColumnaExistencia = '$' . number_format((float)$totalColumnaExistencia, 2, '.', ',');
 
 
@@ -1788,13 +1792,13 @@ class ReportesController extends Controller
             <tr>";
 
 
+        $tabla .= "<tr>
+                        <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL FONDOS PROPIOS: </td>
+                        <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
+                        <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
+                        <td style='font-weight: bold'>$totalDonacionColumna</td>
 
-
-            $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL FONDOS PROPIOS: </td>
-                            <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
-                            <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
-                        <tr>";
+                    <tr>";
 
 
         $tabla .= "<tr>
@@ -1877,6 +1881,11 @@ class ReportesController extends Controller
         // Columna: Total Descargado
         $columnaTotalDescargado = 0;
 
+
+
+        // variable para Total Columna Donacion
+
+
         foreach ($arrayMedicamentos as $dato){
 
             $arrayDetalle = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)->get();
@@ -1905,6 +1914,7 @@ class ReportesController extends Controller
 
                 $multiDescargado = $fila->precio * $cantiEntregada;
                 $multiDescargadoDonacion = $fila->precio_donacion * $cantiEntregada;
+
 
                 // Columna: Total Descargado
                 $columnaTotalDescargado += $multiDescargado;
@@ -2044,6 +2054,11 @@ class ReportesController extends Controller
 
         // Columna: Total existencias
         // Columna: Total Desca. Fechas
+
+
+
+
+
         $columnaTotalDescaFecha = '$' . number_format((float)$columnaTotalDescaFecha, 2, '.', ',');
         // Columna: Total Descargado
         $columnaTotalDescargado = '$' . number_format((float)$columnaTotalDescargado, 2, '.', ',');
@@ -2262,11 +2277,36 @@ class ReportesController extends Controller
             }
         }
 
+
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 12px'>#</td>
+                <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
+                <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
+                <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
+                <td style='font-weight: bold; font-size: 12px'>LINEA</td>
+                <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
+                <td style='font-weight: bold; font-size: 12px'>LOTE</td>
+                <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
+                <td style='font-weight: bold; font-size: 12px'>COSTO</td>
+                <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
+                <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
+                <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
+                <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
+                <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
+
+
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
+            <tr>";
+
         $tabla .= "<tr>
                             <td colspan='13' style='text-align: right; font-weight: bold'></td>
                             <td style='font-weight: bold'>$columnaTotalDescargado</td>
                             <td style='font-weight: bold'>$columnaTotalDescaFecha</td>
                             <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
+                             <td style='font-weight: bold'></td>
                         <tr>";
 
 
