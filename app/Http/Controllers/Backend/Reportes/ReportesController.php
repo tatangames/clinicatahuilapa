@@ -1515,6 +1515,8 @@ class ReportesController extends Controller
         $totalMaterialCovidExistencia = 0;
         $totalMaterialFundelExistencia = 0;
 
+        // Total que va hasta el final de la columna
+        $totalDonacionColumna = 0;
 
         // obtener ID de entradas de esa fecha
         $arrayEntradas = EntradaMedicamento::all();
@@ -1534,8 +1536,6 @@ class ReportesController extends Controller
         foreach ($arrayMedicamentos as $dato){
 
             $arrayDetalle = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)->get();
-
-
             $infoLinea = Linea::where('id', $dato->linea_id)->first();
 
             foreach ($arrayDetalle as $fila){
@@ -1551,17 +1551,19 @@ class ReportesController extends Controller
                 $precioFormat = '$' . number_format((float)$fila->precio, 2, '.', ',');
 
                 if($fila->precio_donacion != null){
+
                     $precioFormatDonacion = '$' . number_format((float)$fila->precio_donacion, 2, '.', ',');
                 }else{
                     $precioFormatDonacion = '$0.00';
                 }
-
 
                 $cantiEntregada = $fila->cantidad_fija - $fila->cantidad;
                 $multiDescargado = $fila->precio * $cantiEntregada;
 
                 if($fila->precio_donacion != null){
                     $multiDescargadoDonacion = $fila->precio_donacion * $cantiEntregada;
+
+                    $totalDonacionColumna = $totalDonacionColumna + $multiDescargadoDonacion;
                 }else{
                     $multiDescargadoDonacion = 0;
                 }
@@ -1669,6 +1671,13 @@ class ReportesController extends Controller
 
 
 
+        $totalDonacionColumna = round($totalDonacionColumna, 2);
+        $totalDonacionColumna = '$' . number_format((float)$totalDonacionColumna, 2, '.', ',');
+
+
+
+
+
         $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
         $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
 
@@ -1759,6 +1768,25 @@ class ReportesController extends Controller
                 }
 
 
+        $tabla .= "<tr>
+                <td style='font-weight: bold; font-size: 12px'>#</td>
+                <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
+                <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
+                <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
+                <td style='font-weight: bold; font-size: 12px'>LINEA</td>
+                <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
+                <td style='font-weight: bold; font-size: 12px'>LOTE</td>
+                <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
+                <td style='font-weight: bold; font-size: 12px'>COSTO</td>
+                <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
+                <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
+                <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
+                <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
+                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONA.</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
+            <tr>";
+
 
 
 
@@ -1787,7 +1815,7 @@ class ReportesController extends Controller
                             <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
                         <tr>";
 
-                $tabla .= "</tbody></table>";
+        $tabla .= "</tbody></table>";
 
 
         $mpdf->setMargins(5, 5, 5);

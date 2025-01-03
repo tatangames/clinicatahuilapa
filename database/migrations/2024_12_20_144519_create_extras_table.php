@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 class CreateExtrasTable extends Migration
 {
     /**
-     * Run the migrations.
+     *
      *
      * @return void
      */
@@ -15,6 +15,8 @@ class CreateExtrasTable extends Migration
     {
         Schema::create('extras', function (Blueprint $table) {
             $table->id();
+
+            // CUANDO ES 1: SERA PARA EL SERVIDOR
             $table->boolean('tipo_url');
         });
     }
