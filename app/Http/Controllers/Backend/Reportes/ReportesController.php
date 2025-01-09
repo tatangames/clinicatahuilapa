@@ -1515,6 +1515,10 @@ class ReportesController extends Controller
         $totalMaterialCovidExistencia = 0;
         $totalMaterialFundelExistencia = 0;
 
+
+        $columnaTotalDescargadoDonac = 0;
+
+
         // Total que va hasta el final de la columna
         $totalDonacionColumna = 0;
 
@@ -1568,6 +1572,16 @@ class ReportesController extends Controller
                     $multiDescargadoDonacion = 0;
                 }
 
+
+
+
+                $columnaTotalDescargadoDonac += $multiDescargadoDonacion;
+
+
+
+
+
+
                 $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
                 $multiDescargadoFormatDonacion = '$' . number_format((float)$multiDescargadoDonacion, 2, '.', ',');
 
@@ -1588,7 +1602,7 @@ class ReportesController extends Controller
 
                 }else{
                     // FONDOS PROPIOS
-                    $totalFondoPropioDescargado += $multiDescargado;
+                    $totalFondoPropioDescargado += $multiDescargado; // precio x cantidad entregada
                     $totalFondoPropioExistencia += $multiExist;
                 }
 
@@ -1637,7 +1651,7 @@ class ReportesController extends Controller
 
         $totalCoEx = $totalColumnaExistenciaEntero . "." . $totalColumnaExistenciaDosDecimales;
 
-        $totalColumnaExistenciaFinal = number_format($totalCoEx, 2, '.', ',');
+        $totalColumnaExistenciaFinal = '$' . number_format($totalCoEx, 2, '.', ',');
 
 
         $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
@@ -1648,7 +1662,7 @@ class ReportesController extends Controller
         $totalColumnaExistencia = '$' . number_format((float)$totalColumnaExistencia, 2, '.', ',');
 
 
-
+        // precio x cantidad entregada
         $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
         //$totalFondoPropioExistencia = '$' . number_format((float)$totalFondoPropioExistencia, 2, '.', ',');
 
@@ -1682,11 +1696,11 @@ class ReportesController extends Controller
 
 
 
-        $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
-        $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
+        //$totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
+        //$totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
 
-        $totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
-        $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
+        //$totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
+        //$totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
 
 
         //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER', 'orientation' => 'L']);
@@ -1787,37 +1801,52 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
                 <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
-                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONA.</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONA.</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
             <tr>";
 
 
-        $tabla .= "<tr>
-                        <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL FONDOS PROPIOS: </td>
-                        <td style='font-weight: bold'>$totalFondoPropioDescargado</td>
-                        <td style='font-weight: bold'>$totalFondoPropioExistenciaFinal</td>
-                        <td style='font-weight: bold'>$totalDonacionColumna</td>
+        $columnaTotalDescargadoDonac = round($columnaTotalDescargadoDonac, 2);
+        $columnaTotalDescargadoDonac = '$' . number_format((float)$columnaTotalDescargadoDonac, 2, '.', ',');
 
-                    <tr>";
+
 
 
         $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES COVID: </td>
-                            <td style='font-weight: bold'>$totalMaterialCovidDescargado</td>
-                            <td style='font-weight: bold'>$totalMaterialCovidExistencia</td>
-                        <tr>";
+                    <td colspan='13' style='text-align: right; font-weight: bold'></td>
+                    <td style='font-weight: bold'>$totalColumnaDescargado</td>
+                    <td style='font-weight: bold'>$columnaTotalDescargadoDonac</td>
+                     <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
+                <tr>";
+
+
+        $tabla .= "</tbody></table><br>";
+
+
+
+
+        $tabla .= "<table id='tablaFor'>
+                    <tbody>";
+
+
 
         $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL MATERIALES FUNDEL: </td>
-                            <td style='font-weight: bold'>$totalMaterialFundelDescargado</td>
-                            <td style='font-weight: bold'>$totalMaterialFundelExistencia</td>
-                    <tr>";
+                <td style='font-weight: bold; font-size: 11px'>Total Fondos Propios</td>
+                <td style='font-weight: bold; font-size: 11px'>Total Existencia</td>
+            <tr>";
 
         $tabla .= "<tr>
-                            <td colspan='12' style='text-align: right; font-weight: bold'>TOTAL: </td>
-                            <td style='font-weight: bold'>$totalColumnaDescargado</td>
-                            <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
-                        <tr>";
+                <td style='font-weight: bold; font-size: 11px'>$totalFondoPropioDescargado</td>
+                <td style='font-weight: bold; font-size: 11px'>$$totalColumnaExistenciaFinal</td>
+            <tr>";
+
+
+
+        // $totalMaterialCovidDescargado
+        // $totalMaterialCovidExistencia
+        // $totalMaterialFundelDescargado
+        // $totalMaterialFundelExistencia
+
 
         $tabla .= "</tbody></table>";
 
@@ -1832,6 +1861,10 @@ class ReportesController extends Controller
 
         $mpdf->Output();
     }
+
+
+
+
 
 
     public function generarReporteFinalv2($desde, $hasta){
@@ -1882,7 +1915,7 @@ class ReportesController extends Controller
         $columnaTotalDescargado = 0;
 
 
-
+        $columnaTotalDescargadoDonac = 0;
         // variable para Total Columna Donacion
 
 
@@ -1915,6 +1948,7 @@ class ReportesController extends Controller
                 $multiDescargado = $fila->precio * $cantiEntregada;
                 $multiDescargadoDonacion = $fila->precio_donacion * $cantiEntregada;
 
+                $columnaTotalDescargadoDonac += $multiDescargadoDonacion;
 
                 // Columna: Total Descargado
                 $columnaTotalDescargado += $multiDescargado;
@@ -1991,7 +2025,6 @@ class ReportesController extends Controller
                     'costo' => $precioFormat,
                     'costo_donacion' => $precioFormatDonacion,
 
-
                     'cantidad_inicial' => $fila->cantidad_fija,
                     'entregado' => $cantiEntregada,
                     'entregadototal' => $entregadoTotal,
@@ -2027,9 +2060,11 @@ class ReportesController extends Controller
 
         $totalCoEx = $totalColumnaExistenciaEntero . "." . $totalColumnaExistenciaDosDecimales;
         $totalColumnaExistenciaFinal = '$' . number_format($totalCoEx, 2, '.', ',');
+
+
         $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
-        $totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
-        $totalFondoPropioExistenciaEntero = intval($totalFondoPropioExistencia);
+        //$totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
+        //$totalFondoPropioExistenciaEntero = intval($totalFondoPropioExistencia);
 
         $numeroCadena2 = (string) $totalFondoPropioExistencia;
         $posicionPunto2 = strpos($numeroCadena2, '.');
@@ -2042,21 +2077,22 @@ class ReportesController extends Controller
             $totalColumnaPropiosDecimales = '00';
         }
 
-        $totalCoExFondoPro = $totalFondoPropioExistenciaEntero . "." . $totalColumnaPropiosDecimales;
-        $totalFondoPropioExistenciaFinal = '$' . number_format($totalCoExFondoPro, 2, '.', ',');
+        //$totalCoExFondoPro = $totalFondoPropioExistenciaEntero . "." . $totalColumnaPropiosDecimales;
+        //$totalFondoPropioExistenciaFinal = '$' . number_format($totalCoExFondoPro, 2, '.', ',');
 
-        $totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
-        $totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
+        //$totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
+        //$totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
 
-        $totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
-        $totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
+        //$totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
+        //$totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
 
 
         // Columna: Total existencias
         // Columna: Total Desca. Fechas
 
 
-
+        $columnaTotalDescargadoDonac = round($columnaTotalDescargadoDonac, 2);
+        $columnaTotalDescargadoDonac = '$' . number_format((float)$columnaTotalDescargadoDonac, 2, '.', ',');
 
 
         $columnaTotalDescaFecha = '$' . number_format((float)$columnaTotalDescaFecha, 2, '.', ',');
@@ -2237,19 +2273,13 @@ class ReportesController extends Controller
                 $detaFechaVen = $fila['fecha_vencimiento'];
                 $detaCosto = $fila['costo'];
                 $detaCostoDonacion = $fila['costo_donacion'];
-
-
                 $detaCantiIni = $fila['cantidad_inicial'];
                 $detaEntregado = $fila['entregado'];
-
                 $detaEntregadoTotal = $fila['entregadototal'];
-
                 $detaExistencia = $fila['existencia'];
                 $detaTotalDesc = $fila['total_descargado'];
                 $detaTotalDescDonacion = $fila['total_descargado_donacion'];
-
                 $totalDescaFecha = $fila['totaldescafecha'];
-
                 $detaTotalExis = $fila['total_existencia'];
 
                 $tabla .= "<tr>
@@ -2263,7 +2293,6 @@ class ReportesController extends Controller
                             <td>$detaFechaVen</td>
                             <td>$detaCosto</td>
                             <td>$detaCostoDonacion</td>
-
                             <td>$detaCantiIni</td>
                             <td>$detaEntregado</td>
                             <td>$detaEntregadoTotal</td>
@@ -2295,19 +2324,17 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
-
-
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
             <tr>";
 
         $tabla .= "<tr>
-                            <td colspan='13' style='text-align: right; font-weight: bold'></td>
-                            <td style='font-weight: bold'>$columnaTotalDescargado</td>
-                            <td style='font-weight: bold'>$columnaTotalDescaFecha</td>
-                            <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
-                             <td style='font-weight: bold'></td>
-                        <tr>";
+                    <td colspan='14' style='text-align: right; font-weight: bold'></td>
+                    <td style='font-weight: bold'>$columnaTotalDescargado</td>
+                    <td style='font-weight: bold'>$columnaTotalDescargadoDonac</td>
+                    <td style='font-weight: bold'>$columnaTotalDescaFecha </td>
+                     <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
+                <tr>";
 
 
         $tabla .= "</tbody></table>";
