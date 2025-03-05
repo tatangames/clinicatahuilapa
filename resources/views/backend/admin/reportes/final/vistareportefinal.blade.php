@@ -78,6 +78,12 @@
                     </section>
 
 
+                    <p>EXPLICACIÓN CADA COLUMNA</p>
+                    <div class="form-group col-md-1" style="margin-top: 30px">
+                        <button type="button" class="btn btn-success form-control" onclick="explicacionColumna()">VER</button>
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -159,6 +165,34 @@
             }
 
             window.open("{{ URL::to('admin/pdf/reporte/finalv2') }}/" + fechaDesde + "/" + fechaHasta);
+        }
+
+
+        function explicacionColumna(){
+
+            let mensaje = "COSTO: precio del medicamento<br>" +
+                "COSTO DONA: precio de donación del medicamento<br>" +
+                "CANTIDAD INICIAL: cuando se ingresó la cantidad la primera vez<br>" +
+                "ENTREGADO: cantidad total que se ha entregado de este medicamento<br>" +
+                "ENTREGADO TOTAL: cantidad que se ha entregado en el rango de fechas del reporte<br>" +
+                "EXISTENCIA: cantidad actual que tendría en bodega del medicamento<br>" +
+                "TOTAL DESCARGADO: Costo * Entregado (no toma rango de fechas) el Costo toma 10 decimales<br>" +
+                "TOTAL DESCARGADO DONAC: Costo Dona * Cantidad Entregada (cantidad fija - cantidad) No toma rango fecha<br>" +
+                "TOTAL DESCA. FECHAS: Costo * Entregado Total (tomado rango de fecha)<br>" +
+                "TOTAL EXISTENCIA: Costo * Cantidad Actual disponible en bodega<br>" +
+                "TOTAL DONA: costo donación * cantidad fija";
+
+            Swal.fire({
+                title: 'Info',
+                html: mensaje,
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                allowOutsideClick: false,
+                confirmButtonText: 'Aceptar'
+            });
+
         }
 
     </script>

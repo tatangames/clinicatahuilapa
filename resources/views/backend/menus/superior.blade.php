@@ -18,7 +18,7 @@
     <!--  /clinica.com/admin -->
 
 
-    <script type="text/javascript"> var url = "/clinica.com/admin"; </script>
+    <script type="text/javascript"> var url = "/admin"; </script>
 
 
 

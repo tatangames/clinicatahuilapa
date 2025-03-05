@@ -214,14 +214,12 @@
                                 </a>
                             </li>
 
-
                             <li class="nav-item">
                                 <a href="{{ route('admin.farmacia.ingreso.articulo') }}" target="frameprincipal" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Ingresar artículo</p>
                                 </a>
                             </li>
-
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.salida.farmacia.index') }}" target="frameprincipal" class="nav-link">
@@ -230,14 +228,12 @@
                                 </a>
                             </li>
 
-
                             <li class="nav-item">
                                 <a href="{{ route('admin.salida.recetas.farmacia.index') }}" target="frameprincipal" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Orden de Salida</p>
                                 </a>
                             </li>
-
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.existencias.farmacia.index') }}" target="frameprincipal" class="nav-link">
@@ -246,7 +242,6 @@
                                 </a>
                             </li>
 
-
                             <li class="nav-item">
                                 <a href="{{ route('admin.catalogo.farmacia.index') }}" target="frameprincipal" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -254,14 +249,12 @@
                                 </a>
                             </li>
 
-
                             <li class="nav-item">
                                 <a href="{{ route('admin.entradas.listado.ver.index') }}" target="frameprincipal" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listado de Entradas</p>
                                 </a>
                             </li>
-
 
                         </ul>
                     </li>

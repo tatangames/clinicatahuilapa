@@ -23,15 +23,13 @@
         <div class="container-fluid">
             <div class="card card-success">
                 <div class="card-header">
-                    <h3 class="card-title">REPORTE DE ENTRADAS</h3>
+                    <h3 class="card-title">REPORTE DE EXISTENCIAS</h3>
                 </div>
                 <div class="card-body">
 
                     <section class="content" style="margin-left: 30px">
                         <div class="container-fluid">
-
                             <div class="row">
-
                                 <div class="form-group col-md-3" >
                                     <label style="color: #686868">Formato: </label>
                                     <select class="form-control" id="select-formato">
@@ -39,18 +37,12 @@
                                         <option value="2">Juntos</option>
                                     </select>
                                 </div>
-
                                 <div class="form-group col-md-1" style="margin-top: 30px">
                                     <button type="button" class="btn btn-success form-control" onclick="verificar()">Generar</button>
                                 </div>
-
                             </div>
-
                         </div>
                     </section>
-
-
-
                 </div>
             </div>
         </div>

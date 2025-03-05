@@ -20,6 +20,7 @@ use App\Models\Profesion;
 use App\Models\Proveedores;
 use App\Models\Recetas;
 use App\Models\RecetasDetalle;
+use App\Models\SalidaReceta;
 use App\Models\SalidaRecetaDetalle;
 use App\Models\SubLinea;
 use App\Models\Tipo_Documento;
@@ -47,7 +48,8 @@ class ReportesController extends Controller
     }
 
 
-    public function reporteEntradaArticulos($idfuente, $desde, $hasta){
+    public function reporteEntradaArticulos($idfuente, $desde, $hasta)
+    {
 
         $start = Carbon::parse($desde)->startOfDay();
         $end = Carbon::parse($hasta)->endOfDay();
@@ -57,18 +59,18 @@ class ReportesController extends Controller
 
         $nombreFuente = "Todos";
 
-        if($infoFuente = FuenteFinanciamiento::where('id', $idfuente)->first()){
+        if ($infoFuente = FuenteFinanciamiento::where('id', $idfuente)->first()) {
             $nombreFuente = $infoFuente->nombre;
         }
 
         $resultsBloque = array();
         $index = 0;
 
-        if($idfuente == '0'){
+        if ($idfuente == '0') {
             $arrayEntradas = EntradaMedicamento::whereBetween('fecha', [$start, $end])
                 ->orderBy('fecha', 'ASC')
                 ->get();
-        }else{
+        } else {
             $arrayEntradas = EntradaMedicamento::whereBetween('fecha', [$start, $end])
                 ->where('fuentefina_id', $idfuente)
                 ->orderBy('fecha', 'ASC')
@@ -79,9 +81,9 @@ class ReportesController extends Controller
         $totalFundel = 0;
         $totalCovid = 0;
         $totalPropios = 0;
+        $totalGeneralDonacion = 0; // sumatoria de todas las Multi de costo donacion
 
-
-        foreach ($arrayEntradas as $infoFila){
+        foreach ($arrayEntradas as $infoFila) {
 
             array_push($resultsBloque, $infoFila);
 
@@ -99,42 +101,65 @@ class ReportesController extends Controller
             $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
                 ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
                 ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio',
-                        'deta.lote', 'deta.fecha_vencimiento', 'fa.id')
+                    'deta.lote', 'deta.fecha_vencimiento', 'fa.id', 'deta.precio_donacion')
                 ->where('deta.entrada_medicamento_id', $infoFila->id)
                 ->orderBy('fa.nombre', 'ASC')
                 ->get();
 
-                $totalXColumna = 0;
+            $totalXColumna = 0;
+            $totalXColumnaCostoDonacion = 0;
+            $totalXColumnaCostoMultiDonacion = 0;
 
-                foreach ($arrayDetalle as $dato){
+            foreach ($arrayDetalle as $dato) {
+                $multi = $dato->cantidad_fija * $dato->precio;
+                $totalXColumna += $multi;
+
+                $multiFormateo = round($multi, 4);
+                $dato->multiFormat = '$' . number_format($multiFormateo, 4, '.', ',');
+                $dato->fechaVencFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
+
+                $dato->precioFormat = '$' . number_format((float)$dato->precio, 4, '.', ',');
+
+                // DONACION
+                $precioDonaFormateo = round($dato->precio_donacion, 4);
+                $dato->precioDonacionFormat = sprintf("$%.4f", $precioDonaFormateo);
+                $totalXColumnaCostoDonacion += $dato->precio_donacion;
+
+                $multiDonaFormateo = round(($dato->cantidad_fija * $dato->precio_donacion), 4);
+                $dato->multiDonaFormateo = sprintf("$%.4f", $multiDonaFormateo);
+                $totalXColumnaCostoMultiDonacion += $multiDonaFormateo;
+                $totalGeneralDonacion += $multiDonaFormateo;
+            }
 
 
-                    $multi = $dato->cantidad_fija * $dato->precio;
-                    $totalXColumna = $totalXColumna + $multi;
+            // SUMATORIAS PARA FUENTE DE FINANCIAMIENTO
 
-                    $dato->multiFormat = '$' . number_format((float)$multi, 4, '.', ',');
-                    $dato->fechaVencFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
-                    $dato->precioFormat = '$' . number_format((float)$dato->precio, 4, '.', ',');
-                }
-
-
-             // SUMATORIAS PARA FUENTE DE FINANCIAMIENTO
-
-            if($infoFila->fuentefina_id == 1){
+            if ($infoFila->fuentefina_id == 1) {
                 $totalFundel = $totalFundel + $totalXColumna;
             }
 
-            if($infoFila->fuentefina_id == 2){
+            if ($infoFila->fuentefina_id == 2) {
                 $totalCovid = $totalCovid + $totalXColumna;
             }
 
-            if($infoFila->fuentefina_id == 3){
+            if ($infoFila->fuentefina_id == 3) {
                 $totalPropios = $totalPropios + $totalXColumna;
             }
 
             $totalGeneral = $totalGeneral + $totalXColumna;
 
-            $infoFila->totalxfilas = '$' . number_format((float)$totalXColumna, 2, '.', ',');
+            // SUMATORIA DE COLUMNA MONTO
+            $totalXColumnaFormateo = round($totalXColumna, 2);
+            $infoFila->totalxfilas = sprintf("$%.2f", $totalXColumnaFormateo);
+
+            // SUMATORIA DE COLUMNA: COSTO DONACION
+            $totalXColumnaCostoDonaFormateo = round($totalXColumnaCostoDonacion, 2);
+            $infoFila->totalXColumnaCostoDonacion = sprintf("$%.2f", $totalXColumnaCostoDonaFormateo);
+
+            // SUMATORIA DE COLUMNA: TOTAL DONACION
+
+            $totalXColumnaMultiCostoDona = round($totalXColumnaCostoMultiDonacion, 2);
+            $infoFila->totalXColumnaMultiTotalDonacion = sprintf("$%.2f", $totalXColumnaMultiCostoDona);
 
             $resultsBloque[$index]->detallefila = $arrayDetalle;
             $index++;
@@ -147,8 +172,6 @@ class ReportesController extends Controller
         $totalCovid = sprintf("%.2f", floor($totalCovid * 100) / 100);
         $totalCovid = '$' . number_format((float)$totalCovid, 2, '.', ',');
 
-       // $totalPropios = sprintf("%.2f", floor($totalPropios * 100) / 100);
-
         $totalPropios = round($totalPropios, 2);
         $totalPropios = '$' . number_format((float)$totalPropios, 2, '.', ',');
 
@@ -158,19 +181,36 @@ class ReportesController extends Controller
 
         //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
         $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
-        $mpdf->SetTitle('Entrada Artículos');
+
+        $mpdf->SetTitle('Entrada Medicamento');
 
         // mostrar errores
         $mpdf->showImageErrors = false;
+        $logoalcaldia = 'images/gobiernologo.jpg';
+        $logosantaana = 'images/logo.png';
 
-        $logoalcaldia = 'images/logodis.png';
-
-        $tabla = "<div class='contenedorp'>
-            <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
-            Reporte de Entradas<br>
-            Fecha:  $desdeFormat - $hastaFormat</p>
-            </div>";
+        $tabla = "
+            <table style='width: 100%; border-collapse: collapse;'>
+                <tr>
+                    <!-- Logo izquierdo -->
+                    <td style='width: 15%; text-align: left;'>
+                        <img src='$logosantaana' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
+                    </td>
+                    <!-- Texto centrado -->
+                    <td style='width: 60%; text-align: center;'>
+                        <h1 style='font-size: 16px; margin: 0; color: #003366;'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE</h1>
+                        <h3 style='font-size: 16px; margin: 0; color: #003366;'>Clinica Municipal Cristobal Peraza</h3>
+                        <h3 style='font-size: 16px; margin: 0; color: #003366;'>Reporte de Entrada de Medicamento</h3>
+                        <h3 style='font-size: 16px; margin: 0; color: #003366;'>Fecha: $desdeFormat - $hastaFormat</h3>
+                    </td>
+                    <!-- Logo derecho -->
+                    <td style='width: 10%; text-align: right;'>
+                        <img src='$logoalcaldia' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
+                    </td>
+                </tr>
+            </table>
+            <hr style='border: none; border-top: 2px solid #003366; margin: 0;'>
+            ";
 
         $tabla .= "<div>
                     <p>Fuente de Financiamiento: $nombreFuente</p>
@@ -178,32 +218,28 @@ class ReportesController extends Controller
 
         foreach ($arrayEntradas as $detaFila) {
 
-            $tabla .= "<table width='100%' id='tablaFor'>
-                    <tbody>";
+            $tabla .= "<table width='100%' id='tablaFor'><tbody>";
 
             $tabla .= "<tr>
-                <td style='font-weight: bold; width: 11%; font-size: 11px'>Fecha Entrada</td>
-                <td style='font-weight: bold; width: 12%; font-size: 11px'>Factura</td>
-                <td style='font-weight: bold; width: 12%; font-size: 11px'># Factura</td>
-                <td style='font-weight: bold; width: 15%; font-size: 11px'>Proveedor</td>
-                <td style='font-weight: bold; width: 15%; font-size: 11px'>Fuente F.</td>
-            <tr>";
+                        <td style='font-weight: bold; width: 11%; font-size: 11px'>Fecha Entrada</td>
+                        <td style='font-weight: bold; width: 12%; font-size: 11px'>Factura</td>
+                        <td style='font-weight: bold; width: 12%; font-size: 11px'># Factura</td>
+                        <td style='font-weight: bold; width: 15%; font-size: 11px'>Proveedor</td>
+                        <td style='font-weight: bold; width: 15%; font-size: 11px'>Fuente F.</td>
+                    <tr>";
 
 
             $tabla .= "<tr style='font-size: 10px'>
-                <td style='font-size: 10px'>$detaFila->fechaFormat</td>
-                <td style='font-size: 10px'>$detaFila->tipofactura</td>
-                <td style='font-size: 10px'>$detaFila->numero_factura</td>
-                <td style='font-size: 10px'>$detaFila->nombreprove</td>
-                <td style='font-size: 10px'>$detaFila->nombrefuente</td>
-            <tr>";
-
+                        <td style='font-size: 10px'>$detaFila->fechaFormat</td>
+                        <td style='font-size: 10px'>$detaFila->tipofactura</td>
+                        <td style='font-size: 10px'>$detaFila->numero_factura</td>
+                        <td style='font-size: 10px'>$detaFila->nombreprove</td>
+                        <td style='font-size: 10px'>$detaFila->nombrefuente</td>
+                    <tr>";
 
             $tabla .= "</tbody></table>";
 
-
-            $tabla .= "<table width='100%' id='tablaFor'>
-                    <tbody>";
+            $tabla .= "<table width='100%' id='tablaFor'><tbody>";
 
             $tabla .= "<tr>
                 <td style='font-weight: bold; width: 11%; font-size: 10px'>Fecha Venc.</td>
@@ -212,8 +248,11 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; width: 13%; font-size: 10px'>Cantidad</td>
                 <td style='font-weight: bold; width: 15%; font-size: 10px'>Precio</td>
                 <td style='font-weight: bold; width: 15%; font-size: 10px'>Monto</td>
+                <td style='font-weight: bold; width: 15%; font-size: 10px'>Costo Dona.</td>
+                <td style='font-weight: bold; width: 15%; font-size: 10px'>Total Dona.</td>
             <tr>";
 
+            // TOTAL DONA: CANTIDAD * PRECIO DONACION
 
             foreach ($detaFila->detallefila as $dato) {
 
@@ -224,12 +263,16 @@ class ReportesController extends Controller
                 <td style='font-size: 10px;' >$dato->cantidad_fija</td>
                 <td style='font-size: 10px;' >$dato->precioFormat</td>
                 <td style='font-size: 10px;' >$dato->multiFormat</td>
+                <td style='font-size: 10px;'>$dato->precioDonacionFormat</td>
+                <td style='font-size: 10px;'>$dato->multiDonaFormateo</td>
             <tr>";
             }
 
             $tabla .= "<tr>
                 <td colspan='5' style='font-size: 10px; font-weight: bold'>Total</td>
                 <td style='font-size: 10px; font-weight: normal'>$detaFila->totalxfilas</td>
+                <td style='font-size: 10px; font-weight: normal'>$detaFila->totalXColumnaCostoDonacion</td>
+                <td style='font-size: 10px; font-weight: normal'>$detaFila->totalXColumnaMultiTotalDonacion</td>
             <tr>";
 
             $tabla .= "</tbody></table>";
@@ -265,6 +308,15 @@ class ReportesController extends Controller
                 </div>";
             }
         }
+
+
+
+        $generalFormateoMultiDon = round($totalGeneralDonacion, 2);
+        $generalFormateoDonacion = "$" . number_format($generalFormateoMultiDon, 2, '.', ',');
+
+        $tabla .= "<div style='margin-top: 0px'>
+                    <p id='textoFinal'>TOTAL DONACION:  $generalFormateoDonacion<br>
+                </div>";
 
 
         $stylesheet = file_get_contents('css/cssregistro.css');
@@ -1086,9 +1138,7 @@ class ReportesController extends Controller
         // VERIFICAR QUE ENTRADAS AUN TIENEN MEDICAMENTO DENTRO DE SU DETALLE AUN
 
 
-        $arrayIdDeta = EntradaMedicamentoDetalle::where('cantidad', '>', 0)
-            ->get();
-
+        $arrayIdDeta = EntradaMedicamentoDetalle::where('cantidad', '>', 0)->get();
 
         $pilaIdEntrada = array();
 
@@ -1100,9 +1150,10 @@ class ReportesController extends Controller
         $index = 0;
 
         $arrayEntradas = EntradaMedicamento::whereIn('id', $pilaIdEntrada)->get();
-        $totalGeneral = 0;
 
+        $totalGeneral = 0;
         $totalColumna = 0;
+        $totalFinalDonacion = 0;
 
         foreach ($arrayEntradas as $infoFila){
 
@@ -1134,7 +1185,7 @@ class ReportesController extends Controller
 
                    $multiFila = $dato->precio * $dato->cantidad_fija;
 
-                   $totalColumna += $multiFila;
+                   //$totalColumna += $multiFila;
 
                    $dato->contador = $contador;
                    $dato->precioXFila = '$' . number_format((float)$multiFila, 2, '.', ',');
@@ -1142,7 +1193,7 @@ class ReportesController extends Controller
                }
             }
 
-            $totalGeneral += $totalColumna;
+            //$totalGeneral += $totalColumna;
 
             $totalColumna = '$' . number_format((float)$totalColumna, 2, '.', ',');
             $infoFila->totalColumna = $totalColumna;
@@ -1259,7 +1310,6 @@ class ReportesController extends Controller
     public function reporteExistenciasFormatoJuntos(){
 
         $arrayIdDeta = EntradaMedicamentoDetalle::where('cantidad', '>', 0)->get();
-
         $pilaIdEntrada = array();
 
         foreach ($arrayIdDeta as $info){
@@ -1269,35 +1319,40 @@ class ReportesController extends Controller
         $arrayEntradasDetalle =  DB::table('entrada_medicamento_detalle AS deta')
             ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
             ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad', 'deta.precio',
-                'deta.lote', 'deta.fecha_vencimiento')
+                'deta.lote', 'deta.fecha_vencimiento', 'deta.precio_donacion')
             ->whereIn('deta.entrada_medicamento_id', $pilaIdEntrada)
             ->where('deta.cantidad', '>', 0)
             ->orderBy('fa.nombre', 'ASC')
             ->get();
 
         $totalGeneral = 0;
+        $totalFinalDonacion = 0;
 
         foreach ($arrayEntradasDetalle as $infoFila){
 
             $infoFila->fechaVencFormat = date("d-m-Y", strtotime($infoFila->fecha_vencimiento));
-
-
             $multiFila = $infoFila->cantidad * $infoFila->precio;
             $totalGeneral = $totalGeneral + $multiFila;
-
             $infoFila->multiFila = '$' . number_format((float)$multiFila, 2, '.', ',');
             $infoFila->precioFormat = '$' . number_format((float)$infoFila->precio, 2, '.', ',');
+
+
+            $multiDona = $infoFila->cantidad * $infoFila->precio_donacion;
+            $totalFinalDonacion += $multiDona;
+
+            $infoFila->totalMontoDonacion = '$' . number_format((float)$multiDona, 2, '.', ',');
+            $infoFila->precio_donacion = '$' . number_format((float)$infoFila->precio_donacion, 2, '.', ',');
         }
 
         $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
-
+        $totalFinalDonacion = '$' . number_format((float)$totalFinalDonacion, 2, '.', ',');
 
         //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
         $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
 
         // mostrar errores
         $mpdf->showImageErrors = false;
-        $mpdf->SetTitle('Existencias');
+        $mpdf->SetTitle('Existencias Juntos');
         $logoalcaldia = 'images/logodis.png';
 
         $tabla = "<div class='contenedorp'>
@@ -1318,7 +1373,12 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; width: 12%; font-size: 11px'>Cantidad</td>
                 <td style='font-weight: bold; width: 15%; font-size: 11px'>Precio</td>
                 <td style='font-weight: bold; width: 15%; font-size: 11px'>Monto</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Dona.</td>
+                <td style='font-weight: bold; width: 15%; font-size: 11px'>Monto Dona.</td>
             <tr>";
+
+
+
 
         foreach ($arrayEntradasDetalle as $detaFila) {
             $tabla .= "<tr>
@@ -1328,6 +1388,9 @@ class ReportesController extends Controller
                 <td>$detaFila->cantidad</td>
                 <td>$detaFila->precioFormat</td>
                 <td>$detaFila->multiFila</td>
+
+                 <td>$detaFila->precio_donacion</td>
+                 <td>$detaFila->totalMontoDonacion</td>
             <tr>";
         }
 
@@ -1337,6 +1400,7 @@ class ReportesController extends Controller
         $tabla .= "<div style='margin-top: 30px'>
             <hr>
             <p id='textoFinal'>Total General:  $totalGeneral<br>
+            <p id='textoFinal'>Total Donación:  $totalFinalDonacion<br>
             </div>";
 
         $stylesheet = file_get_contents('css/cssregistro.css');
@@ -1895,24 +1959,20 @@ class ReportesController extends Controller
             array_push($pilaIdEntradas, $info->id);
         }
 
-
         $arrayMedicamentos = FarmaciaArticulo::orderBy('nombre', 'ASC')->get();
         $contador = 0;
 
         $hayDatos = false;
 
-        // TABLAS
-        // recetas
-        // recetas_detalle
-        // salida_receta
-        // salida_receta_detalle
-
-
-
-        // Columna: Total Desca. Fechas
+        // COLUMNA: TOTAL DESCA FECHAS
         $columnaTotalDescaFecha = 0;
-        // Columna: Total Descargado
+        // COLUMNA: TOTAL DESCARGADO
         $columnaTotalDescargado = 0;
+        // COLUMNA: TOTAL EXISTENCIA
+        $columnaTotalExistenciaDinero = 0;
+        // COLUMNA: TOTAL DONA.
+        $columnaTotalDona = 0;
+
 
 
         $columnaTotalDescargadoDonac = 0;
@@ -1923,14 +1983,11 @@ class ReportesController extends Controller
 
             $arrayDetalle = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)->get();
 
-
             $infoLinea = Linea::where('id', $dato->linea_id)->first();
 
             foreach ($arrayDetalle as $fila){
                 $contador++;
                 $hayDatos = true;
-
-                $entregadoTotal = 0;
 
                 $infoEntradaFi = EntradaMedicamento::where('id', $fila->entrada_medicamento_id)->first();
                 $infoProve = Proveedores::where('id', $infoEntradaFi->proveedor_id)->first();
@@ -1940,46 +1997,24 @@ class ReportesController extends Controller
                 $precioFormat = '$' . number_format((float)$fila->precio, 2, '.', ',');
                 $precioFormatDonacion = '$' . number_format((float)$fila->precio_donacion, 2, '.', ',');
 
+                $existenciaActual = $fila->cantidad_fija - $fila->cantidad;
+                $multiDescargado = $fila->precio * $existenciaActual;
 
-
-
-                $cantiEntregada = $fila->cantidad_fija - $fila->cantidad;
-
-                $multiDescargado = $fila->precio * $cantiEntregada;
-                $multiDescargadoDonacion = $fila->precio_donacion * $cantiEntregada;
-
+                $multiDescargadoDonacion = $fila->precio_donacion * $existenciaActual;
                 $columnaTotalDescargadoDonac += $multiDescargadoDonacion;
 
                 // Columna: Total Descargado
-                $columnaTotalDescargado += $multiDescargado;
+                $columnaTotalDescargado += $fila->precio * $fila->cantidad;
 
                 $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
                 $multiDescargadoFormatDonacion = '$' . number_format((float)$multiDescargadoDonacion, 2, '.', ',');
 
-                $multiExist = $fila->precio * $fila->cantidad;
-                $multiExistFormat = '$' . number_format((float)$multiExist, 2, '.', ',');
+                $multiPrecioXExistenciaActual = $fila->precio * $existenciaActual;
+                $columnaTotalExistenciaDinero += $multiPrecioXExistenciaActual;
+                $multiExistFormat = '$' . number_format((float)$multiPrecioXExistenciaActual, 2, '.', ',');
 
-
-                if($infoFuenteFi->id == 1){
-                    // MATERIALES FUNDEL
-                    $totalMaterialFundelDescargado += $multiDescargado;
-                    $totalMaterialFundelExistencia += $multiExist;
-
-                }else if($infoFuenteFi->id == 2){
-                    // MATERIALES COVID
-                    $totalMaterialCovidDescargado += $multiDescargado;
-                    $totalMaterialCovidExistencia += $multiExist;
-
-                }else{
-                    // FONDOS PROPIOS
-                    $totalFondoPropioDescargado += $multiDescargado;
-                    $totalFondoPropioExistencia += $multiExist;
-                }
-
-
-                // necesito obtener de ese medicamento cuantas salidas hubo,
-
-
+                // SALIDAS HUBO DEL MEDICAMENTE SEGUN FECHAS DEL REPORTE
+                // PARA SACAR: ENTREGADO TOTAL
                 $listaIDR = DB::table('recetas AS r')
                     ->join('salida_receta AS sr', 'sr.recetas_id', '=', 'r.id')
                     ->select('r.estado', 'sr.fecha', 'sr.id')
@@ -1987,9 +2022,7 @@ class ReportesController extends Controller
                     ->whereBetween('sr.fecha', [$start, $end])
                     ->get();
 
-
                 $pilaIdSalidaReceta = array();
-
                 foreach ($listaIDR as $infoR){
                     array_push($pilaIdSalidaReceta, $infoR->id);
                 }
@@ -1999,18 +2032,22 @@ class ReportesController extends Controller
                     ->where('entrada_detalle_id', $fila->id)
                     ->get();
 
+                $entregadoTotalRangos = 0;
+                foreach ($listaSumadaR as $item){
+                    //$infoSalidaRecenta = SalidaReceta::where('id', $item->salidareceta_id)->first();
+                    //$item->fechass = $infoSalidaRecenta->fecha;
 
-                foreach ($listaSumadaR as $datoR){
-                    $entregadoTotal = $entregadoTotal + $datoR->cantidad;
+                    $entregadoTotalRangos += $item->cantidad;
                 }
 
-                $total2Dec = sprintf("%.2f", floor($fila->precio * 100) / 100);
-                $totalDescaFecha = $total2Dec * $entregadoTotal;
-
-                // Columna: Total Desca. Fechas
+                $totalDescaFecha = $fila->precio * $entregadoTotalRangos;
                 $columnaTotalDescaFecha += $totalDescaFecha;
+
                 $totalDescaFecha = '$' . number_format((float)$totalDescaFecha, 2, '.', ',');
 
+                $totalMontoDonacion = $fila->precio_donacion * $fila->cantidad_fija;
+                $columnaTotalDona += $totalMontoDonacion;
+                $totalMontoDonacion = '$' . number_format((float)$totalMontoDonacion, 2, '.', ',');
 
 
                 $dataArray[] = [
@@ -2024,219 +2061,77 @@ class ReportesController extends Controller
                     'fecha_vencimiento' => $fechaVen,
                     'costo' => $precioFormat,
                     'costo_donacion' => $precioFormatDonacion,
-
                     'cantidad_inicial' => $fila->cantidad_fija,
-                    'entregado' => $cantiEntregada,
-                    'entregadototal' => $entregadoTotal,
+                    'entregado' => $existenciaActual,
+                    'entregadototal' => $entregadoTotalRangos,
                     'existencia' => $fila->cantidad,
                     'total_descargado' => $multiDescargadoFormat,
                     'total_descargado_donacion' => $multiDescargadoFormatDonacion,
-
                     'totaldescafecha' => $totalDescaFecha,
                     'total_existencia' => $multiExistFormat,
+                    'montoTotalDonacion' => $totalMontoDonacion,
                 ];
-
             }
         }
-
-
-
-        $totalColumnaDescargado = $totalFondoPropioDescargado + $totalMaterialCovidDescargado + $totalMaterialFundelDescargado;
-        $totalColumnaExistencia = $totalFondoPropioExistencia + $totalMaterialCovidExistencia + $totalMaterialFundelExistencia;
-
-
-        $totalColumnaExistenciaEntero = intval($totalColumnaExistencia);
-
-        $numeroCadena = (string) $totalColumnaExistencia;
-        $posicionPunto = strpos($numeroCadena, '.');
-
-        if ($posicionPunto !== false) {
-            // Extraer los dos primeros caracteres después del punto decimal
-            $totalColumnaExistenciaDosDecimales = substr($numeroCadena, $posicionPunto + 1, 2);
-        } else {
-            // Si no hay punto decimal, establecer los dos decimales como "00"
-            $totalColumnaExistenciaDosDecimales = '00';
-        }
-
-        $totalCoEx = $totalColumnaExistenciaEntero . "." . $totalColumnaExistenciaDosDecimales;
-        $totalColumnaExistenciaFinal = '$' . number_format($totalCoEx, 2, '.', ',');
-
-
-        $totalColumnaDescargado = '$' . number_format((float)$totalColumnaDescargado, 2, '.', ',');
-        //$totalFondoPropioDescargado = '$' . number_format((float)$totalFondoPropioDescargado, 2, '.', ',');
-        //$totalFondoPropioExistenciaEntero = intval($totalFondoPropioExistencia);
-
-        $numeroCadena2 = (string) $totalFondoPropioExistencia;
-        $posicionPunto2 = strpos($numeroCadena2, '.');
-
-        if ($posicionPunto2 !== false) {
-            // Extraer los dos primeros caracteres después del punto decimal
-            $totalColumnaPropiosDecimales = substr($numeroCadena2, $posicionPunto2 + 1, 2);
-        } else {
-            // Si no hay punto decimal, establecer los dos decimales como "00"
-            $totalColumnaPropiosDecimales = '00';
-        }
-
-        //$totalCoExFondoPro = $totalFondoPropioExistenciaEntero . "." . $totalColumnaPropiosDecimales;
-        //$totalFondoPropioExistenciaFinal = '$' . number_format($totalCoExFondoPro, 2, '.', ',');
-
-        //$totalMaterialCovidDescargado = '$' . number_format((float)$totalMaterialCovidDescargado, 2, '.', ',');
-        //$totalMaterialCovidExistencia = '$' . number_format((float)$totalMaterialCovidExistencia, 2, '.', ',');
-
-        //$totalMaterialFundelDescargado = '$' . number_format((float)$totalMaterialFundelDescargado, 2, '.', ',');
-        //$totalMaterialFundelExistencia = '$' . number_format((float)$totalMaterialFundelExistencia, 2, '.', ',');
-
-
-        // Columna: Total existencias
-        // Columna: Total Desca. Fechas
 
 
         $columnaTotalDescargadoDonac = round($columnaTotalDescargadoDonac, 2);
-        $columnaTotalDescargadoDonac = '$' . number_format((float)$columnaTotalDescargadoDonac, 2, '.', ',');
-
+        $columnaTotalDescargadoDonac = '$' . number_format($columnaTotalDescargadoDonac, 2, '.', ',');
 
         $columnaTotalDescaFecha = '$' . number_format((float)$columnaTotalDescaFecha, 2, '.', ',');
-        // Columna: Total Descargado
+
+
+        // COLUMNA: TOTAL DESCARGADO
         $columnaTotalDescargado = '$' . number_format((float)$columnaTotalDescargado, 2, '.', ',');
 
+        // COLUMNA: TOTAL EXISTENCIA
+        $columnaTotalExistenciaDinero = '$' . number_format((float)$columnaTotalExistenciaDinero, 2, '.', ',');
 
-
-        //************ DATOS PARA SABER LOS INGRESOS POR MES (FECHA DESDE - FECHA HASTA), OBTENER EL TOTAL DINERO INGRESADO
-
-
-
-        // Inicializar un array para almacenar los resultados
-        $rangosFechas = [];
-        $rangosFechasReparado = [];
-
-        // Iterar a través de cada mes en el rango
-        $current = $start->copy();
-        while ($current->startOfMonth()->lessThanOrEqualTo($end)) {
-            // Calcular el inicio del mes actual
-            $inicioMes = $current->copy()->startOfMonth()->toDateString();
-            // Si es el primer mes del rango, ajustar la fecha de inicio
-            if ($current->isSameMonth($start)) {
-                $inicioMes = $start->toDateString();
-            }
-
-            // Calcular el fin del mes actual
-            $finMes = $current->copy()->endOfMonth()->toDateString();
-            // Si es el último mes del rango, ajustar la fecha de fin
-            if ($current->isSameMonth($end)) {
-                $finMes = $end->toDateString();
-            }
-
-            // Almacenar las fechas en el array
-            $rangosFechas[] = [
-                'mes' => $current->locale('es')->translatedFormat('F Y'),
-                'inicio' => $inicioMes,
-                'fin' => $finMes
-            ];
-
-            // Avanzar al siguiente mes
-            $current->addMonth();
-        }
-
-
-        usort($rangosFechas, function ($a, $b) {
-            return strtotime($a['inicio']) <=> strtotime($b['inicio']);
-        });
-
-
-
-        // RECORRER FECHAS
-        foreach ($rangosFechas as $datoArray){
-
-            $desdeFecha = date("Y-m-d", strtotime($datoArray['inicio']));
-            $hastaFecha = date("Y-m-d", strtotime($datoArray['fin']));
-
-            $startF = Carbon::parse($desdeFecha)->startOfDay(); // año - mes - dia
-            $endF = Carbon::parse($hastaFecha)->endOfDay();
-
-            $arrayEntradas = EntradaMedicamento::whereBetween('fecha', [$startF, $endF])
-                ->orderBy('fecha', 'ASC')
-                ->get();
-
-            $totalGeneral = 0; // sumatoria de todas las fuentes de financiamiento
-
-            foreach ($arrayEntradas as $infoFila){
-
-                $arrayDetalle = DB::table('entrada_medicamento_detalle AS deta')
-                    ->join('farmacia_articulo AS fa', 'fa.id', '=', 'deta.medicamento_id')
-                    ->select('fa.nombre', 'deta.entrada_medicamento_id', 'deta.cantidad_fija', 'deta.precio',
-                        'deta.lote', 'deta.fecha_vencimiento', 'fa.id')
-                    ->where('deta.entrada_medicamento_id', $infoFila->id)
-                    ->orderBy('fa.nombre', 'ASC')
-                    ->get();
-
-                $totalXColumna = 0;
-
-                foreach ($arrayDetalle as $dato){
-
-                    $multi = $dato->cantidad_fija * $dato->precio;
-                    $totalXColumna = $totalXColumna + $multi;
-
-                    $dato->multiFormat = '$' . number_format((float)$multi, 4, '.', ',');
-                    $dato->fechaVencFormat = date("d-m-Y", strtotime($dato->fecha_vencimiento));
-                    $dato->precioFormat = '$' . number_format((float)$dato->precio, 4, '.', ',');
-                }
-
-
-                $totalGeneral = $totalGeneral + $totalXColumna;
-            }
-
-
-            $totalGeneral = sprintf("%.2f", floor($totalGeneral * 100) / 100);
-            $totalGeneral = '$' . number_format((float)$totalGeneral, 2, '.', ',');
-
-            $miMes =  $datoArray['mes'];
-            $miInicio =  $datoArray['inicio'];
-            $miFinal =  $datoArray['fin'];
-
-            $rangosFechasReparado[] = [
-                'mes' => $miMes,
-                'inicio' => $miInicio,
-                'fin' => $miFinal,
-                'total' => $totalGeneral
-            ];
-        }
-
-
-
-
-
-
-
-
-
-
-
+        // COLUMNA: TOTAL DONA
+        $columnaTotalDona = '$' . number_format((float)$columnaTotalDona, 2, '.', ',');
 
 
         //*******************************************************************************************
 
 
 
-        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
 
-        $mpdf->SetTitle('Reporte Existencias');
 
+        $mpdf->SetTitle('Reporte Final');
 
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logodis.png';
+        $logoalcaldia = 'images/gobiernologo.jpg';
+        $logosantaana = 'images/logo.png';
 
-        $tabla = "<div class='contenedorp'>
-            <img id='logo' src='$logoalcaldia'>
-            <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
-                REPORTE DE EXISTENCIAS POR FECHAS <br><br>
-             <strong>INTERVALO DESDE</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</p>
-            </div>";
+        $tabla = "
+            <table style='width: 100%; border-collapse: collapse; margin-bottom: 0px'>
+                <tr>
+                    <!-- Logo izquierdo -->
+                    <td style='width: 15%; text-align: left;'>
+                        <img src='$logosantaana' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
+                    </td>
+                    <!-- Texto centrado -->
+                    <td style='width: 60%; text-align: center;'>
+                        <h1 style='font-size: 16px; margin: 0; color: #003366;'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE</h1>
+                        <h3 style='font-size: 16px; margin: 0; color: #003366;'>Clinica Municipal Cristobal Peraza</h3>
+                        <h3 style='font-size: 16px; margin: 0; color: #003366;'>REPORTE DE EXISTENCIAS POR FECHAS</h3>
+                        <h3 style='font-size: 16px; margin: 0; color: #003366;'><strong>INTERVALO DESDE:</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</h3>
+                    </td>
+                    <!-- Logo derecho -->
+                    <td style='width: 10%; text-align: right;'>
+                        <img src='$logoalcaldia' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
+                    </td>
+                </tr>
+            </table>
+            <hr style='border: none; border-top: 2px solid #003366; margin: 0;'>
+            ";
 
 
-        $tabla .= "<table id='tablaFor'>
-                    <tbody>";
+        $tabla .= "<table id='tablaFor' style='margin-top: 40px'><tbody>";
 
         $tabla .= "<tr>
                 <td style='font-weight: bold; font-size: 12px'>#</td>
@@ -2255,11 +2150,13 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
-
-
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL DONA.</td>
             <tr>";
+
+        // TOTAL DONACION: EXISTENCIA * COSTO DONACION
+
 
         foreach ($dataArray as $fila){
             if($hayDatos){
@@ -2281,6 +2178,7 @@ class ReportesController extends Controller
                 $detaTotalDescDonacion = $fila['total_descargado_donacion'];
                 $totalDescaFecha = $fila['totaldescafecha'];
                 $detaTotalExis = $fila['total_existencia'];
+                $detaTotalDona = $fila['montoTotalDonacion'];
 
                 $tabla .= "<tr>
                             <td>$detaContador</td>
@@ -2299,13 +2197,12 @@ class ReportesController extends Controller
                             <td>$detaExistencia</td>
                             <td>$detaTotalDesc</td>
                             <td>$detaTotalDescDonacion</td>
-
                             <td>$totalDescaFecha</td>
                             <td>$detaTotalExis</td>
+                            <td>$detaTotalDona</td>
                         <tr>";
             }
         }
-
 
         $tabla .= "<tr>
                 <td style='font-weight: bold; font-size: 12px'>#</td>
@@ -2326,6 +2223,7 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
+                 <td style='font-weight: bold; font-size: 12px'>TOTAL DONA.</td>
             <tr>";
 
         $tabla .= "<tr>
@@ -2333,16 +2231,13 @@ class ReportesController extends Controller
                     <td style='font-weight: bold'>$columnaTotalDescargado</td>
                     <td style='font-weight: bold'>$columnaTotalDescargadoDonac</td>
                     <td style='font-weight: bold'>$columnaTotalDescaFecha </td>
-                     <td style='font-weight: bold'>$totalColumnaExistenciaFinal</td>
+                    <td style='font-weight: bold'>$columnaTotalExistenciaDinero</td>
+                    <td style='font-weight: bold'>$columnaTotalDona</td>
                 <tr>";
-
 
         $tabla .= "</tbody></table>";
 
-
-        $tabla .= "<table style='border-collapse: collapse;' border='1'; width='500'>
-                    <tbody>";
-
+        $tabla .= "<table style='border-collapse: collapse;' border='1'; width='500'><tbody>";
 
         $tabla .= "<tr>
                 <td style='font-weight: bold; font-size: 11px'>Total Descargado</td>
@@ -2350,8 +2245,8 @@ class ReportesController extends Controller
             <tr>";
 
         $tabla .= "<tr>
-                <td style='font-weight: bold; font-size: 11px'>$totalColumnaDescargado</td>
-                <td style='font-weight: bold; font-size: 11px'>$totalColumnaExistenciaFinal</td>
+                <td style='font-weight: bold; font-size: 11px'>$columnaTotalDescargado</td>
+                <td style='font-weight: bold; font-size: 11px'>$columnaTotalExistenciaDinero</td>
             <tr>";
 
 
@@ -2359,52 +2254,6 @@ class ReportesController extends Controller
 
 
         $tabla .= "<br><br>";
-
-        // PARTE DE INGRESOS POR MES, PERO DE FECHA A FECHA
-
-        $tabla .= "<table style='border-collapse: collapse;' border='1'; width='330'>
-                    <tbody>";
-
-        $tabla .= "<tr>
-                <td colspan='4' style='font-weight: bold; font-size: 11px; text-align: center'>Ingresos</td>
-            <tr>";
-
-        $tabla .= "<tr>
-                <td style='font-weight: bold; font-size: 11px'>Mes</td>
-                <td style='font-weight: bold; font-size: 11px'>Fecha Desde</td>
-                <td style='font-weight: bold; font-size: 11px'>Fecha Hasta</td>
-                <td style='font-weight: bold; font-size: 11px'>Total</td>
-            <tr>";
-
-        foreach ($rangosFechasReparado as $dato){
-
-            $dInicio = $dato['inicio'];
-            $dHasta = $dato['fin'];
-            $dMes = $dato['mes'];
-            $dTotal = $dato['total'];
-
-            $tabla .= "<tr>
-                <td style='font-size: 10px'>$dMes</td>
-                <td style='font-size: 10px'>$dInicio</td>
-                <td style='font-size: 10px'>$dHasta</td>
-                <td style='font-size: 10px'>$dTotal</td>
-            <tr>";
-        }
-
-
-
-        $tabla .= "</tbody></table>";
-
-
-
-
-
-
-
-
-
-
-
 
 
         $mpdf->setMargins(5, 5, 5);

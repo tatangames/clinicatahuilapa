@@ -140,7 +140,7 @@
         var urlWeb = "/login"
 
         if(tipoUrl === 1){
-            urlWeb = "/clinica.com/login"
+            urlWeb = "/login"
         }
 
         axios.post(urlWeb, formData, {
