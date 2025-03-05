@@ -15,6 +15,12 @@
         table-layout: fixed;
     }
 
+
+    .swal2-popup.custom-swal {
+        width: 80% !important;
+        max-width: 800px !important;
+    }
+
 </style>
 
 <div id="divcontenedor" style="display: none">
@@ -183,14 +189,19 @@
                 "TOTAL DONA: costo donación * cantidad fija";
 
             Swal.fire({
-                title: 'Info',
+                title: 'Información Columnas',
                 html: mensaje,
                 icon: 'info',
                 showCancelButton: false,
                 confirmButtonColor: '#28a745',
                 cancelButtonColor: '#d33',
                 allowOutsideClick: false,
-                confirmButtonText: 'Aceptar'
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    popup: 'custom-swal',  // Asegúrate de que esta clase esté bien definida
+                    title: 'swal-title',   // Si también quieres personalizar el título
+                    htmlContainer: 'swal-html-container' // Si quieres personalizar el contenedor del texto
+                }
             });
 
         }
