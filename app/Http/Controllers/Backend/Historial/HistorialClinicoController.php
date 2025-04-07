@@ -295,11 +295,35 @@ class HistorialClinicoController extends Controller
         $infoConsulta = Consulta_Paciente::where('id', $idconsulta)->first();
         $infoPaciente = Paciente::where('id', $infoConsulta->paciente_id)->first();
 
-        $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+       // $edad = Carbon::parse($infoPaciente->fecha_nacimiento)->age;
+
+
+        $fechaNacimiento = Carbon::parse($infoPaciente->fecha_nacimiento);
+        $hoy = Carbon::now();
+
+        $edadAnios = $fechaNacimiento->diffInYears($hoy);
+
+        if ($edadAnios > 0) {
+            $edad = $edadAnios . ' Año';
+        } else {
+            $edadMeses = $fechaNacimiento->diffInMonths($hoy);
+            if ($edadMeses > 0) {
+                $edad = $edadMeses . ' Meses';
+            } else {
+                $edadDias = $fechaNacimiento->diffInDays($hoy);
+                $edad = $edadDias . ' Días';
+            }
+        }
+
+
+
+
+
+
 
         $miFecha = date("d-m-Y", strtotime($infoPaciente->fecha_nacimiento));
 
-        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos . " (" . $edad . " Años)";
+        $nombreCompleto = $infoPaciente->nombres . " " . $infoPaciente->apellidos . " (" . $edad . ")";
 
 
         // CONTEO DIRECTO
