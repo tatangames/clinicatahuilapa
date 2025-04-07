@@ -1941,15 +1941,6 @@ class ReportesController extends Controller
 
         $dataArray = array();
 
-        $totalFondoPropioDescargado = 0;
-        $totalMaterialCovidDescargado = 0;
-        $totalMaterialFundelDescargado = 0;
-
-        $totalFondoPropioExistencia = 0;
-        $totalMaterialCovidExistencia = 0;
-        $totalMaterialFundelExistencia = 0;
-
-
         // obtener ID de entradas de esa fecha
         $arrayEntradas = EntradaMedicamento::all();
 
@@ -2093,6 +2084,13 @@ class ReportesController extends Controller
 
         //*******************************************************************************************
 
+        // Agrupar el array por el campo 'linea'
+        $dataGrouped = collect($dataArray)->groupBy('linea');
+
+        $contadorCorrelativo = 0;
+
+
+
 
 
         $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
@@ -2158,13 +2156,19 @@ class ReportesController extends Controller
         // TOTAL DONACION: EXISTENCIA * COSTO DONACION
 
 
-        foreach ($dataArray as $fila){
-            if($hayDatos){
-                $detaContador = $fila['contador'];
+        foreach ($dataGrouped as $linea => $items) {
+            // Imprime el encabezado del grupo si lo deseas
+            $tabla .= "<tr style='background-color: #ddd; font-weight: bold;'>
+                 <td colspan='19'>$linea</td>
+               </tr>";
+
+            foreach ($items as $fila) {
+                $contadorCorrelativo++; // Incrementa el contador correlativo
+
+                // Extraer valores (sin usar $fila['contador'])
                 $detaCodigo = $fila['codigo'];
                 $detaNombre = $fila['nombre'];
                 $detaFinanci = $fila['financiamiento'];
-                $detaLinea = $fila['linea'];
                 $detaProveedor = $fila['proveedor'];
                 $detaLote = $fila['lote'];
                 $detaFechaVen = $fila['fecha_vencimiento'];
@@ -2181,26 +2185,26 @@ class ReportesController extends Controller
                 $detaTotalDona = $fila['montoTotalDonacion'];
 
                 $tabla .= "<tr>
-                            <td>$detaContador</td>
-                            <td>$detaCodigo</td>
-                            <td>$detaNombre</td>
-                            <td>$detaFinanci</td>
-                            <td>$detaLinea</td>
-                            <td>$detaProveedor</td>
-                            <td>$detaLote</td>
-                            <td>$detaFechaVen</td>
-                            <td>$detaCosto</td>
-                            <td>$detaCostoDonacion</td>
-                            <td>$detaCantiIni</td>
-                            <td>$detaEntregado</td>
-                            <td>$detaEntregadoTotal</td>
-                            <td>$detaExistencia</td>
-                            <td>$detaTotalDesc</td>
-                            <td>$detaTotalDescDonacion</td>
-                            <td>$totalDescaFecha</td>
-                            <td>$detaTotalExis</td>
-                            <td>$detaTotalDona</td>
-                        <tr>";
+                        <td>$contadorCorrelativo</td>
+                        <td>$detaCodigo</td>
+                        <td>$detaNombre</td>
+                        <td>$detaFinanci</td>
+                        <td>$linea</td>
+                        <td>$detaProveedor</td>
+                        <td>$detaLote</td>
+                        <td>$detaFechaVen</td>
+                        <td>$detaCosto</td>
+                        <td>$detaCostoDonacion</td>
+                        <td>$detaCantiIni</td>
+                        <td>$detaEntregado</td>
+                        <td>$detaEntregadoTotal</td>
+                        <td>$detaExistencia</td>
+                        <td>$detaTotalDesc</td>
+                        <td>$detaTotalDescDonacion</td>
+                        <td>$totalDescaFecha</td>
+                        <td>$detaTotalExis</td>
+                        <td>$detaTotalDona</td>
+                    </tr>";
             }
         }
 
