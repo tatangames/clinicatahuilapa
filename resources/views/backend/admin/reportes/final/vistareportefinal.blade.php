@@ -185,6 +185,7 @@
                 "TOTAL DESCARGADO: Costo * Entregado (no toma rango de fechas) el Costo toma 10 decimales<br>" +
                 "TOTAL DESCARGADO DONAC: Costo Dona * Cantidad Entregada (cantidad fija - cantidad) No toma rango fecha<br>" +
                 "TOTAL DESCA. FECHAS: Costo * Entregado Total (tomado rango de fecha)<br>" +
+                "TOTAL DESCA. DONA FECHAS: Costo donacion * Entregado Total (tomado rango de fecha)<br>" +
                 "TOTAL EXISTENCIA: Costo * Cantidad Actual disponible en bodega<br>" +
                 "TOTAL DONA: costo donación * cantidad fija";
 
