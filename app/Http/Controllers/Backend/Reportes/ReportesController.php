@@ -2001,10 +2001,11 @@ class ReportesController extends Controller
 
 
 
+
                 $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
                 $multiDescargadoFormatDonacion = '$' . number_format((float)$multiDescargadoDonacion, 2, '.', ',');
 
-                $multiPrecioXExistenciaActual = $fila->precio * $existenciaActual;
+                $multiPrecioXExistenciaActual = $fila->precio * $fila->cantidad;
                 $columnaTotalExistenciaDinero += $multiPrecioXExistenciaActual;
                 $multiExistFormat = '$' . number_format((float)$multiPrecioXExistenciaActual, 2, '.', ',');
 
@@ -2077,6 +2078,8 @@ class ReportesController extends Controller
                 ];
             }
         }
+
+
 
 
         $columnaTotalDescargadoDonac = round($columnaTotalDescargadoDonac, 2);
