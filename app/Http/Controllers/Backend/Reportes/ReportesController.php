@@ -1989,7 +1989,6 @@ class ReportesController extends Controller
                 // ** CANTIDAD ENTREGADO (Total que se ha entregado de este medicamento)
                 $entregado_COL = $fila->cantidad_fija - $fila->cantidad;
 
-
                 //************************************************************************************
                 // SALIDAS HUBO DEL MEDICAMENTE SEGUN FECHAS DEL REPORTE
                 // PARA SACAR: ENTREGADO TOTAL
@@ -2011,9 +2010,9 @@ class ReportesController extends Controller
                     ->get();
 
                 //** COLUMNA: ENTREGADO TOTAL (Entregado por rangos de fecha)
-                $entregadoTotal_COL = 0;
+                $entregadoTotalF_COL = 0;
                 foreach ($listaSumadaR as $item){
-                    $entregadoTotal_COL += $item->cantidad;
+                    $entregadoTotalF_COL += $item->cantidad;
                 }
 
                 //************************************************************************************
@@ -2023,8 +2022,8 @@ class ReportesController extends Controller
                 $existencia_COL = $fila->cantidad;
 
                 //** COLUMNA: TOTAL DESCARGADO
-                $totalDescargado_COL = '$' . number_format((float)($fila->precio * $entregadoTotal_COL), 2, '.', ',');
-                $sumatoriaTotalDescargado += ($fila->precio * $entregadoTotal_COL);
+                $totalDescargado_COL = '$' . number_format((float)($fila->precio * $entregado_COL), 2, '.', ',');
+                $sumatoriaTotalDescargado += ($fila->precio * $entregado_COL);
 
 
                 //** COLUMNA: TOTAL DESCARGADO DONAC
@@ -2032,12 +2031,12 @@ class ReportesController extends Controller
                 $sumatoriaTotalDescargadoDonac += ($fila->precio_donacion * $entregado_COL);
 
                 //** COLUMNA: TOTAL DESCA. FECHAS
-                $totalDescaFecha_COL = '$' . number_format((float)($fila->precio * $entregadoTotal_COL), 2, '.', ',');
-                $sumatoriaTotalDescaFecha += ($fila->precio * $entregadoTotal_COL);
+                $totalDescaFecha_COL = '$' . number_format((float)($fila->precio * $entregadoTotalF_COL), 2, '.', ',');
+                $sumatoriaTotalDescaFecha += ($fila->precio * $entregadoTotalF_COL);
 
                 //** COLUMNA: TOTAL DESCA. DONA FECHAS:
-                $totalDescaDonacionFecha_COL = '$' . number_format((float)($fila->precio_donacion * $entregadoTotal_COL), 2, '.', ',');
-                $sumatoriaTotalDescaDonacionFecha += ($fila->precio_donacion * $entregadoTotal_COL);
+                $totalDescaDonacionFecha_COL = '$' . number_format((float)($fila->precio_donacion * $entregadoTotalF_COL), 2, '.', ',');
+                $sumatoriaTotalDescaDonacionFecha += ($fila->precio_donacion * $entregadoTotalF_COL);
 
 
                 //** COLUMNA: TOTAL EXISTENCIA
@@ -2063,7 +2062,7 @@ class ReportesController extends Controller
                     'costo_donacion' => $precioFormatDonacion_COL, //*
                     'cantidad_inicial' => $cantidadInicial_COL, //*
                     'entregado' => $entregado_COL, //*
-                    'entregadototal' => $entregadoTotal_COL, //*
+                    'entregadototal' => $entregadoTotalF_COL, //*
                     'existencia' => $existencia_COL, //*
                     'total_descargado' => $totalDescargado_COL, //*
                     'total_descargado_donacion' => $totalDescargadoDonac_COL, //*
