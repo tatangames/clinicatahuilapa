@@ -182,8 +182,8 @@
                 "ENTREGADO: cantidad total que se ha entregado de este medicamento<br>" +
                 "ENTREGADO TOTAL: cantidad que se ha entregado en el rango de fechas del reporte<br>" +
                 "EXISTENCIA: cantidad actual que tendría en bodega del medicamento<br>" +
-                "TOTAL DESCARGADO: Costo * Entregado (no toma rango de fechas) el Costo toma 10 decimales<br>" +
-                "TOTAL DESCARGADO DONAC: Costo Dona * Cantidad Entregada (cantidad fija - cantidad) No toma rango fecha<br>" +
+                "TOTAL DESCARGADO: Costo * Entregado (no toma rango de fechas)<br>" +
+                "TOTAL DESCARGADO DONAC: Costo Dona * Entregado (no toma rango fecha)<br>" +
                 "TOTAL DESCA. FECHAS: Costo * Entregado Total (tomado rango de fecha)<br>" +
                 "TOTAL DESCA. DONA FECHAS: Costo donacion * Entregado Total (tomado rango de fecha)<br>" +
                 "TOTAL EXISTENCIA: Costo * Cantidad Actual disponible en bodega (Columna: Existencia)<br>" +

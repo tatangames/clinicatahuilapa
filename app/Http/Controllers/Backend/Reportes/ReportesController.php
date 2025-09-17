@@ -1933,6 +1933,10 @@ class ReportesController extends Controller
 
     public function generarReporteFinalv2($desde, $hasta){
 
+        // REPORTE PARA PRODUCCION
+        $PDF_PRODUCCION = true;
+
+
         $start = Carbon::parse($desde)->startOfDay();
         $end = Carbon::parse($hasta)->endOfDay();
 
@@ -1953,23 +1957,13 @@ class ReportesController extends Controller
         $arrayMedicamentos = FarmaciaArticulo::orderBy('nombre', 'ASC')->get();
         $contador = 0;
 
-        $hayDatos = false;
 
-        // COLUMNA: TOTAL DESCA FECHAS
-        $columnaTotalDescaFecha = 0;
-        // COLUMNA: TOTAL DESCARGADO
-        $columnaTotalDescargado = 0;
-        // COLUMNA: TOTAL EXISTENCIA
-        $columnaTotalExistenciaDinero = 0;
-        // COLUMNA: TOTAL DONA.
-        $columnaTotalDona = 0;
-
-        // COLUMNA: TOTAL DESCARGADO FECHA DONACION.
-        $columnaTotalDescargadoFechaDona = 0;
-
-        $columnaTotalDescargadoDonac = 0;
-        // variable para Total Columna Donacion
-
+        $sumatoriaTotalDescargado = 0;
+        $sumatoriaTotalDescargadoDonac = 0;
+        $sumatoriaTotalDescaFecha = 0;
+        $sumatoriaTotalDescaDonacionFecha = 0;
+        $sumatoriaTotalExistencia = 0;
+        $sumatoriaTotalDona = 0;
 
         foreach ($arrayMedicamentos as $dato){
 
@@ -1985,30 +1979,18 @@ class ReportesController extends Controller
                 $infoFuenteFi = FuenteFinanciamiento::where('id', $infoEntradaFi->fuentefina_id)->first();
 
                 $fechaVen = date("d-m-Y", strtotime($fila->fecha_vencimiento));
-                $precioFormat = '$' . number_format((float)$fila->precio, 2, '.', ',');
-                $precioFormatDonacion = '$' . number_format((float)$fila->precio_donacion, 2, '.', ',');
 
-                $existenciaActual = $fila->cantidad_fija - $fila->cantidad;
-                $multiDescargado = $fila->precio * $existenciaActual;
-
-                $multiDescargadoDonacion = $fila->precio_donacion * $existenciaActual;
-                $columnaTotalDescargadoDonac += $multiDescargadoDonacion;
-
-                // Columna: Total Descargado
-                $columnaTotalDescargado += $fila->precio * $fila->cantidad;
+                // ** COLUMNA: PRECIO
+                $precioFormat_COL = '$' . number_format((float)$fila->precio, 2, '.', ',');
+                // ** COLUMNA: COSTO DONA.
+                $precioFormatDonacion_COL = '$' . number_format((float)$fila->precio_donacion, 2, '.', ',');
+                // ** COLUMNA: CANTIDAD INICIAL
+                $cantidadInicial_COL = $fila->cantidad_fija;
+                // ** CANTIDAD ENTREGADO (Total que se ha entregado de este medicamento)
+                $entregado_COL = $fila->cantidad_fija - $fila->cantidad;
 
 
-
-
-
-
-                $multiDescargadoFormat = '$' . number_format((float)$multiDescargado, 2, '.', ',');
-                $multiDescargadoFormatDonacion = '$' . number_format((float)$multiDescargadoDonacion, 2, '.', ',');
-
-                $multiPrecioXExistenciaActual = $fila->precio * $fila->cantidad;
-                $columnaTotalExistenciaDinero += $multiPrecioXExistenciaActual;
-                $multiExistFormat = '$' . number_format((float)$multiPrecioXExistenciaActual, 2, '.', ',');
-
+                //************************************************************************************
                 // SALIDAS HUBO DEL MEDICAMENTE SEGUN FECHAS DEL REPORTE
                 // PARA SACAR: ENTREGADO TOTAL
                 $listaIDR = DB::table('recetas AS r')
@@ -2028,53 +2010,67 @@ class ReportesController extends Controller
                     ->where('entrada_detalle_id', $fila->id)
                     ->get();
 
-                $entregadoTotalRangos = 0;
+                //** COLUMNA: ENTREGADO TOTAL (Entregado por rangos de fecha)
+                $entregadoTotal_COL = 0;
                 foreach ($listaSumadaR as $item){
-                    $entregadoTotalRangos += $item->cantidad;
+                    $entregadoTotal_COL += $item->cantidad;
                 }
 
-                $totalDescaFecha = $fila->precio * $entregadoTotalRangos;
-                $columnaTotalDescaFecha += $totalDescaFecha;
+                //************************************************************************************
 
 
-                // TOTAL DESCARGADO DONACION POR FECHA DONACION
-                $totalDescaDonacionFecha = $fila->precio_donacion * $entregadoTotalRangos;
-                $columnaTotalDescargadoFechaDona += $totalDescaDonacionFecha;
-                $totalDescaDonacionFecha = '$' . number_format((float)$totalDescaDonacionFecha, 2, '.', ',');
+                //** COLUMNA: EXISTENCIA
+                $existencia_COL = $fila->cantidad;
+
+                //** COLUMNA: TOTAL DESCARGADO
+                $totalDescargado_COL = '$' . number_format((float)($fila->precio * $entregadoTotal_COL), 2, '.', ',');
+                $sumatoriaTotalDescargado += ($fila->precio * $entregadoTotal_COL);
 
 
+                //** COLUMNA: TOTAL DESCARGADO DONAC
+                $totalDescargadoDonac_COL = '$' . number_format((float)($fila->precio_donacion * $entregado_COL), 2, '.', ',');
+                $sumatoriaTotalDescargadoDonac += ($fila->precio_donacion * $entregado_COL);
+
+                //** COLUMNA: TOTAL DESCA. FECHAS
+                $totalDescaFecha_COL = '$' . number_format((float)($fila->precio * $entregadoTotal_COL), 2, '.', ',');
+                $sumatoriaTotalDescaFecha += ($fila->precio * $entregadoTotal_COL);
+
+                //** COLUMNA: TOTAL DESCA. DONA FECHAS:
+                $totalDescaDonacionFecha_COL = '$' . number_format((float)($fila->precio_donacion * $entregadoTotal_COL), 2, '.', ',');
+                $sumatoriaTotalDescaDonacionFecha += ($fila->precio_donacion * $entregadoTotal_COL);
 
 
+                //** COLUMNA: TOTAL EXISTENCIA
+                $totalExistencia_COL = '$' . number_format((float)($fila->precio * $existencia_COL), 2, '.', ',');
+                $sumatoriaTotalExistencia += ($fila->precio * $existencia_COL);
 
+                //** COLUMNA: TOTAL DONA
+                $totalDona_COL = '$' . number_format((float)($fila->precio_donacion * $fila->cantidad_fija), 2, '.', ',');
+                $sumatoriaTotalDona += ($fila->precio_donacion * $fila->cantidad_fija);
 
-                $totalDescaFecha = '$' . number_format((float)$totalDescaFecha, 2, '.', ',');
-
-                $totalMontoDonacion = $fila->precio_donacion * $fila->cantidad_fija;
-                $columnaTotalDona += $totalMontoDonacion;
-                $totalMontoDonacion = '$' . number_format((float)$totalMontoDonacion, 2, '.', ',');
 
 
                 $dataArray[] = [
-                    'contador' => $contador,
-                    'codigo' => $dato->codigo_articulo,
-                    'nombre' => $dato->nombre,
-                    'financiamiento' => $infoFuenteFi->nombre,
-                    'linea' => $infoLinea->nombre,
-                    'proveedor' => $infoProve->nombre,
-                    'lote' => $fila->lote,
-                    'fecha_vencimiento' => $fechaVen,
-                    'costo' => $precioFormat,
-                    'costo_donacion' => $precioFormatDonacion,
-                    'cantidad_inicial' => $fila->cantidad_fija,
-                    'entregado' => $existenciaActual,
-                    'entregadototal' => $entregadoTotalRangos,
-                    'existencia' => $fila->cantidad,
-                    'total_descargado' => $multiDescargadoFormat,
-                    'total_descargado_donacion' => $multiDescargadoFormatDonacion,
-                    'totaldescafecha' => $totalDescaFecha,
-                    'totaldescadonacionfecha' => $totalDescaDonacionFecha,
-                    'total_existencia' => $multiExistFormat,
-                    'montoTotalDonacion' => $totalMontoDonacion,
+                    'contador' => $contador, //*
+                    'codigo' => $dato->codigo_articulo, //*
+                    'nombre' => $dato->nombre, //*
+                    'financiamiento' => $infoFuenteFi->nombre, //*
+                    'linea' => $infoLinea->nombre, //*
+                    'proveedor' => $infoProve->nombre, //*
+                    'lote' => $fila->lote, //*
+                    'fecha_vencimiento' => $fechaVen, //*
+                    'costo' => $precioFormat_COL, //*
+                    'costo_donacion' => $precioFormatDonacion_COL, //*
+                    'cantidad_inicial' => $cantidadInicial_COL, //*
+                    'entregado' => $entregado_COL, //*
+                    'entregadototal' => $entregadoTotal_COL, //*
+                    'existencia' => $existencia_COL, //*
+                    'total_descargado' => $totalDescargado_COL, //*
+                    'total_descargado_donacion' => $totalDescargadoDonac_COL, //*
+                    'totaldescafecha' => $totalDescaFecha_COL, //*
+                    'totaldescadonacionfecha' => $totalDescaDonacionFecha_COL, //*
+                    'total_existencia' => $totalExistencia_COL, //*
+                    'montoTotalDonacion' => $totalDona_COL,
                 ];
             }
         }
@@ -2082,27 +2078,25 @@ class ReportesController extends Controller
 
 
 
-        $columnaTotalDescargadoDonac = round($columnaTotalDescargadoDonac, 2);
-        $columnaTotalDescargadoDonac = '$' . number_format($columnaTotalDescargadoDonac, 2, '.', ',');
 
-        $columnaTotalDescaFecha = '$' . number_format((float)$columnaTotalDescaFecha, 2, '.', ',');
+        // COLUMNA: TOTAL DESCA. DONA FECHAS:
+        $sumatoriaTotalDescaDonacionFecha = '$' . number_format((float)$sumatoriaTotalDescaDonacionFecha, 2, '.', ',');
 
+        //** COLUMNA: TOTAL DESCARGADO DONAC
+        $sumatoriaTotalDescargadoDonac = round($sumatoriaTotalDescargadoDonac, 2);
+        $sumatoriaTotalDescargadoDonac = '$' . number_format($sumatoriaTotalDescargadoDonac, 2, '.', ',');
+
+        //** COLUMNA: TOTAL DESCA. FECHAS
+        $sumatoriaTotalDescaFecha = '$' . number_format((float)$sumatoriaTotalDescaFecha, 2, '.', ',');
 
         // COLUMNA: TOTAL DESCARGADO
-        $columnaTotalDescargado = '$' . number_format((float)$columnaTotalDescargado, 2, '.', ',');
+        $sumatoriaTotalDescargado = '$' . number_format((float)$sumatoriaTotalDescargado, 2, '.', ',');
 
         // COLUMNA: TOTAL EXISTENCIA
-        $columnaTotalExistenciaDinero = '$' . number_format((float)$columnaTotalExistenciaDinero, 2, '.', ',');
+        $sumatoriaTotalExistencia = '$' . number_format((float)$sumatoriaTotalExistencia, 2, '.', ',');
 
         // COLUMNA: TOTAL DONA
-        $columnaTotalDona = '$' . number_format((float)$columnaTotalDona, 2, '.', ',');
-
-
-        // COLUMNA: TOTAL COSTO DONACION X DESCARGADO FECHA
-        $columnaTotalDescargadoFechaDona = '$' . number_format((float)$columnaTotalDescargadoFechaDona, 2, '.', ',');
-
-
-
+        $sumatoriaTotalDona = '$' . number_format((float)$sumatoriaTotalDona, 2, '.', ',');
 
 
 
@@ -2113,12 +2107,11 @@ class ReportesController extends Controller
 
         $contadorCorrelativo = 0;
 
-
-
-
-
-        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
-        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        if($PDF_PRODUCCION){
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
+        }else{
+            $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        }
 
 
         $mpdf->SetTitle('Reporte Final');
@@ -2211,7 +2204,6 @@ class ReportesController extends Controller
                 $detaTotalDona = $fila['montoTotalDonacion'];
 
 
-
                 $tabla .= "<tr>
                         <td>$contadorCorrelativo</td>
                         <td>$detaCodigo</td>
@@ -2262,13 +2254,14 @@ class ReportesController extends Controller
 
         $tabla .= "<tr>
                     <td colspan='14' style='text-align: right; font-weight: bold'></td>
-                    <td style='font-weight: bold'>$columnaTotalDescargado</td>
-                    <td style='font-weight: bold'>$columnaTotalDescargadoDonac</td>
-                    <td style='font-weight: bold'>$columnaTotalDescaFecha </td>
-                    <td style='font-weight: bold'>$columnaTotalDescargadoFechaDona</td>
-                    <td style='font-weight: bold'>$columnaTotalExistenciaDinero</td>
-                    <td style='font-weight: bold'>$columnaTotalDona</td>
+                    <td style='font-weight: bold'>$sumatoriaTotalDescargado</td>
+                    <td style='font-weight: bold'>$sumatoriaTotalDescargadoDonac</td>
+                    <td style='font-weight: bold'>$sumatoriaTotalDescaFecha </td>
+                    <td style='font-weight: bold'>$sumatoriaTotalDescaDonacionFecha</td>
+                    <td style='font-weight: bold'>$sumatoriaTotalExistencia</td>
+                    <td style='font-weight: bold'>$sumatoriaTotalDona</td>
                 <tr>";
+
 
         $tabla .= "</tbody></table>";
 
@@ -2280,8 +2273,8 @@ class ReportesController extends Controller
             <tr>";
 
         $tabla .= "<tr>
-                <td style='font-weight: bold; font-size: 11px'>$columnaTotalDescargado</td>
-                <td style='font-weight: bold; font-size: 11px'>$columnaTotalExistenciaDinero</td>
+                <td style='font-weight: bold; font-size: 11px'>$sumatoriaTotalDescargado</td>
+                <td style='font-weight: bold; font-size: 11px'>$sumatoriaTotalExistencia</td>
             <tr>";
 
 
