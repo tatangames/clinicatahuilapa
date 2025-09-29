@@ -2045,7 +2045,7 @@ class ReportesController extends Controller
 
                 //** COLUMNA: TOTAL EXISTENCIA DONA
                 $totalExistenciaDona_COL = '$' . number_format((float)($fila->precio_donacion * $existencia_COL), 2, '.', ',');
-                $sumatoriaTotalDona += ($fila->precio_donacion * $fila->cantidad_fija);
+                $sumatoriaTotalDona += ($fila->precio_donacion * $existencia_COL);
 
 
 
