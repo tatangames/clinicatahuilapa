@@ -2043,8 +2043,8 @@ class ReportesController extends Controller
                 $totalExistencia_COL = '$' . number_format((float)($fila->precio * $existencia_COL), 2, '.', ',');
                 $sumatoriaTotalExistencia += ($fila->precio * $existencia_COL);
 
-                //** COLUMNA: TOTAL DONA
-                $totalDona_COL = '$' . number_format((float)($fila->precio_donacion * $fila->cantidad_fija), 2, '.', ',');
+                //** COLUMNA: TOTAL EXISTENCIA DONA
+                $totalExistenciaDona_COL = '$' . number_format((float)($fila->precio_donacion * $existencia_COL), 2, '.', ',');
                 $sumatoriaTotalDona += ($fila->precio_donacion * $fila->cantidad_fija);
 
 
@@ -2069,7 +2069,7 @@ class ReportesController extends Controller
                     'totaldescafecha' => $totalDescaFecha_COL, //*
                     'totaldescadonacionfecha' => $totalDescaDonacionFecha_COL, //*
                     'total_existencia' => $totalExistencia_COL, //*
-                    'montoTotalDonacion' => $totalDona_COL,
+                    'totalexistencia_dona' => $totalExistenciaDona_COL,
                 ];
             }
         }
@@ -2167,7 +2167,7 @@ class ReportesController extends Controller
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. DONA FECHAS</td>
                 <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
-                <td style='font-weight: bold; font-size: 12px'>TOTAL DONA.</td>
+                <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA DONA.</td>
             <tr>";
 
         // TOTAL DONACION: EXISTENCIA * COSTO DONACION
@@ -2200,7 +2200,7 @@ class ReportesController extends Controller
                 $totalDescaFecha = $fila['totaldescafecha'];
                 $totalDescaDonacionFecha = $fila['totaldescadonacionfecha']; //
                 $detaTotalExis = $fila['total_existencia'];
-                $detaTotalDona = $fila['montoTotalDonacion'];
+                $detaTotalExistenciaDona = $fila['totalexistencia_dona'];
 
 
                 $tabla .= "<tr>
@@ -2223,7 +2223,7 @@ class ReportesController extends Controller
                         <td>$totalDescaFecha</td>
                         <td>$totalDescaDonacionFecha</td>
                         <td>$detaTotalExis</td>
-                        <td>$detaTotalDona</td>
+                        <td>$detaTotalExistenciaDona</td>
                     </tr>";
             }
         }
