@@ -45,6 +45,13 @@
                                 <label>Fecha Receta Hasta</label>
                                 <input type="date" class="form-control" id="fecha-fin" autocomplete="off" onchange="verificarEstado()">
                             </div>
+
+
+                        <button type="button" class="btn btn-info btn-xs" style="height: 30px; margin: 10px; color: white" onclick="imprimirTodosPDF()">
+                            <i class="fas fa-print" title="Imprimir"></i>&nbsp; Imprimir Por Fecha
+                        </button>
+
+
                     </div>
 
                     <div id="tablaDatatable" style="margin-top: 20px">
@@ -324,6 +331,30 @@
                     closeLoading();
                     toastr.error('Información no encontrada');
                 });
+        }
+
+
+        function imprimirTodosPDF() {
+            const estado      = document.getElementById("select-estado").value;
+            const fechainicio = document.getElementById("fecha-inicio").value;
+            const fechafin    = document.getElementById("fecha-fin").value;
+
+            if (!fechainicio || !fechafin) {
+                toastr.error('Ambas fechas son requeridas');
+                return;
+            }
+
+            const f1 = new Date(fechainicio);
+            const f2 = new Date(fechafin);
+
+            if (f1 > f2) {
+                toastr.error('La fecha de inicio no puede ser mayor que la fecha fin');
+                return;
+            }
+
+            // Abrir PDF en nueva pestaña
+            const url = "{{ url('/admin/reporte/receta/paciente-bloque') }}/" + estado + "/" + fechainicio + "/" + fechafin;
+            window.open(url, '_blank');
         }
 
 

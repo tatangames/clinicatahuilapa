@@ -542,7 +542,14 @@ class FarmaciaController extends Controller
             foreach ($arrayRecetas as $info){
 
                 $info->fechaFormat = date("d-m-Y", strtotime($info->fecha));
-                $info->fechaEstadoFormat = date("d-m-Y", strtotime($info->fecha_estado));
+
+                if($info->fecha_estado != null){
+                    $info->fechaEstadoFormat = date("d-m-Y", strtotime($info->fecha_estado));
+                }else{
+                    $info->fechaEstadoFormat = "";
+                }
+
+
                 $infoPaciente = Paciente::where('id', $info->paciente_id)->first();
 
                 $info->nombrepaciente = $infoPaciente->nombres . " " . $infoPaciente->apellidos;
@@ -550,6 +557,8 @@ class FarmaciaController extends Controller
                 $infoUsuario = Usuario::where('id', $info->usuario_id)->first();
                 $info->doctor = $infoUsuario->nombre;
             }
+
+
 
             return view('backend.admin.farmacia.salidareceta.tablarecetasalidaprocesada', compact('arrayRecetas'));
 
@@ -674,6 +683,8 @@ class FarmaciaController extends Controller
 
 
     public function vistaRecetaDetalleProcesar($idreceta){
+
+
 
         $infoReceta = Recetas::where('id', $idreceta)->first();
 

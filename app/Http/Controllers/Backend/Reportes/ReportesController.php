@@ -1448,8 +1448,18 @@ class ReportesController extends Controller
         }
 
 
-        //$mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+
+
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+
+
+
+
+
+
 
         // mostrar errores
         $mpdf->showImageErrors = false;
@@ -1549,6 +1559,214 @@ class ReportesController extends Controller
 
         $mpdf->Output();
     }
+
+
+    // NUEVO REPORTE UNIDOS POR FECHA
+    public function reporteRecetaPacientePorFechasTodos($estado, $desde, $hasta)
+    {
+        // ---------- Validación de fechas en servidor ----------
+        try {
+            $start = Carbon::parse($desde)->startOfDay();
+            $end   = Carbon::parse($hasta)->endOfDay();
+        } catch (\Throwable $e) {
+            abort(400, 'Fechas inválidas.');
+        }
+
+        if ($start->gt($end)) {
+            abort(400, 'La fecha de inicio no puede ser mayor que la fecha fin.');
+        }
+
+        // ---------- Construcción del dataset según estado ----------
+        // Nota: replico tu lógica: estado=1 no filtra por fecha; 2 y 3 sí filtran por rango
+        if ($estado == '1') {
+            $recetas = Recetas::where('estado', 1)
+                ->orderBy('fecha', 'ASC')
+                ->get();
+        } elseif ($estado == '2') {
+            $recetas = Recetas::where('estado', 2)
+                ->whereBetween('fecha', [$start, $end])
+                ->orderBy('fecha', 'ASC')
+                ->get();
+        } else { // estado == 3 (u otros valores caen aquí)
+            $recetas = Recetas::where('estado', 3)
+                ->whereBetween('fecha', [$start, $end])
+                ->orderBy('fecha', 'ASC')
+                ->get();
+        }
+
+        // ---------- Instanciar mPDF ----------
+        $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
+        //$mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER']);
+
+
+
+        $mpdf->showImageErrors = false;
+        $mpdf->SetTitle('Recetas por bloque');
+
+        // Cargar CSS (ajusta la ruta si difiere)
+        if (file_exists(public_path('css/cssreceta.css'))) {
+            $stylesheet = file_get_contents(public_path('css/cssreceta.css'));
+            $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
+        }
+
+        // Encabezado común (mostrar estado y rango)
+        $tituloEstado = match ((string)$estado) {
+            '1' => 'PENDIENTES',
+            '2' => 'PROCESADAS',
+            '3' => 'ANULADAS',
+            default => 'ESTADO DESCONOCIDO',
+        };
+        $rango = $start->format('d-m-Y').' al '.$end->format('d-m-Y');
+
+        $logoalcaldia = public_path('images/logodis.png'); // ajusta si tu logo está en otra carpeta
+
+        // ---------- Generar una página por receta ----------
+        $total = $recetas->count();
+        if ($total === 0) {
+            // Página simple informando que no hay datos
+            $htmlVacio = "
+                <div class='contenedorp'>
+                    <p id='titulo'>Clinica Municipal Cristobal Peraza <br>
+                    Tahuilapa, Distrito de Metapán, Santa Ana Norte</p>
+                    <h3 style='text-align:center;margin-top:10px'>No se encontraron recetas</h3>
+                    <p style='text-align:center'>Estado: <b>{$tituloEstado}</b> &middot; Rango: <b>{$rango}</b></p>
+                </div>";
+            $mpdf->WriteHTML($htmlVacio, \Mpdf\HTMLParserMode::HTML_BODY);
+            return $mpdf->Output('recetas-'.$desde.'_'.$hasta.'.pdf', 'I');
+        }
+
+        foreach ($recetas as $idx => $receta) {
+            // Datos del paciente
+            $paciente = Paciente::find($receta->paciente_id);
+            $nombrePaciente = $paciente ? trim(($paciente->nombres ?? '').' '.($paciente->apellidos ?? '')) : 'N/D';
+            $edad = $paciente && $paciente->fecha_nacimiento ? Carbon::parse($paciente->fecha_nacimiento)->age : 'N/D';
+
+            // Fechas formato
+            $fechaReceta = $receta->fecha ? Carbon::parse($receta->fecha)->format('d-m-Y') : '';
+            $fechaProxCita = $receta->proxima_cita ? Carbon::parse($receta->proxima_cita)->format('d-m-Y') : '';
+
+            // Detalle de medicamentos (como tu ejemplo)
+            $detalles = DB::table('recetas_detalle AS deta')
+                ->join('entrada_medicamento_detalle AS enta', 'deta.entrada_detalle_id', '=', 'enta.id')
+                ->join('farmacia_articulo AS fa', 'fa.id', '=', 'enta.medicamento_id')
+                ->select('fa.nombre', 'deta.recetas_id', 'deta.cantidad', 'deta.descripcion', 'deta.via_id')
+                ->where('deta.recetas_id', $receta->id)
+                ->orderBy('fa.nombre', 'ASC')
+                ->get();
+
+            // Resolver nombre de vía
+            foreach ($detalles as $d) {
+                $via = ViaReceta::find($d->via_id);
+                $d->nombreVia = $via ? $via->nombre : '';
+            }
+
+            // ---------- Armar la página ----------
+            $top = "
+                <div class='contenedorp'>
+                    ".(file_exists($logoalcaldia) ? "<img id='logo' src='{$logoalcaldia}'>" : "")."
+                    <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte</p>
+                </div>
+
+                <div style='text-align:center;margin:6px 0 10px'>
+                    <span style='font-size:13px'><b>Estado:</b> {$tituloEstado} &nbsp;&middot;&nbsp; <b>Rango:</b> {$rango}</span>
+                </div>
+
+                <table width='100%'>
+                    <tr>
+                        <td style='text-align:left;width:33%'>
+                            <p style='font-size:12px'><strong>Paciente:</strong> {$nombrePaciente}</p>
+                        </td>
+                        <td style='text-align:center;width:34%'>
+                            <p style='font-size:12px'><strong>Edad:</strong> {$edad}</p>
+                        </td>
+                        <td style='text-align:right;width:33%'>
+                            <p style='font-size:12px'><strong>Fecha:</strong> {$fechaReceta}</p>
+                        </td>
+                    </tr>";
+
+            if (!empty($fechaProxCita)) {
+                $top .= "
+                    <tr>
+                        <td style='text-align:left;width:33%'><p style='font-size:12px'>&nbsp;</p></td>
+                        <td style='text-align:center;width:34%'><p style='font-size:12px'>&nbsp;</p></td>
+                        <td style='text-align:right;width:33%'>
+                            <p style='font-size:12px'><strong>Próxima Consulta:</strong> {$fechaProxCita}</p>
+                        </td>
+                    </tr>";
+            }
+
+            $top .= "</table><hr>";
+
+            $body = "";
+            $vueltas = 0;
+            foreach ($detalles as $dato) {
+                $vueltas++;
+                $body .= "
+                    <table width='100%' style='margin-top:".($vueltas === 1 ? "0" : "20")."px; line-height:1'>
+                        <tr>
+                            <td style='text-align:left;width:33%'>
+                                <p style='font-size:11px'><strong><ul><li>{$dato->nombre}</li></ul></strong></p>
+                            </td>
+                            <td style='text-align:center;width:34%'>
+                                <p style='font-size:11px'><strong>Cantidad:</strong> {$dato->cantidad}</p>
+                            </td>
+                            <td style='text-align:right;width:33%'>
+                                <p style='font-size:11px'><strong>Vía:</strong> {$dato->nombreVia}</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p style='font-size:12px; line-height:1.2; margin-top:4px'>
+                        <strong>Indicaciones del Medicamento:</strong><br>
+                        {$dato->descripcion}
+                    </p>";
+            }
+
+            $htmlPagina = $top . $body;
+
+            // Escribir página
+            $mpdf->WriteHTML($htmlPagina, \Mpdf\HTMLParserMode::HTML_BODY);
+
+            // Footer con numeración
+            $mpdf->setFooter("Página {PAGENO} de {nb}");
+
+            // Salto de página si no es la última
+            if ($idx < $total - 1) {
+                $mpdf->WriteHTML("<pagebreak />", \Mpdf\HTMLParserMode::HTML_BODY);
+            }
+        }
+
+        // ---------- Salida ----------
+        return $mpdf->Output('recetas-'.$desde.'_'.$hasta.'.pdf', 'I');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public function vistaReporteFinal(){
