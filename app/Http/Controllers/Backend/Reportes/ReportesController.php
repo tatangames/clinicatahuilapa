@@ -1609,13 +1609,22 @@ class ReportesController extends Controller
             $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
         }
 
-        // Encabezado común (mostrar estado y rango)
-        $tituloEstado = match ((string)$estado) {
-            '1' => 'PENDIENTES',
-            '2' => 'PROCESADAS',
-            '3' => 'ANULADAS',
-            default => 'ESTADO DESCONOCIDO',
-        };
+        switch ((string)$estado) {
+            case '1':
+                $tituloEstado = 'PENDIENTES';
+                break;
+            case '2':
+                $tituloEstado = 'PROCESADAS';
+                break;
+            case '3':
+                $tituloEstado = 'ANULADAS';
+                break;
+            default:
+                $tituloEstado = 'ESTADO DESCONOCIDO';
+                break;
+        }
+
+
         $rango = $start->format('d-m-Y').' al '.$end->format('d-m-Y');
 
         $logoalcaldia = public_path('images/logodis.png'); // ajusta si tu logo está en otra carpeta
@@ -2637,9 +2646,6 @@ class ReportesController extends Controller
         $tabla .= "</tbody></table>";
 
 
-
-
-
         $stylesheet = file_get_contents('css/cssregistro.css');
         $mpdf->WriteHTML($stylesheet,1);
 
@@ -2699,10 +2705,7 @@ class ReportesController extends Controller
                 </tr> </table> <br><br> ";
 
 
-
         $tabla .= "$infoNota->nota";
-
-
 
         $stylesheet = file_get_contents('css/cssregistro.css');
         $mpdf->WriteHTML($stylesheet,1);
