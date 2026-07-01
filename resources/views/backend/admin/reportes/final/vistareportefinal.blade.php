@@ -21,6 +21,52 @@
         max-width: 800px !important;
     }
 
+    /* Checkbox existencia */
+    .custom-existencia-check {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        user-select: none;
+        background: #f8f9fa;
+        border: 2px solid #ced4da;
+        border-radius: 30px;
+        padding: 6px 16px 6px 8px;
+        transition: all 0.25s ease;
+        width: fit-content;
+    }
+    .custom-existencia-check:hover {
+        border-color: #28a745;
+        background: #eafaf1;
+    }
+    .custom-existencia-check.activo {
+        border-color: #28a745;
+        background: #eafaf1;
+    }
+    .check-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #ced4da;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.25s ease;
+        flex-shrink: 0;
+    }
+    .custom-existencia-check.activo .check-icon {
+        background: #28a745;
+    }
+    .check-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #495057;
+        transition: color 0.25s;
+    }
+    .custom-existencia-check.activo .check-label {
+        color: #28a745;
+    }
+
 </style>
 
 <div id="divcontenedor" style="display: none">
@@ -62,24 +108,33 @@
                     <section class="content" style="margin-left: 30px; margin-top: 30px">
                         <div class="container-fluid">
                             <p style="font-weight: bold">Este reporte toma en cuenta las Fechas para columnas (Entregado Total y Total Desca. Fechas)</p>
-                            <div class="row">
+                            <div class="row align-items-end">
 
                                 <div class="form-group col-md-2">
                                     <label style="color: #686868">Desde: </label>
                                     <input type="date" autocomplete="off" class="form-control" id="fecha2-desde">
                                 </div>
 
-                                <div class="form-group col-md-2" >
+                                <div class="form-group col-md-2">
                                     <label style="color: #686868">Hasta: </label>
                                     <input type="date" autocomplete="off" class="form-control" id="fecha2-hasta">
                                 </div>
 
-                                <div class="form-group " style="margin-top: 30px">
-                                    <button type="button" class="btn btn-success form-control" onclick="verificar2()">Generar</button>
+                                {{-- CHECKBOX EXISTENCIA --}}
+                                <div class="form-group col-md-3" style="margin-bottom: 16px">
+                                    <div class="custom-existencia-check" id="checkExistencia" onclick="toggleCheck()" title="Solo mostrar artículos con existencia mayor a 0">
+                                        <div class="check-icon" id="checkIcon">
+                                            <i class="fas fa-check" id="checkMark" style="display:none; color:#fff; font-size:13px;"></i>
+                                        </div>
+                                        <span class="check-label" id="checkLabel">Solo Existencia &gt; 0</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-top: 0px; margin-bottom: 16px">
+                                    <button type="button" class="btn btn-success" onclick="verificar2()">Generar</button>
                                 </div>
 
                             </div>
-
                         </div>
                     </section>
 
@@ -147,8 +202,22 @@
         }
 
 
-        function verificar2(){
+        let soloExistencia = false;
 
+        function toggleCheck() {
+            soloExistencia = !soloExistencia;
+            const wrapper = document.getElementById('checkExistencia');
+            const mark    = document.getElementById('checkMark');
+            if (soloExistencia) {
+                wrapper.classList.add('activo');
+                mark.style.display = 'inline';
+            } else {
+                wrapper.classList.remove('activo');
+                mark.style.display = 'none';
+            }
+        }
+
+        function verificar2(){
             let fechaDesde = document.getElementById("fecha2-desde").value;
             let fechaHasta = document.getElementById("fecha2-hasta").value;
 
@@ -156,7 +225,6 @@
                 toastr.error('Fecha Desde es requerido');
                 return;
             }
-
             if(fechaHasta === ''){
                 toastr.error('Fecha Hasta es requerido');
                 return;
@@ -166,11 +234,12 @@
             var fecha2 = new Date(fechaHasta);
 
             if (fecha1 > fecha2) {
-                toastr.error('Fecha Desde no puede ser mayor que Fecha Hasta')
+                toastr.error('Fecha Desde no puede ser mayor que Fecha Hasta');
                 return;
             }
 
-            window.open("{{ URL::to('admin/pdf/reporte/finalv2') }}/" + fechaDesde + "/" + fechaHasta);
+            let filtro = soloExistencia ? '1' : '0';
+            window.open("{{ URL::to('admin/pdf/reporte/finalv2') }}/" + fechaDesde + "/" + fechaHasta + "/" + filtro);
         }
 
 

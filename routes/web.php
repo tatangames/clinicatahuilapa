@@ -486,8 +486,7 @@ Route::get('/admin/vista/reporte/final', [ReportesController::class,'vistaReport
 Route::get('/admin/pdf/reporte/final/{desde}/{hasta}', [ReportesController::class,'generarReporteFinal']);
 
 // REPORTE QUE TOMA EN CUENTA LAS FECHAS (entregado total y total desca. fechas)
-Route::get('/admin/pdf/reporte/finalv2/{desde}/{hasta}', [ReportesController::class,'generarReporteFinalv2']);
-
+Route::get('/admin/pdf/reporte/finalv2/{desde}/{hasta}/{soloExistencia?}', [ReportesController::class,'generarReporteFinalv2']);
 
 
 // Reporte para notas paciente
