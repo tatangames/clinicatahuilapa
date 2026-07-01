@@ -139,6 +139,32 @@
                     </section>
 
 
+                    {{-- NUEVO REPORTE: CONTROL DE ENTRADAS/SALIDAS POR PERIODO --}}
+                    <section class="content" style="margin-left: 30px; margin-top: 30px">
+                        <div class="container-fluid">
+                            <p style="font-weight: bold">Reporte con Saldo Inicial, Entradas, Salidas y Saldo Final según el período seleccionado</p>
+                            <div class="row">
+
+                                <div class="form-group col-md-2">
+                                    <label style="color: #686868">Desde: </label>
+                                    <input type="date" autocomplete="off" class="form-control" id="periodo-desde">
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label style="color: #686868">Hasta: </label>
+                                    <input type="date" autocomplete="off" class="form-control" id="periodo-hasta">
+                                </div>
+
+                                <div class="form-group" style="margin-top: 30px">
+                                    <button type="button" class="btn btn-success form-control" onclick="pdfPeriodosFarmacia()">Generar</button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </section>
+
+
                     <p>EXPLICACIÓN CADA COLUMNA</p>
                     <div class="form-group col-md-1" style="margin-top: 30px">
                         <button type="button" class="btn btn-success form-control" onclick="explicacionColumna()">VER</button>
@@ -240,6 +266,32 @@
 
             let filtro = soloExistencia ? '1' : '0';
             window.open("{{ URL::to('admin/pdf/reporte/finalv2') }}/" + fechaDesde + "/" + fechaHasta + "/" + filtro);
+        }
+
+
+        // NUEVO REPORTE: Control de Entradas/Salidas por Periodo
+        function pdfPeriodosFarmacia(){
+            let fechaDesde = document.getElementById("periodo-desde").value;
+            let fechaHasta = document.getElementById("periodo-hasta").value;
+
+            if(fechaDesde === ''){
+                toastr.error('Fecha Desde es requerido');
+                return;
+            }
+            if(fechaHasta === ''){
+                toastr.error('Fecha Hasta es requerido');
+                return;
+            }
+
+            var fecha1 = new Date(fechaDesde);
+            var fecha2 = new Date(fechaHasta);
+
+            if (fecha1 > fecha2) {
+                toastr.error('Fecha Desde no puede ser mayor que Fecha Hasta');
+                return;
+            }
+
+            window.open("{{ URL::to('admin/pdf/reporte/inicial/final') }}/" + fechaDesde + "/" + fechaHasta);
         }
 
 

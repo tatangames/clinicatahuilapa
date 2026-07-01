@@ -510,7 +510,7 @@ Route::get('/admin/existencias/tablas', [ExistenciasController::class,'tablaExis
 
 
 
-
+Route::get('/admin/pdf/reporte/inicial/final/{desde}/{hasta}', [ReportesController::class, 'reportePDFInicialPorPeriodosFarmacia']);
 
 
 
