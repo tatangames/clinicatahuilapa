@@ -2337,8 +2337,8 @@ class ReportesController extends Controller
         $logoGobiernoData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
         $logoGobierno     = 'data:image/jpg;base64,' . $logoGobiernoData;
 
-        $logoAlcaldiaData = base64_encode(file_get_contents(public_path('images/logoalcaldia.png')));
-        $logoAlcaldia     = 'data:image/png;base64,' . $logoAlcaldiaData;
+        $logoAlcaldiaData = base64_encode(file_get_contents(public_path('images/medical_back.jpg')));
+        $logoAlcaldia     = 'data:image/jpg;base64,' . $logoAlcaldiaData;
 
 
 
