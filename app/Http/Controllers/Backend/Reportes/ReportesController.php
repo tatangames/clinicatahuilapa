@@ -2340,7 +2340,7 @@ class ReportesController extends Controller
 
 
 
-        $logoalcaldia     = 'data:image/png;base64,' . $logoalcaldiaData;
+        $logoalcaldia     = 'data:image/jpg;base64,' . $logoalcaldiaData;
         $logosantaana     = 'data:image/png;base64,'  . $logosantaanaData;
 
         $tabla = "
