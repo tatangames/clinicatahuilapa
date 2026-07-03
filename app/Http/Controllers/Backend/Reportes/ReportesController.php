@@ -2159,7 +2159,6 @@ class ReportesController extends Controller
 
         ini_set('memory_limit', '6024M');
 
-        $PDF_PRODUCCION = true;
 
         $start = Carbon::parse($desde)->startOfDay();
         $end   = Carbon::parse($hasta)->endOfDay();
@@ -2330,25 +2329,20 @@ class ReportesController extends Controller
 
         $contadorCorrelativo = 0;
 
-        if($PDF_PRODUCCION){
-            $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
-        }else{
-            $mpdf = new \Mpdf\Mpdf(['format' => 'LETTER']);
-        }
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
 
         $mpdf->SetTitle('Reporte Final');
         $mpdf->showImageErrors = false;
 
-        $logoalcaldiaData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
-        $logosantaanaData = base64_encode(file_get_contents(public_path('images/logo.png')));
-        $logoalcaldia     = 'data:image/jpeg;base64,' . $logoalcaldiaData;
-        $logosantaana     = 'data:image/png;base64,'  . $logosantaanaData;
+        $logoalcaldia = 'images/logo.png';
+        $logosantaanaData = 'images/logo.png';
+
 
         $tabla = "
     <table style='width: 100%; border-collapse: collapse; margin-bottom: 0px'>
         <tr>
             <td style='width: 15%; text-align: left;'>
-                <img src='$logosantaana' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
+                <img src='$logosantaanaData' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
             </td>
             <td style='width: 60%; text-align: center;'>
                 <h1 style='font-size: 16px; margin: 0; color: #003366;'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE</h1>
