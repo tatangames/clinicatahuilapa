@@ -2337,8 +2337,20 @@ class ReportesController extends Controller
         $logoGobiernoData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
         $logoGobierno     = 'data:image/jpg;base64,' . $logoGobiernoData;
 
-        $logoAlcaldiaData = base64_encode(file_get_contents(public_path('images/medical_back.jpg')));
-        $logoAlcaldia     = 'data:image/jpg;base64,' . $logoAlcaldiaData;
+
+
+
+        $rutaLogo = public_path('images/logosantaananorte.png');
+
+        if (!file_exists($rutaLogo)) {
+            dd('Archivo no existe: ' . $rutaLogo);
+        }
+        if (!is_readable($rutaLogo)) {
+            dd('Archivo existe pero no es legible: ' . $rutaLogo);
+        }
+
+        $logoAlcaldiaData = base64_encode(file_get_contents($rutaLogo));
+        $logoAlcaldia     = 'data:image/png;base64,' . $logoAlcaldiaData;
 
 
 
