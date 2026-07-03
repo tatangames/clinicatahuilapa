@@ -2499,17 +2499,11 @@ class ReportesController extends Controller
     </tbody></table>
     <br><br>";
 
-        $mpdf->SetHTMLFooter("
-    <table style='width:100%; font-size:9px;'>
-        <tr>
-            <td style='text-align:right;'>Página {PAGENO} de {nb}</td>
-        </tr>
-    </table>
-");
 
-        $mpdf->WriteHTML($stylesheet, 1);
-        $mpdf->WriteHTML($tabla, 2);
-// ... resto de WriteHTML
+
+
+
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
         $mpdf->WriteHTML($tablaFooter, 2);
 
         $mpdf->Output();
