@@ -2334,21 +2334,20 @@ class ReportesController extends Controller
         $mpdf->SetTitle('Reporte Final');
         $mpdf->showImageErrors = false;
 
-        $logoalcaldiaData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
-        $logosantaanaData = base64_encode(
-            file_get_contents(public_path('images/logo.png'))
-        );
+        $logoGobiernoData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
+        $logoGobierno     = 'data:image/jpg;base64,' . $logoGobiernoData;
+
+        $logoAlcaldiaData = base64_encode(file_get_contents(public_path('images/logoalcaldia.png')));
+        $logoAlcaldia     = 'data:image/png;base64,' . $logoAlcaldiaData;
 
 
 
-        $logoalcaldia     = 'data:image/jpg;base64,' . $logoalcaldiaData;
-        $logosantaana = 'data:image/png;base64,' . $logosantaanaData;
 
         $tabla = "
     <table style='width: 100%; border-collapse: collapse; margin-bottom: 0px'>
         <tr>
             <td style='width: 15%; text-align: left;'>
-                <img src='$logosantaana' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
+                <img src='$logoAlcaldia' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
             </td>
             <td style='width: 60%; text-align: center;'>
                 <h1 style='font-size: 16px; margin: 0; color: #003366;'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE</h1>
@@ -2357,7 +2356,7 @@ class ReportesController extends Controller
                 <h3 style='font-size: 16px; margin: 0; color: #003366;'><strong>INTERVALO DESDE:</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</h3>
             </td>
             <td style='width: 10%; text-align: right;'>
-                <img src='$logoalcaldia' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
+                <img src=' $logoGobierno' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
             </td>
         </tr>
     </table>
