@@ -2335,13 +2335,14 @@ class ReportesController extends Controller
         $mpdf->showImageErrors = false;
 
         $logoalcaldiaData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
-        $logosantaanaData = base64_encode(file_get_contents(public_path('images/logo.png')));
-
+        $logosantaanaData = base64_encode(
+            file_get_contents(public_path('images/logo.png'))
+        );
 
 
 
         $logoalcaldia     = 'data:image/jpg;base64,' . $logoalcaldiaData;
-        $logosantaana     = 'data:image/png;base64,'  . $logosantaanaData;
+        $logosantaana = 'data:image/png;base64,' . $logosantaanaData;
 
         $tabla = "
     <table style='width: 100%; border-collapse: collapse; margin-bottom: 0px'>
