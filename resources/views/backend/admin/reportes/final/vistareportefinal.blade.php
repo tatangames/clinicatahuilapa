@@ -297,18 +297,18 @@
 
         function explicacionColumna(){
 
-            let mensaje = "COSTO: precio del medicamento<br>" +
-                "COSTO DONA: precio de donación del medicamento<br>" +
-                "CANTIDAD INICIAL: cuando se ingresó la cantidad la primera vez<br>" +
-                "ENTREGADO: cantidad total que se ha entregado de este medicamento<br>" +
-                "ENTREGADO TOTAL: cantidad que se ha entregado en el rango de fechas del reporte<br>" +
-                "EXISTENCIA: cantidad actual que tendría en bodega del medicamento<br>" +
-                "TOTAL DESCARGADO: Costo * Entregado (no toma rango de fechas)<br>" +
-                "TOTAL DESCARGADO DONAC: Costo Dona * Entregado (no toma rango fecha)<br>" +
-                "TOTAL DESCA. FECHAS: Costo * Entregado Total (tomado rango de fecha)<br>" +
-                "TOTAL DESCA. DONA FECHAS: Costo donacion * Entregado Total (tomado rango de fecha)<br>" +
-                "TOTAL EXISTENCIA: Costo * Cantidad Actual disponible en bodega (Columna: Existencia)<br>" +
-                "TOTAL EXISTENCIA DONA: costo donación * cantidad actual";
+            let mensaje = "COSTO: Precio unitario del medicamento (costo normal)<br>" +
+                "COSTO DONA: Precio unitario del medicamento por donación<br>" +
+                "CANTIDAD INICIAL: Cantidad con la que ingresó el lote al sistema<br>" +
+                "ENTREGADO: Cantidad total entregada acumulada hasta la fecha final del intervalo<br>" +
+                "ENTREGADO TOTAL: Cantidad entregada únicamente dentro del rango de fechas del reporte<br>" +
+                "EXISTENCIA: Cantidad disponible en bodega (Cantidad Inicial - Entregado acumulado hasta fecha final)<br>" +
+                "TOTAL DESCARGADO: Costo * Entregado (acumulado hasta fecha final, no solo el rango)<br>" +
+                "TOTAL DESCARGADO DONAC: Costo Dona * Entregado (acumulado hasta fecha final, no solo el rango)<br>" +
+                "TOTAL DESCA. FECHAS: Costo * Entregado Total (solo dentro del rango de fechas)<br>" +
+                "TOTAL DESCA. DONA FECHAS: Costo Dona * Entregado Total (solo dentro del rango de fechas)<br>" +
+                "TOTAL EXISTENCIA: Costo * Existencia (cantidad disponible en bodega)<br>" +
+                "TOTAL EXISTENCIA DONA: Costo Dona * Existencia (cantidad disponible en bodega)";
 
             Swal.fire({
                 title: 'Información Columnas',
