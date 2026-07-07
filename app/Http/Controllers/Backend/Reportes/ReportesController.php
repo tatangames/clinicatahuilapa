@@ -1780,7 +1780,9 @@ class ReportesController extends Controller
 
     public function vistaReporteFinal(){
 
-        return view('backend.admin.reportes.final.vistareportefinal');
+        $materiales = FarmaciaArticulo::orderBy('nombre', 'ASC')->get();
+
+        return view('backend.admin.reportes.final.vistareportefinal', compact('materiales'));
     }
 
 
@@ -2158,7 +2160,8 @@ class ReportesController extends Controller
     public function generarReporteFinalv2($desde, $hasta, $soloExistencia = '0'){
 
         ini_set('memory_limit', '6024M');
-
+        ini_set('pcre.backtrack_limit', '100000000');
+        ini_set('pcre.recursion_limit', '100000000');
 
         $start = Carbon::parse($desde)->startOfDay();
         $end   = Carbon::parse($hasta)->endOfDay();
@@ -2184,16 +2187,41 @@ class ReportesController extends Controller
             ->pluck('sr.id')
             ->toArray();
 
-        // *** Pre-cargar SalidaRecetaDetalle de una sola vez ***
-        $allDetallesHasta = DB::table('salida_receta_detalle')
+        // *** IDs orden_salida RANGO desde-hasta ***
+        $pilaIdOrdenRango = DB::table('orden_salida')
+            ->whereBetween('fecha', [$start, $end])
+            ->pluck('id')
+            ->toArray();
+
+        // *** IDs orden_salida ACUMULADO hasta "hasta" ***
+        $pilaIdOrdenHasta = DB::table('orden_salida')
+            ->where('fecha', '<=', $end)
+            ->pluck('id')
+            ->toArray();
+
+        // *** Pre-cargar SalidaRecetaDetalle ***
+        $allDetallesRecetaHasta = DB::table('salida_receta_detalle')
             ->whereIn('salidareceta_id', $pilaIdSalidaRecetaHasta)
             ->select('entrada_detalle_id', 'cantidad')
             ->get()
             ->groupBy('entrada_detalle_id');
 
-        $allDetallesRango = DB::table('salida_receta_detalle')
+        $allDetallesRecetaRango = DB::table('salida_receta_detalle')
             ->whereIn('salidareceta_id', $pilaIdSalidaRecetaRango)
             ->select('entrada_detalle_id', 'cantidad')
+            ->get()
+            ->groupBy('entrada_detalle_id');
+
+        // *** Pre-cargar OrdenSalidaDetalle ***
+        $allDetallesOrdenHasta = DB::table('orden_salida_detalle')
+            ->whereIn('orden_salida_id', $pilaIdOrdenHasta)
+            ->select('entrada_medi_detalle_id AS entrada_detalle_id', 'cantidad')
+            ->get()
+            ->groupBy('entrada_detalle_id');
+
+        $allDetallesOrdenRango = DB::table('orden_salida_detalle')
+            ->whereIn('orden_salida_id', $pilaIdOrdenRango)
+            ->select('entrada_medi_detalle_id AS entrada_detalle_id', 'cantidad')
             ->get()
             ->groupBy('entrada_detalle_id');
 
@@ -2220,32 +2248,37 @@ class ReportesController extends Controller
 
             foreach ($arrayDetalle as $fila){
 
-                // *** ENTREGADO: acumulado hasta fecha "hasta" ***
+                // *** ENTREGADO ACUMULADO HASTA: recetas + ordenes ***
                 $entregado_hasta_COL = 0;
-                if (isset($allDetallesHasta[$fila->id])) {
-                    foreach ($allDetallesHasta[$fila->id] as $d) {
+                if (isset($allDetallesRecetaHasta[$fila->id])) {
+                    foreach ($allDetallesRecetaHasta[$fila->id] as $d) {
+                        $entregado_hasta_COL += $d->cantidad;
+                    }
+                }
+                if (isset($allDetallesOrdenHasta[$fila->id])) {
+                    foreach ($allDetallesOrdenHasta[$fila->id] as $d) {
                         $entregado_hasta_COL += $d->cantidad;
                     }
                 }
 
-                // *** EXISTENCIA: cantidad_inicial - entregado hasta la fecha del intervalo ***
+                // *** EXISTENCIA: cantidad_inicial - entregado acumulado hasta ***
                 $existencia_rango_COL = $fila->cantidad_fija - $entregado_hasta_COL;
 
-                // *** ENTREG. TOTAL: solo las del intervalo desde-hasta ***
+                // *** ENTREGADO TOTAL RANGO: recetas + ordenes ***
                 $entregadoTotalF_COL = 0;
-                if (isset($allDetallesRango[$fila->id])) {
-                    foreach ($allDetallesRango[$fila->id] as $d) {
+                if (isset($allDetallesRecetaRango[$fila->id])) {
+                    foreach ($allDetallesRecetaRango[$fila->id] as $d) {
+                        $entregadoTotalF_COL += $d->cantidad;
+                    }
+                }
+                if (isset($allDetallesOrdenRango[$fila->id])) {
+                    foreach ($allDetallesOrdenRango[$fila->id] as $d) {
                         $entregadoTotalF_COL += $d->cantidad;
                     }
                 }
 
-                // *** FILTRO PRINCIPAL ***
-                // Si soloExistencia=1: solo mostrar si existencia > 0
-                // Siempre: si existencia=0 Y entregado_total=0 → no mostrar
-                //          si existencia=0 Y entregado_total>0 → si mostrar (hubo movimiento en el rango)
                 // *** FILTRO ***
                 if ($soloExistencia === '1') {
-                    // Solo mostrar si tiene existencia O si hubo movimiento en el rango de fechas
                     if ($existencia_rango_COL <= 0 && $entregadoTotalF_COL <= 0) {
                         continue;
                     }
@@ -2275,19 +2308,19 @@ class ReportesController extends Controller
                 $totalDescargadoDonac_COL      = '$' . number_format((float)($fila->precio_donacion * $entregado_hasta_COL), 2, '.', ',');
                 $sumatoriaTotalDescargadoDonac += ($fila->precio_donacion * $entregado_hasta_COL);
 
-                // *** TOTAL DESCA. FECHAS: costo * entregado total (intervalo) ***
+                // *** TOTAL DESCA. FECHAS: costo * entregado total rango ***
                 $totalDescaFecha_COL       = '$' . number_format((float)($fila->precio * $entregadoTotalF_COL), 2, '.', ',');
                 $sumatoriaTotalDescaFecha += ($fila->precio * $entregadoTotalF_COL);
 
-                // *** TOTAL DESCA. DONA FECHAS: costo_donacion * entregado total (intervalo) ***
+                // *** TOTAL DESCA. DONA FECHAS: costo_donacion * entregado total rango ***
                 $totalDescaDonacionFecha_COL       = '$' . number_format((float)($fila->precio_donacion * $entregadoTotalF_COL), 2, '.', ',');
                 $sumatoriaTotalDescaDonacionFecha  += ($fila->precio_donacion * $entregadoTotalF_COL);
 
-                // *** TOTAL EXISTENCIA: costo * existencia de rango fecha ***
+                // *** TOTAL EXISTENCIA: costo * existencia rango ***
                 $totalExistencia_COL       = '$' . number_format((float)($fila->precio * $existencia_rango_COL), 2, '.', ',');
                 $sumatoriaTotalExistencia += ($fila->precio * $existencia_rango_COL);
 
-                // *** TOTAL EXISTENCIA DONA.: costo_donacion * existencia de rango fecha ***
+                // *** TOTAL EXISTENCIA DONA.: costo_donacion * existencia rango ***
                 $totalExistenciaDona_COL  = '$' . number_format((float)($fila->precio_donacion * $existencia_rango_COL), 2, '.', ',');
                 $sumatoriaTotalDona      += ($fila->precio_donacion * $existencia_rango_COL);
 
@@ -2329,21 +2362,25 @@ class ReportesController extends Controller
 
         $contadorCorrelativo = 0;
 
+        // *** mPDF ***
         $mpdf = new \Mpdf\Mpdf(['tempDir' => sys_get_temp_dir(), 'format' => 'LETTER', 'orientation' => 'L']);
-
         $mpdf->SetTitle('Reporte Final');
         $mpdf->showImageErrors = false;
+        $mpdf->packTableData   = true; // reduce consumo de memoria en tablas grandes
 
         $logoGobiernoData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
         $logoGobierno     = 'data:image/jpg;base64,' . $logoGobiernoData;
-
         $logoAlcaldiaData = base64_encode(file_get_contents(public_path('images/logojpg.jpg')));
         $logoAlcaldia     = 'data:image/jpg;base64,' . $logoAlcaldiaData;
 
+        // *** CSS ***
+        $stylesheet = file_get_contents('css/cssreportefinal.css');
+        $mpdf->WriteHTML($stylesheet, 1);
 
+        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
 
-
-        $tabla = "
+        // *** HEADER LOGOS ***
+        $mpdf->WriteHTML("
     <table style='width: 100%; border-collapse: collapse; margin-bottom: 0px'>
         <tr>
             <td style='width: 15%; text-align: left;'>
@@ -2356,20 +2393,15 @@ class ReportesController extends Controller
                 <h3 style='font-size: 16px; margin: 0; color: #003366;'><strong>INTERVALO DESDE:</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</h3>
             </td>
             <td style='width: 10%; text-align: right;'>
-                <img src=' $logoGobierno' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
+                <img src='$logoGobierno' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
             </td>
         </tr>
     </table>
     <hr style='border: none; border-top: 2px solid #003366; margin: 0;'>
-    ";
+    ", 2);
 
-        // *** CSS ***
-        $stylesheet = file_get_contents('css/cssreportefinal.css');
-        $mpdf->WriteHTML($stylesheet, 1);
-
-        // *** HEADER DE TABLA ***
-        $tablaHeader = "
-    <table id='tablaFor' style='margin-top: 40px'><tbody>
+        // *** ENCABEZADO DE TABLA (reutilizable) ***
+        $encabezadoTabla = "
     <tr>
         <td style='font-weight: bold; font-size: 12px'>#</td>
         <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
@@ -2393,15 +2425,20 @@ class ReportesController extends Controller
         <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA DONA.</td>
     </tr>";
 
-        $mpdf->WriteHTML($tabla, 2);
-        $mpdf->WriteHTML($tablaHeader, 2);
+        // *** FILAS: tablas completas en bloques (evita pcre.backtrack_limit) ***
+        $maxFilasPorBloque = 150; // ajustable: filas por tabla antes de cerrar y abrir otra
+        $primeraTabla      = true;
 
-        // *** FILAS POR GRUPO ***
         foreach ($dataGrouped as $linea => $items) {
 
-            $chunk = "<tr style='background-color: #ddd; font-weight: bold;'>
+            $margen     = $primeraTabla ? 'margin-top: 40px' : 'margin-top: 0px';
+            $htmlBloque = "<table id='tablaFor' style='$margen'><tbody>" . $encabezadoTabla;
+            $htmlBloque .= "
+        <tr style='background-color: #ddd; font-weight: bold;'>
             <td colspan='20'>$linea</td>
         </tr>";
+            $primeraTabla   = false;
+            $filasEnBloque  = 0;
 
             foreach ($items as $fila) {
                 $contadorCorrelativo++;
@@ -2425,7 +2462,8 @@ class ReportesController extends Controller
                 $detaTotalExis           = $fila['total_existencia'];
                 $detaTotalExistenciaDona = $fila['totalexistencia_dona'];
 
-                $chunk .= "<tr>
+                $htmlBloque .= "
+            <tr>
                 <td>$contadorCorrelativo</td>
                 <td>$detaCodigo</td>
                 <td>$detaNombre</td>
@@ -2447,35 +2485,28 @@ class ReportesController extends Controller
                 <td>$detaTotalExis</td>
                 <td>$detaTotalExistenciaDona</td>
             </tr>";
+
+                $filasEnBloque++;
+
+                // Cerrar tabla y abrir nueva si el bloque ya es muy grande
+                if ($filasEnBloque >= $maxFilasPorBloque) {
+                    $htmlBloque .= "</tbody></table>";
+                    $mpdf->WriteHTML($htmlBloque, 2);
+
+                    $htmlBloque    = "<table id='tablaFor' style='margin-top: 0px'><tbody>" . $encabezadoTabla;
+                    $filasEnBloque = 0;
+                }
             }
 
-            $mpdf->WriteHTML($chunk, 2);
+            // Escribir lo que quede del grupo
+            $htmlBloque .= "</tbody></table>";
+            $mpdf->WriteHTML($htmlBloque, 2);
         }
 
-        // *** FILA SUMATORIAS + CIERRE ***
-        $tablaFooter = "
-    <tr>
-        <td style='font-weight: bold; font-size: 12px'>#</td>
-        <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
-        <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
-        <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
-        <td style='font-weight: bold; font-size: 12px'>LINEA</td>
-        <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
-        <td style='font-weight: bold; font-size: 12px'>LOTE</td>
-        <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
-        <td style='font-weight: bold; font-size: 12px'>COSTO</td>
-        <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
-        <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
-        <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
-        <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
-        <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
-        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
-        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
-        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
-        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. DONA FECHAS</td>
-        <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
-        <td style='font-weight: bold; font-size: 12px'>TOTAL DONA.</td>
-    </tr>
+        // *** TABLA DE TOTALES (encabezado repetido + fila de sumatorias) ***
+        $mpdf->WriteHTML("
+    <table id='tablaFor' style='margin-top: 0px'><tbody>
+    $encabezadoTabla
     <tr>
         <td colspan='14' style='text-align: right; font-weight: bold'></td>
         <td style='font-weight: bold'>$sumatoriaTotalDescargado</td>
@@ -2485,8 +2516,10 @@ class ReportesController extends Controller
         <td style='font-weight: bold'>$sumatoriaTotalExistencia</td>
         <td style='font-weight: bold'>$sumatoriaTotalDona</td>
     </tr>
-    </tbody></table>
+    </tbody></table>", 2);
 
+        // *** TABLA RESUMEN ***
+        $mpdf->WriteHTML("
     <table style='border-collapse: collapse;' border='1' width='500'><tbody>
     <tr>
         <td style='font-weight: bold; font-size: 11px'>Total Descargado</td>
@@ -2497,17 +2530,13 @@ class ReportesController extends Controller
         <td style='font-weight: bold; font-size: 11px'>$sumatoriaTotalExistencia</td>
     </tr>
     </tbody></table>
-    <br><br>";
-
-
-
-
-
-        $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
-        $mpdf->WriteHTML($tablaFooter, 2);
+    <br><br>", 2);
 
         $mpdf->Output();
     }
+
+
+
 
 
     public function generarReporteFichaGeneralPaciente($idpaciente){
@@ -3106,7 +3135,303 @@ class ReportesController extends Controller
 
 
 
+    public function movimientosMedicamento($id, $desde = null, $hasta = null){
 
+        ini_set('memory_limit', '1024M');
+
+        $medicamento = FarmaciaArticulo::findOrFail($id);
+
+        $start = $desde ? Carbon::parse($desde)->startOfDay() : null;
+        $end   = $hasta ? Carbon::parse($hasta)->endOfDay()   : null;
+
+        $desdeFormat = $desde ? date("d-m-Y", strtotime($desde)) : 'Inicio';
+        $hastaFormat = $hasta ? date("d-m-Y", strtotime($hasta)) : 'Hoy';
+
+        // *** ENTRADAS: lotes del medicamento ***
+        $entradas = DB::table('entrada_medicamento_detalle AS emd')
+            ->join('entrada_medicamento AS em', 'em.id', '=', 'emd.entrada_medicamento_id')
+            ->join('proveedores AS p', 'p.id', '=', 'em.proveedor_id')
+            ->join('fuente_financiamiento AS ff', 'ff.id', '=', 'em.fuentefina_id')
+            ->where('emd.medicamento_id', $id)
+            ->when($start && $end, function($q) use ($start, $end){
+                $q->whereBetween('em.fecha', [$start, $end]);
+            })
+            ->select(
+                'em.fecha',
+                'em.numero_factura',
+                'p.nombre AS proveedor',
+                'ff.nombre AS fuente',
+                'emd.lote',
+                'emd.fecha_vencimiento',
+                'emd.cantidad_fija AS cantidad_entrada',
+                'emd.precio',
+                'emd.precio_donacion'
+            )
+            ->orderBy('em.fecha', 'ASC')
+            ->get();
+
+        // *** SALIDAS POR RECETA ***
+        $salidasReceta = DB::table('salida_receta_detalle AS srd')
+            ->join('salida_receta AS sr', 'sr.id', '=', 'srd.salidareceta_id')
+            ->join('recetas AS r', 'r.id', '=', 'sr.recetas_id')
+            ->join('entrada_medicamento_detalle AS emd', 'emd.id', '=', 'srd.entrada_detalle_id')
+            ->join('usuario AS u', 'u.id', '=', 'sr.usuario_id')
+            ->where('emd.medicamento_id', $id)
+            ->where('r.estado', 2)
+            ->when($start && $end, function($q) use ($start, $end){
+                $q->whereBetween('sr.fecha', [$start, $end]);
+            })
+            ->select(
+                'sr.fecha',
+                'r.id AS receta_id',
+                'u.nombre AS usuario',
+                'emd.lote',
+                'srd.cantidad AS cantidad_salida',
+                'emd.precio',
+                'emd.precio_donacion',
+                'sr.notas'
+            )
+            ->orderBy('sr.fecha', 'ASC')
+            ->get();
+
+        // *** SALIDAS POR ORDEN ***
+        $salidasOrden = DB::table('orden_salida_detalle AS osd')
+            ->join('orden_salida AS os', 'os.id', '=', 'osd.orden_salida_id')
+            ->join('entrada_medicamento_detalle AS emd', 'emd.id', '=', 'osd.entrada_medi_detalle_id')
+            ->join('usuario AS u', 'u.id', '=', 'os.usuario_id')
+            ->join('motivo_farmacia AS mf', 'mf.id', '=', 'os.motivo_id')
+            ->where('emd.medicamento_id', $id)
+            ->when($start && $end, function($q) use ($start, $end){
+                $q->whereBetween('os.fecha', [$start, $end]);
+            })
+            ->select(
+                'os.fecha',
+                'os.hora',
+                'mf.nombre AS motivo',
+                'u.nombre AS usuario',
+                'emd.lote',
+                'osd.cantidad AS cantidad_salida',
+                'emd.precio',
+                'emd.precio_donacion',
+                'os.observaciones'
+            )
+            ->orderBy('os.fecha', 'ASC')
+            ->get();
+
+        // *** TOTALES ***
+        $totalEntradas      = $entradas->sum('cantidad_entrada');
+        $totalSalidasReceta = $salidasReceta->sum('cantidad_salida');
+        $totalSalidasOrden  = $salidasOrden->sum('cantidad_salida');
+        $totalSalidas       = $totalSalidasReceta + $totalSalidasOrden;
+
+        // *** mPDF ***
+        $mpdf = new \Mpdf\Mpdf([
+            'tempDir'      => sys_get_temp_dir(),
+            'format'       => 'LETTER',
+            'orientation'  => 'L',
+            'margin_top'   => 35,
+            'margin_left'  => 8,
+            'margin_right' => 8,
+            'margin_bottom'=> 12,
+        ]);
+
+        $mpdf->SetTitle('Movimientos ' . $medicamento->nombre);
+        $mpdf->showImageErrors = false;
+
+        $logoalcaldiaData = base64_encode(file_get_contents(public_path('images/gobiernologo.jpg')));
+        $logosantaanaData = base64_encode(file_get_contents(public_path('images/logo.png')));
+        $logoalcaldia     = 'data:image/jpeg;base64,' . $logoalcaldiaData;
+        $logosantaana     = 'data:image/png;base64,'  . $logosantaanaData;
+
+        $mpdf->SetHTMLFooter("
+        <table style='width:100%; font-size:9px;'>
+            <tr>
+                <td style='text-align:right;'>Página {PAGENO} de {nb}</td>
+            </tr>
+        </table>
+    ");
+
+        $stylesheet = file_get_contents('css/cssreportefinal.css');
+        $mpdf->WriteHTML($stylesheet, 1);
+
+        // *** HEADER ***
+        $header = "
+    <table style='width:100%; border-collapse:collapse; margin-bottom:0px'>
+        <tr>
+            <td style='width:15%; text-align:left;'>
+                <img src='$logosantaana' style='max-width:100px; height:auto;'>
+            </td>
+            <td style='width:70%; text-align:center;'>
+                <h1 style='font-size:15px; margin:0; color:#003366;'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE</h1>
+                <h3 style='font-size:14px; margin:0; color:#003366;'>Clínica Municipal Cristóbal Peraza</h3>
+                <h3 style='font-size:13px; margin:0; color:#003366;'>REPORTE DE MOVIMIENTOS DE MEDICAMENTO</h3>
+                <h3 style='font-size:12px; margin:2px 0 0 0; color:#003366;'>
+                    <strong>" . strtoupper($medicamento->nombre) . "</strong>
+                </h3>
+                <h4 style='font-size:11px; margin:2px 0 0 0; color:#003366;'>
+                    PERÍODO: $desdeFormat &nbsp;–&nbsp; $hastaFormat
+                </h4>
+            </td>
+            <td style='width:15%; text-align:right;'>
+                <img src='$logoalcaldia' style='max-width:60px; height:auto;'>
+            </td>
+        </tr>
+    </table>
+    <hr style='border:none; border-top:2px solid #003366; margin:0;'>
+    ";
+
+        $mpdf->WriteHTML($header, 2);
+
+        // *** SECCIÓN ENTRADAS ***
+        $seccionEntradas = "
+    <br>
+    <table style='width:100%; border-collapse:collapse;'>
+        <tr style='background-color:#003366; color:#ffffff;'>
+            <td colspan='9' style='font-size:11px; font-weight:bold; padding:4px 6px;'>
+                ENTRADAS DE MEDICAMENTO &nbsp;|&nbsp; Total unidades: $totalEntradas
+            </td>
+        </tr>
+        <tr style='background-color:#cce0ff;'>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>FECHA</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>N° FACTURA</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>PROVEEDOR</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>FUENTE</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>LOTE</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>FECHA VEN.</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>CANTIDAD</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>COSTO</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>COSTO DONA.</td>
+        </tr>";
+
+        if($entradas->isEmpty()){
+            $seccionEntradas .= "<tr><td colspan='9' style='font-size:9px; padding:3px; text-align:center;'>Sin entradas en el período</td></tr>";
+        } else {
+            foreach($entradas as $e){
+                $fechaE    = date('d-m-Y', strtotime($e->fecha));
+                $fechaVenE = date('d-m-Y', strtotime($e->fecha_vencimiento));
+                $costoE    = '$' . number_format((float)$e->precio, 2, '.', ',');
+                $costoDonaE= '$' . number_format((float)$e->precio_donacion, 2, '.', ',');
+
+                $seccionEntradas .= "<tr>
+                <td style='font-size:8px; padding:1px 2px;'>$fechaE</td>
+                <td style='font-size:8px; padding:1px 2px;'>$e->numero_factura</td>
+                <td style='font-size:8px; padding:1px 2px;'>$e->proveedor</td>
+                <td style='font-size:8px; padding:1px 2px;'>$e->fuente</td>
+                <td style='font-size:8px; padding:1px 2px;'>$e->lote</td>
+                <td style='font-size:8px; padding:1px 2px;'>$fechaVenE</td>
+                <td style='font-size:8px; padding:1px 2px;'>$e->cantidad_entrada</td>
+                <td style='font-size:8px; padding:1px 2px;'>$costoE</td>
+                <td style='font-size:8px; padding:1px 2px;'>$costoDonaE</td>
+            </tr>";
+            }
+        }
+
+        $seccionEntradas .= "</table>";
+        $mpdf->WriteHTML($seccionEntradas, 2);
+
+        // *** SECCIÓN SALIDAS POR RECETA ***
+        $seccionRecetas = "
+    <br>
+    <table style='width:100%; border-collapse:collapse;'>
+        <tr style='background-color:#003366; color:#ffffff;'>
+            <td colspan='7' style='font-size:11px; font-weight:bold; padding:4px 6px;'>
+                SALIDAS POR RECETA &nbsp;|&nbsp; Total unidades: $totalSalidasReceta
+            </td>
+        </tr>
+        <tr style='background-color:#cce0ff;'>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>FECHA</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>N° RECETA</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>USUARIO</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>LOTE</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>CANTIDAD</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>COSTO UNIT.</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>NOTAS</td>
+        </tr>";
+
+        if($salidasReceta->isEmpty()){
+            $seccionRecetas .= "<tr><td colspan='7' style='font-size:9px; padding:3px; text-align:center;'>Sin salidas por receta en el período</td></tr>";
+        } else {
+            foreach($salidasReceta as $sr){
+                $fechaSR  = date('d-m-Y H:i', strtotime($sr->fecha));
+                $costoSR  = '$' . number_format((float)$sr->precio, 2, '.', ',');
+
+                $seccionRecetas .= "<tr>
+                <td style='font-size:8px; padding:1px 2px;'>$fechaSR</td>
+                <td style='font-size:8px; padding:1px 2px;'># $sr->receta_id</td>
+                <td style='font-size:8px; padding:1px 2px;'>$sr->usuario</td>
+                <td style='font-size:8px; padding:1px 2px;'>$sr->lote</td>
+                <td style='font-size:8px; padding:1px 2px;'>$sr->cantidad_salida</td>
+                <td style='font-size:8px; padding:1px 2px;'>$costoSR</td>
+                <td style='font-size:8px; padding:1px 2px;'>$sr->notas</td>
+            </tr>";
+            }
+        }
+
+        $seccionRecetas .= "</table>";
+        $mpdf->WriteHTML($seccionRecetas, 2);
+
+        // *** SECCIÓN SALIDAS POR ORDEN ***
+        $seccionOrdenes = "
+    <br>
+    <table style='width:100%; border-collapse:collapse;'>
+        <tr style='background-color:#003366; color:#ffffff;'>
+            <td colspan='7' style='font-size:11px; font-weight:bold; padding:4px 6px;'>
+                SALIDAS POR ORDEN &nbsp;|&nbsp; Total unidades: $totalSalidasOrden
+            </td>
+        </tr>
+        <tr style='background-color:#cce0ff;'>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>FECHA</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>HORA</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>MOTIVO</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>USUARIO</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>LOTE</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>CANTIDAD</td>
+            <td style='font-weight:bold; font-size:9px; padding:2px;'>OBSERVACIONES</td>
+        </tr>";
+
+        if($salidasOrden->isEmpty()){
+            $seccionOrdenes .= "<tr><td colspan='7' style='font-size:9px; padding:3px; text-align:center;'>Sin salidas por orden en el período</td></tr>";
+        } else {
+            foreach($salidasOrden as $so){
+                $fechaSO = date('d-m-Y', strtotime($so->fecha));
+
+                $seccionOrdenes .= "<tr>
+                <td style='font-size:8px; padding:1px 2px;'>$fechaSO</td>
+                <td style='font-size:8px; padding:1px 2px;'>$so->hora</td>
+                <td style='font-size:8px; padding:1px 2px;'>$so->motivo</td>
+                <td style='font-size:8px; padding:1px 2px;'>$so->usuario</td>
+                <td style='font-size:8px; padding:1px 2px;'>$so->lote</td>
+                <td style='font-size:8px; padding:1px 2px;'>$so->cantidad_salida</td>
+                <td style='font-size:8px; padding:1px 2px;'>$so->observaciones</td>
+            </tr>";
+            }
+        }
+
+        $seccionOrdenes .= "</table>";
+        $mpdf->WriteHTML($seccionOrdenes, 2);
+
+        // *** RESUMEN FINAL ***
+        $resumen = "
+    <br>
+    <table style='border-collapse:collapse;' border='1' width='350'>
+        <tr style='background-color:#003366; color:#ffffff;'>
+            <td style='font-weight:bold; font-size:10px; padding:3px;'>Total Entradas</td>
+            <td style='font-weight:bold; font-size:10px; padding:3px;'>Total Salidas Receta</td>
+            <td style='font-weight:bold; font-size:10px; padding:3px;'>Total Salidas Orden</td>
+            <td style='font-weight:bold; font-size:10px; padding:3px;'>Total Salidas</td>
+        </tr>
+        <tr>
+            <td style='font-size:10px; padding:3px; font-weight:bold;'>$totalEntradas</td>
+            <td style='font-size:10px; padding:3px; font-weight:bold;'>$totalSalidasReceta</td>
+            <td style='font-size:10px; padding:3px; font-weight:bold;'>$totalSalidasOrden</td>
+            <td style='font-size:10px; padding:3px; font-weight:bold;'>$totalSalidas</td>
+        </tr>
+    </table>
+    <br><br>";
+
+        $mpdf->WriteHTML($resumen, 2);
+        $mpdf->Output();
+    }
 
 
 

@@ -171,6 +171,45 @@
                     </div>
 
 
+
+                    <hr>
+
+
+                    <section class="content" style="margin-left: 30px; margin-top: 30px">
+                        <div class="container-fluid">
+                            <p style="font-weight: bold">Reporte de Movimientos por Medicamento (Entradas y Salidas)</p>
+                            <div class="row align-items-end">
+
+                                <div class="form-group col-md-4">
+                                    <label style="color: #686868">Medicamento: </label>
+                                    <select class="form-control select2" id="mov-medicamento">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach($materiales as $m)
+                                            <option value="{{ $m->id }}">{{ $m->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label style="color: #686868">Desde (opcional): </label>
+                                    <input type="date" autocomplete="off" class="form-control" id="mov-desde">
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label style="color: #686868">Hasta (opcional): </label>
+                                    <input type="date" autocomplete="off" class="form-control" id="mov-hasta">
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 16px">
+                                    <button type="button" class="btn btn-success" onclick="reporteMovimientosMedicamento()">Generar</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+
+
+
                 </div>
             </div>
         </div>
@@ -193,6 +232,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            $('#mov-medicamento').select2({
+                theme: 'bootstrap-5',
+                placeholder: '-- Seleccione medicamento --'
+            });
 
             document.getElementById("divcontenedor").style.display = "block";
         });
@@ -325,8 +368,35 @@
                     htmlContainer: 'swal-html-container' // Si quieres personalizar el contenedor del texto
                 }
             });
-
         }
+
+
+        function reporteMovimientosMedicamento(){
+            let id     = document.getElementById("mov-medicamento").value;
+            let desde  = document.getElementById("mov-desde").value;
+            let hasta  = document.getElementById("mov-hasta").value;
+
+            if(id === ''){
+                toastr.error('Seleccione un medicamento');
+                return;
+            }
+
+            // Fechas son opcionales, si no se ponen va sin filtro
+            let url = "{{ URL::to('admin/pdf/reporte/movimientos/medicina') }}/" + id;
+            if(desde !== '' && hasta !== ''){
+                var f1 = new Date(desde);
+                var f2 = new Date(hasta);
+                if(f1 > f2){
+                    toastr.error('Fecha Desde no puede ser mayor que Fecha Hasta');
+                    return;
+                }
+                url += "/" + desde + "/" + hasta;
+            }
+
+            window.open(url);
+        }
+
+
 
     </script>
 

@@ -514,8 +514,7 @@ Route::get('/admin/pdf/reporte/inicial/final/{desde}/{hasta}', [ReportesControll
 
 
 
-
-
+Route::get('/admin/pdf/reporte/movimientos/medicina/{id}/{desde?}/{hasta?}', [ReportesController::class, 'movimientosMedicamento']);
 
 
 
