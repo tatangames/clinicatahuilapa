@@ -406,10 +406,10 @@ class ReportesController extends Controller
         // mostrar errores
         $mpdf->showImageErrors = false;
 
-        $logoalcaldia = 'images/logodis.png';
+        $logoalcaldia = 'images/logojpg.jpg';
 
         $tabla = "<div class='contenedorp'>
-            <img id='logo' src='$logoalcaldia'>
+            <img id='logo' src='$logoalcaldia' style='width: 110px'>
             <p id='titulo'>Clinica Municipal Cristobal Peraza <br> Tahuilapa, Distrito de Metapán, Santa Ana Norte<br>
             Reporte de Salida Manual<br>
             Fecha:  $desdeFormat - $hastaFormat</p>
