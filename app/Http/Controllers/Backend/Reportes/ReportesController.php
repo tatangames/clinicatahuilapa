@@ -2156,6 +2156,7 @@ class ReportesController extends Controller
     }
 
 
+
     public function generarReporteFinalv2($desde, $hasta, $soloExistencia = '0')
     {
         ini_set('memory_limit', '6024M');
@@ -2173,7 +2174,7 @@ class ReportesController extends Controller
 
         $dataArray = [];
 
-        // *** IDs salida_receta RANGO desde-hasta ***
+        // *** IDs salida_receta RANGO desde-hasta (para ENTREGADO TOTAL) ***
         $pilaIdSalidaRecetaRango = DB::table('recetas AS r')
             ->join('salida_receta AS sr', 'sr.recetas_id', '=', 'r.id')
             ->where('r.estado', 2)
@@ -2181,7 +2182,7 @@ class ReportesController extends Controller
             ->pluck('sr.id')
             ->toArray();
 
-        // *** IDs salida_receta ACUMULADO hasta "hasta" ***
+        // *** IDs salida_receta ACUMULADO hasta "hasta" (para ENTREGADO) ***
         $pilaIdSalidaRecetaHasta = DB::table('recetas AS r')
             ->join('salida_receta AS sr', 'sr.recetas_id', '=', 'r.id')
             ->where('r.estado', 2)
@@ -2202,7 +2203,7 @@ class ReportesController extends Controller
             ->get()
             ->groupBy('entrada_detalle_id');
 
-        // *** Salidas por ORDEN acumuladas hasta "hasta" ***
+        // *** Salidas por ORDEN acumuladas hasta "hasta" (para ENTREGADO) ***
         $ordenesHasta = DB::table('orden_salida AS os')
             ->join('orden_salida_detalle AS osd', 'osd.orden_salida_id', '=', 'os.id')
             ->where('os.fecha', '<=', $hastaDate)
@@ -2210,7 +2211,7 @@ class ReportesController extends Controller
             ->groupBy('osd.entrada_medi_detalle_id')
             ->pluck('total', 'entrada_medi_detalle_id');
 
-        // *** Salidas por ORDEN en el RANGO desde-hasta ***
+        // *** Salidas por ORDEN en el RANGO desde-hasta (para ENTREGADO TOTAL) ***
         $ordenesRango = DB::table('orden_salida AS os')
             ->join('orden_salida_detalle AS osd', 'osd.orden_salida_id', '=', 'os.id')
             ->whereBetween('os.fecha', [$desdeDate, $hastaDate])
@@ -2239,39 +2240,39 @@ class ReportesController extends Controller
             $arrayDetalle = EntradaMedicamentoDetalle::where('medicamento_id', $dato->id)->get();
             $infoLinea = $allLineas->get($dato->linea_id);
 
+
             foreach ($arrayDetalle as $fila) {
 
-                // *** ENTREGADO: acumulado hasta "hasta" (recetas + ordenes) ***
+                // ============================================================
+                // ENTREGADO ACUMULADO HASTA LA FECHA FINAL
+                // ============================================================
                 $entregado_hasta_COL = 0;
+
                 if (isset($allDetallesHasta[$fila->id])) {
                     foreach ($allDetallesHasta[$fila->id] as $d) {
                         $entregado_hasta_COL += $d->cantidad;
                     }
                 }
+
                 $entregado_hasta_COL += (int)($ordenesHasta[$fila->id] ?? 0);
 
-                // *** EXISTENCIA: cantidad_inicial - entregado hasta "hasta" ***
+                // ============================================================
+                // EXISTENCIA
+                // ============================================================
                 $existencia_rango_COL = $fila->cantidad_fija - $entregado_hasta_COL;
 
-                // *** ENTREGADO TOTAL: solo intervalo desde-hasta (recetas + ordenes) ***
+                // ============================================================
+                // ENTREGADO TOTAL EN EL RANGO
+                // ============================================================
                 $entregadoTotalF_COL = 0;
+
                 if (isset($allDetallesRango[$fila->id])) {
                     foreach ($allDetallesRango[$fila->id] as $d) {
                         $entregadoTotalF_COL += $d->cantidad;
                     }
                 }
+
                 $entregadoTotalF_COL += (int)($ordenesRango[$fila->id] ?? 0);
-
-                // *** FILTRO ***
-                // soloExistencia = '1' → solo lotes con existencia > 0 o movimiento en el rango
-                // soloExistencia = '0' → mostrar TODOS los lotes sin excepción
-                if ($soloExistencia === '1') {
-                    if ($existencia_rango_COL <= 0 && $entregadoTotalF_COL <= 0) {
-                        continue;
-                    }
-                }
-
-                $contador++;
 
                 $infoEntradaFi = $allEntradas->get($fila->entrada_medicamento_id);
                 $infoProve = $infoEntradaFi ? $allProveedores->get($infoEntradaFi->proveedor_id) : null;
@@ -2279,27 +2280,44 @@ class ReportesController extends Controller
 
                 $fechaVen = date("d-m-Y", strtotime($fila->fecha_vencimiento));
 
-                $precioFormat_COL = '$' . number_format((float)$fila->precio, 2, '.', ',');
-                $precioFormatDonacion_COL = '$' . number_format((float)$fila->precio_donacion, 2, '.', ',');
+                // ============================================================
+                // COSTOS
+                // ============================================================
+                $precioFormat_COL = '$' . number_format((float)$fila->precio, 4, '.', ',');
+                $precioFormatDonacion_COL = '$' . number_format((float)$fila->precio_donacion, 4, '.', ',');
                 $cantidadInicial_COL = $fila->cantidad_fija;
 
-                $totalDescargado_COL = '$' . number_format((float)($fila->precio * $entregado_hasta_COL), 2, '.', ',');
+                // ============================================================
+                // TOTALES
+                // ============================================================
+                $totalDescargado_COL = '$' . number_format((float)($fila->precio * $entregado_hasta_COL), 4, '.', ',');
                 $sumatoriaTotalDescargado += ($fila->precio * $entregado_hasta_COL);
 
                 $totalDescargadoDonac_COL = '$' . number_format((float)($fila->precio_donacion * $entregado_hasta_COL), 2, '.', ',');
                 $sumatoriaTotalDescargadoDonac += ($fila->precio_donacion * $entregado_hasta_COL);
 
-                $totalDescaFecha_COL = '$' . number_format((float)($fila->precio * $entregadoTotalF_COL), 2, '.', ',');
+                $totalDescaFecha_COL = '$' . number_format((float)($fila->precio * $entregadoTotalF_COL), 4, '.', ',');
                 $sumatoriaTotalDescaFecha += ($fila->precio * $entregadoTotalF_COL);
 
-                $totalDescaDonacionFecha_COL = '$' . number_format((float)($fila->precio_donacion * $entregadoTotalF_COL), 2, '.', ',');
+                $totalDescaDonacionFecha_COL = '$' . number_format((float)($fila->precio_donacion * $entregadoTotalF_COL), 4, '.', ',');
                 $sumatoriaTotalDescaDonacionFecha += ($fila->precio_donacion * $entregadoTotalF_COL);
 
-                $totalExistencia_COL = '$' . number_format((float)($fila->precio * $existencia_rango_COL), 2, '.', ',');
+                $totalExistencia_COL = '$' . number_format((float)($fila->precio * $existencia_rango_COL), 4, '.', ',');
                 $sumatoriaTotalExistencia += ($fila->precio * $existencia_rango_COL);
 
-                $totalExistenciaDona_COL = '$' . number_format((float)($fila->precio_donacion * $existencia_rango_COL), 2, '.', ',');
+                $totalExistenciaDona_COL = '$' . number_format((float)($fila->precio_donacion * $existencia_rango_COL), 4, '.', ',');
                 $sumatoriaTotalDona += ($fila->precio_donacion * $existencia_rango_COL);
+
+                // ============================================================
+                // FILTRO (SOLO AFECTA LO QUE SE MUESTRA)
+                // ============================================================
+                if ($soloExistencia === '1') {
+                    if ($existencia_rango_COL <= 0 && $entregadoTotalF_COL <= 0) {
+                        continue;
+                    }
+                }
+
+                $contador++;
 
                 $dataArray[] = [
                     'contador' => $contador,
@@ -2324,7 +2342,14 @@ class ReportesController extends Controller
                     'totalexistencia_dona' => $totalExistenciaDona_COL,
                 ];
             }
+
+
+
+            if($dato->id == 123){
+              //  return $dataArray;
+            }
         }
+
 
         // --- Sumatorias formato ---
         $sumatoriaTotalDescaDonacionFecha = '$' . number_format((float)$sumatoriaTotalDescaDonacionFecha, 2, '.', ',');
@@ -2332,7 +2357,10 @@ class ReportesController extends Controller
         $sumatoriaTotalDescaFecha = '$' . number_format((float)$sumatoriaTotalDescaFecha, 2, '.', ',');
         $sumatoriaTotalDescargado = '$' . number_format((float)$sumatoriaTotalDescargado, 2, '.', ',');
         $sumatoriaTotalExistencia = '$' . number_format((float)$sumatoriaTotalExistencia, 2, '.', ',');
-        $sumatoriaTotalDona = '$' . number_format((float)$sumatoriaTotalDona, 2, '.', ',');
+        $sumatoriaTotalDona = '$' . number_format((float)$sumatoriaTotalDona, 4, '.', ',');
+
+        //return $sumatoriaTotalDona;
+
 
         // --- Agrupar por linea ---
         $dataGrouped = collect($dataArray)->groupBy('linea');
@@ -2350,52 +2378,52 @@ class ReportesController extends Controller
         $logoAlcaldia = 'data:image/jpg;base64,' . $logoAlcaldiaData;
 
         $tabla = "
-        <table style='width: 100%; border-collapse: collapse; margin-bottom: 0px'>
-            <tr>
-                <td style='width: 15%; text-align: left;'>
-                    <img src='$logoAlcaldia' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
-                </td>
-                <td style='width: 60%; text-align: center;'>
-                    <h1 style='font-size: 16px; margin: 0; color: #003366;'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE</h1>
-                    <h3 style='font-size: 16px; margin: 0; color: #003366;'>Clinica Municipal Cristobal Peraza</h3>
-                    <h3 style='font-size: 16px; margin: 0; color: #003366;'>REPORTE DE EXISTENCIAS POR FECHAS</h3>
-                    <h3 style='font-size: 16px; margin: 0; color: #003366;'><strong>INTERVALO DESDE:</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</h3>
-                </td>
-                <td style='width: 10%; text-align: right;'>
-                    <img src='$logoGobierno' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
-                </td>
-            </tr>
-        </table>
-        <hr style='border: none; border-top: 2px solid #003366; margin: 0;'>
-        ";
+    <table style='width: 100%; border-collapse: collapse; margin-bottom: 0px'>
+        <tr>
+            <td style='width: 15%; text-align: left;'>
+                <img src='$logoAlcaldia' alt='Santa Ana Norte' style='max-width: 100px; height: auto;'>
+            </td>
+            <td style='width: 60%; text-align: center;'>
+                <h1 style='font-size: 16px; margin: 0; color: #003366;'>ALCALDÍA MUNICIPAL DE SANTA ANA NORTE</h1>
+                <h3 style='font-size: 16px; margin: 0; color: #003366;'>Clinica Municipal Cristobal Peraza</h3>
+                <h3 style='font-size: 16px; margin: 0; color: #003366;'>REPORTE DE EXISTENCIAS POR FECHAS</h3>
+                <h3 style='font-size: 16px; margin: 0; color: #003366;'><strong>INTERVALO DESDE:</strong> $desdeFormat <strong>HASTA</strong> $hastaFormat</h3>
+            </td>
+            <td style='width: 10%; text-align: right;'>
+                <img src='$logoGobierno' alt='Gobierno de El Salvador' style='max-width: 60px; height: auto;'>
+            </td>
+        </tr>
+    </table>
+    <hr style='border: none; border-top: 2px solid #003366; margin: 0;'>
+    ";
 
         $stylesheet = file_get_contents('css/cssreportefinal.css');
         $mpdf->WriteHTML($stylesheet, 1);
 
         $tablaHeader = "
-        <table id='tablaFor' style='margin-top: 40px'><tbody>
-        <tr>
-            <td style='font-weight: bold; font-size: 12px'>#</td>
-            <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
-            <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
-            <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
-            <td style='font-weight: bold; font-size: 12px'>LINEA</td>
-            <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
-            <td style='font-weight: bold; font-size: 12px'>LOTE</td>
-            <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
-            <td style='font-weight: bold; font-size: 12px'>COSTO</td>
-            <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
-            <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
-            <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
-            <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
-            <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. DONA FECHAS</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA DONA.</td>
-        </tr>";
+    <table id='tablaFor' style='margin-top: 40px'><tbody>
+    <tr>
+        <td style='font-weight: bold; font-size: 12px'>#</td>
+        <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
+        <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
+        <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
+        <td style='font-weight: bold; font-size: 12px'>LINEA</td>
+        <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
+        <td style='font-weight: bold; font-size: 12px'>LOTE</td>
+        <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
+        <td style='font-weight: bold; font-size: 12px'>COSTO</td>
+        <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
+        <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
+        <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
+        <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
+        <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. DONA FECHAS</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA DONA.</td>
+    </tr>";
 
         $mpdf->setFooter("Página: " . '{PAGENO}' . "/" . '{nb}');
         $mpdf->WriteHTML($tabla, 2);
@@ -2407,8 +2435,8 @@ class ReportesController extends Controller
         foreach ($dataGrouped as $linea => $items) {
 
             $mpdf->WriteHTML("<tr style='background-color: #ddd; font-weight: bold;'>
-                <td colspan='20'>$linea</td>
-            </tr>", 2);
+            <td colspan='20'>$linea</td>
+        </tr>", 2);
 
             $chunk = '';
             $filasEnChunk = 0;
@@ -2436,27 +2464,27 @@ class ReportesController extends Controller
                 $detaTotalExistenciaDona = $fila['totalexistencia_dona'];
 
                 $chunk .= "<tr>
-                    <td>$contadorCorrelativo</td>
-                    <td>$detaCodigo</td>
-                    <td>$detaNombre</td>
-                    <td>$detaFinanci</td>
-                    <td>$linea</td>
-                    <td>$detaProveedor</td>
-                    <td>$detaLote</td>
-                    <td>$detaFechaVen</td>
-                    <td>$detaCosto</td>
-                    <td>$detaCostoDonacion</td>
-                    <td>$detaCantiIni</td>
-                    <td>$detaEntregado</td>
-                    <td>$detaEntregadoTotal</td>
-                    <td>$detaExistencia</td>
-                    <td>$detaTotalDesc</td>
-                    <td>$detaTotalDescDonacion</td>
-                    <td>$totalDescaFecha</td>
-                    <td>$totalDescaDonacionFecha</td>
-                    <td>$detaTotalExis</td>
-                    <td>$detaTotalExistenciaDona</td>
-                </tr>";
+                <td>$contadorCorrelativo</td>
+                <td>$detaCodigo</td>
+                <td>$detaNombre</td>
+                <td>$detaFinanci</td>
+                <td>$linea</td>
+                <td>$detaProveedor</td>
+                <td>$detaLote</td>
+                <td>$detaFechaVen</td>
+                <td>$detaCosto</td>
+                <td>$detaCostoDonacion</td>
+                <td>$detaCantiIni</td>
+                <td>$detaEntregado</td>
+                <td>$detaEntregadoTotal</td>
+                <td>$detaExistencia</td>
+                <td>$detaTotalDesc</td>
+                <td>$detaTotalDescDonacion</td>
+                <td>$totalDescaFecha</td>
+                <td>$totalDescaDonacionFecha</td>
+                <td>$detaTotalExis</td>
+                <td>$detaTotalExistenciaDona</td>
+            </tr>";
 
                 $filasEnChunk++;
 
@@ -2474,54 +2502,79 @@ class ReportesController extends Controller
 
         // *** SUMATORIAS + CIERRE ***
         $tablaFooter = "
-        <tr>
-            <td style='font-weight: bold; font-size: 12px'>#</td>
-            <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
-            <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
-            <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
-            <td style='font-weight: bold; font-size: 12px'>LINEA</td>
-            <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
-            <td style='font-weight: bold; font-size: 12px'>LOTE</td>
-            <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
-            <td style='font-weight: bold; font-size: 12px'>COSTO</td>
-            <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
-            <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
-            <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
-            <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
-            <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. DONA FECHAS</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
-            <td style='font-weight: bold; font-size: 12px'>TOTAL DONA.</td>
-        </tr>
-        <tr>
-            <td colspan='14' style='text-align: right; font-weight: bold'></td>
-            <td style='font-weight: bold'>$sumatoriaTotalDescargado</td>
-            <td style='font-weight: bold'>$sumatoriaTotalDescargadoDonac</td>
-            <td style='font-weight: bold'>$sumatoriaTotalDescaFecha</td>
-            <td style='font-weight: bold'>$sumatoriaTotalDescaDonacionFecha</td>
-            <td style='font-weight: bold'>$sumatoriaTotalExistencia</td>
-            <td style='font-weight: bold'>$sumatoriaTotalDona</td>
-        </tr>
-        </tbody></table>
+    <tr>
+        <td style='font-weight: bold; font-size: 12px'>#</td>
+        <td style='font-weight: bold; font-size: 12px'>CODIGO</td>
+        <td style='font-weight: bold; font-size: 12px'>DESCRIPCION</td>
+        <td style='font-weight: bold; font-size: 12px'>FINANCIAMIENTO</td>
+        <td style='font-weight: bold; font-size: 12px'>LINEA</td>
+        <td style='font-weight: bold; font-size: 12px'>PROVEEDOR</td>
+        <td style='font-weight: bold; font-size: 12px'>LOTE</td>
+        <td style='font-weight: bold; font-size: 12px'>FECHA VENCIMIENTO</td>
+        <td style='font-weight: bold; font-size: 12px'>COSTO</td>
+        <td style='font-weight: bold; font-size: 12px'>COSTO DONA.</td>
+        <td style='font-weight: bold; font-size: 12px'>CANTIDAD INICIAL</td>
+        <td style='font-weight: bold; font-size: 12px'>ENTREGADO</td>
+        <td style='font-weight: bold; font-size: 12px'>ENTREGADO TOTAL</td>
+        <td style='font-weight: bold; font-size: 12px'>EXISTENCIA</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCARGADO DONAC.</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. FECHAS</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL DESCA. DONA FECHAS</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA</td>
+        <td style='font-weight: bold; font-size: 12px'>TOTAL EXISTENCIA DONA.</td>
+    </tr>
+    <tr>
+        <td colspan='14' style='text-align: right; font-weight: bold'></td>
+        <td style='font-weight: bold'>$sumatoriaTotalDescargado</td>
+        <td style='font-weight: bold'>$sumatoriaTotalDescargadoDonac</td>
+        <td style='font-weight: bold'>$sumatoriaTotalDescaFecha</td>
+        <td style='font-weight: bold'>$sumatoriaTotalDescaDonacionFecha</td>
+        <td style='font-weight: bold'>$sumatoriaTotalExistencia</td>
+        <td style='font-weight: bold'>$sumatoriaTotalDona</td>
+    </tr>
+    </tbody></table>
 
-        <table style='border-collapse: collapse;' border='1' width='500'><tbody>
-        <tr>
-            <td style='font-weight: bold; font-size: 11px'>Total Descargado</td>
-            <td style='font-weight: bold; font-size: 11px'>Total Existencias</td>
-        </tr>
-        <tr>
-            <td style='font-weight: bold; font-size: 11px'>$sumatoriaTotalDescargado</td>
-            <td style='font-weight: bold; font-size: 11px'>$sumatoriaTotalExistencia</td>
-        </tr>
-        </tbody></table>
-        <br><br>";
+    <table style='border-collapse: collapse;' border='1' width='500'><tbody>
+    <tr>
+        <td style='font-weight: bold; font-size: 11px'>Total Descargado</td>
+        <td style='font-weight: bold; font-size: 11px'>Total Existencias</td>
+    </tr>
+    <tr>
+        <td style='font-weight: bold; font-size: 11px'>$sumatoriaTotalDescargado</td>
+        <td style='font-weight: bold; font-size: 11px'>$sumatoriaTotalExistencia</td>
+    </tr>
+    </tbody></table>
+    <br><br>";
 
         $mpdf->WriteHTML($tablaFooter, 2);
         $mpdf->Output();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
